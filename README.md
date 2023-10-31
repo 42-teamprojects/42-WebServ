@@ -29,3 +29,10 @@ gantt
     Submission: done, des19, after des17, 1d
 
 ```
+
+## Resources
+
+[A helpful repo](https://github.com/Kaydooo/Webserv_42)<br>
+[About network programming](https://beej.us/guide/bgnet/html/split/index.html)<br>
+[the RFC](https://www.rfc-editor.org/rfc/rfc9110.html#name-introduction)<br>
+[Socket Tutorial](https://www.geeksforgeeks.org/socket-programming-cc/)
