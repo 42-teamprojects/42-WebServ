@@ -7,11 +7,10 @@ gantt
   section Initialization
     Learning phase: done, des1, 2023-11-01, 3d
     Setup Environment: done, des2, 2023-11-01, 1d
-    Directory Structure: done, des3, 2023-11-01, 1d
 
   section Core Functionality
     Configuration Handling: done, des4, after des1, 5d
-    Server Initialization: done, des5, after des2, 4d
+    Server Initialization: done, des5, after des1, 4d
     Request Handling: done, des6, after des1, 5d
     Response Generation: done, des7, after des6, 5d
     Static Website Serving: done, des8, after des6, 4d
@@ -67,7 +66,7 @@ Certainly, here are the key concepts you should study before working on a non-bl
 <details>
 
 <summary>
-HTTP, or Hypertext Transfer Protocol, is the foundation of data communication on the World Wide Web. It's an application-layer protocol that facilitates the transfer of text, images, videos, and other resources between clients (typically web browsers) and web servers. Here's a summary of HTTP and its key concepts:
+HTTP (Hypertext Transfer Protocol) is a protocol for transmitting and receiving data on the World Wide Web, defining how information is requested and presented between web servers and web clients (usually web browsers). Here's a summary of HTTP and its key concepts:
 </summary>
 
 1. **RFC (Request for Comments)**: HTTP is defined in a series of RFC documents. The most widely used version is HTTP/1.1, defined in RFC 2616. There's also HTTP/2 (RFC 7540) and HTTP/3 (RFC 7541).
@@ -156,9 +155,6 @@ HTTP, or Hypertext Transfer Protocol, is the foundation of data communication on
 10. **Looping for More Requests**:
     - The web server continues listening for and handling incoming client requests in a loop, allowing multiple clients to connect simultaneously.
 
-11. **Security Measures**:
-    - The web server may implement security measures, such as authentication, encryption (HTTPS), and access control, to protect sensitive information and resources.
-
 This process repeats for each client connection, making it possible for multiple clients to access web content simultaneously. Web servers can serve a variety of resources, from static web pages to dynamic web applications, and they play a crucial role in delivering content on the World Wide Web.
 </details>
 <br>
@@ -200,6 +196,39 @@ So, under the hood, a socket represents an endpoint for network communication, h
 <br>
 
 ---
+
+# How socket works with the browser and webserver
+
+1. **Socket Creation**:
+   - The web server creates a socket to listen for incoming connections. This is often referred to as the server socket.
+   - When a web browser (client) wants to communicate with the server, it creates a socket for that specific connection. This is often referred to as the client socket.
+
+2. **Client-Server Communication**:
+   - The web browser (client) initiates a connection to the web server by specifying the server's IP address and port number.
+   - The web server accepts the incoming connection request using its server socket.
+
+3. **Request-Response Model**:
+   - The web browser sends an HTTP request to the server over the client socket. This request typically includes information about the resource (e.g., a web page) the browser wants to retrieve.
+   - The web server receives the request on its server socket, processes the request, and prepares an HTTP response. This response contains the requested data or information.
+
+4. **Data Transfer**:
+   - The data (the HTTP request and response) is transmitted between the client and server over the established socket connection. Data can be sent and received in both directions.
+
+5. **Connection Termination**:
+   - Once the communication is complete, the client or server may close the socket connection. This frees up resources and indicates the end of the communication for that connection.
+
+6. **Multiple Connections**:
+   - Web servers are designed to handle multiple simultaneous connections from various clients. Each client connection is typically represented by a separate socket.
+
+7. **Concurrency and Multithreading**:
+   - To manage multiple client connections efficiently, web servers often use techniques like multithreading or asynchronous I/O. This allows the server to handle multiple socket connections concurrently.
+
+8. **Response to Multiple Clients**:
+   - The web server can respond to requests from multiple clients simultaneously, allowing users to access web pages and resources concurrently.
+
+---
+
+<br>
 
 # Functions
 
