@@ -38,6 +38,7 @@ gantt
 [Socket Tutorial](https://www.geeksforgeeks.org/socket-programming-cc/)<br>
 [MDN HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP)<br>
 [Sockets](https://w3.cs.jmu.edu/kirkpams/OpenCSF/Books/csf/html/TCPSockets.html)<br>
+[Youtube Playlist](https://www.youtube.com/playlist?list=PL2yzsKiNIapNcFWhNAxTGAluY5zLQ-53v) <br>
 
 # Key concepts
 
