@@ -426,3 +426,5 @@ ssize_t send(int sockfd, const void *buf, size_t len, int flags);
 - Return value : On success, these calls return the number of bytes sent. On error, -1 is returned, and `errno` is set appropriately.
 
 </details>
+
+<img src="./github/functions.png" alt="Functions">
