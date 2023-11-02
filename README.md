@@ -32,7 +32,7 @@ gantt
 ## Resources
 
 [A helpful repo](https://github.com/Kaydooo/Webserv_42)<br>
-[About network programming](https://beej.us/guide/bgnet/html/split/index.html)<br>
+[About network programming](http://www.cs.columbia.edu/~danr/courses/6761/Fall00/hw/pa1/6761-sockhelp.pdf)<br>
 [the RFC](https://www.rfc-editor.org/rfc/rfc9110.html#name-introduction)<br>
 [Socket Tutorial](https://www.geeksforgeeks.org/socket-programming-cc/)<br>
 [MDN HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP)<br>
