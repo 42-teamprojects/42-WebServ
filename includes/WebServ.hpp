@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 22:14:47 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/02 17:28:17 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/02 18:08:11 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,3 +19,5 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+
+#include "utils.hpp"
