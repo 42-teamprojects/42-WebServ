@@ -162,10 +162,22 @@ This process repeats for each client connection, making it possible for multiple
 ---
 
 # Sockets
+A socket is a software component that represents an endpoint for network communication on your computer. It acts as a communication channel through which data can be sent and received between processes (programs) running on your computer and remote computers over a network, like the internet. Sockets are a fundamental concept in networking and allow applications to communicate with each other,
+
+But what are Sockets?
+
+You've probably heard of IP addresses, right? In a very general sense, an IP address is how you distinguish different machines, or hosts. For example, when you connect to Amazon, you need a way to specify the physical server you want your messages to be sent to. That's what the IP address is for.
+
+Great, right? The IP address helps you distinguish between physical machines (typically called hosts), and that is all you need to do be able to do, right?
+
+Not quite! While IP addressing helps you distinguish between hosts, what about different processes on your computer? When a message (sometimes called a packet, or segment, in this context) reaches your computer, how does your Operating System know which process that message was meant for? You might be browsing reddit while checking your email while playing a game while streaming music. How does your OS know that the message it just received was meant for Spotify or for Web Browsing? The IP address can't distinguish between the two.
+
+This is where ports come in. A port is just a number, but it acts as a kind of "address" so that your operating system can identify which process a message is meant for.
+
+A socket is then a way for your program to say, "Hey, this is My IP Address and my Port Number. Contact me Here!". This way, you can have multiple programs running on the same machine, and the OS can distinguish between your python program and some other process going on.
+
 <details>
 <summary>
-A socket is a software component that represents an endpoint for network communication on your computer. It acts as a communication channel through which data can be sent and received between processes (programs) running on your computer and remote computers over a network, like the internet. Sockets are a fundamental concept in networking and allow applications to communicate with each other:
-
 Here's how sockets work under the hood and what they represent:
 </summary>
 

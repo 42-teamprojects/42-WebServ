@@ -6,51 +6,56 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 22:27:57 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/01 21:36:50 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/02 09:13:10 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
 
 int main() {
-    // Holds the ip and port of the server
-    struct sockaddr_in serv_addr, cli_addr;
-    // int opt = 1;
-    int new_socket;
-    socklen_t len = sizeof(cli_addr);
+    int serverSocket, clientSocket;
+    struct sockaddr_in serverAddr, clientAddr;
+    socklen_t addrSize = sizeof(struct sockaddr_in);
 
     // Create a socket
-    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0) {
-        perror("Socket creation failed");
-        exit(EXIT_FAILURE);
-    }
-    // Forcefully attaching socket to the port 8080
-    // if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
-    //     perror("setsockopt");
-    //     exit(EXIT_FAILURE);
-    // }
-    
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = INADDR_ANY;
-    serv_addr.sin_port = htons(8080);
-    
-    if (bind(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
-        perror("Binding failed");
-        exit(EXIT_FAILURE);
+    serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+    if (serverSocket < 0) {
+        perror("Error opening socket");
+        exit(1);
     }
 
-    if (listen(sockfd, 4) < 0) {
-        perror("Listenning failed");
-        exit(EXIT_FAILURE);
+    // Set up server address information
+    memset(&serverAddr, 0, sizeof(serverAddr));
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_addr.s_addr = INADDR_ANY;
+    serverAddr.sin_port = htons(8080);
+
+    // Bind the socket to the server address
+    if (bind(serverSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0) {
+        perror("Error binding socket");
+        exit(1);
     }
-    std::cout << "Listenning on port 8080" << std::endl;
-    if ((new_socket = accept(sockfd, (struct sockaddr *)&cli_addr, &len)) < 0) {
-        perror("Accept failed");
-        exit(EXIT_FAILURE); 
+
+    // Listen for incoming connections
+    if (listen(serverSocket, 5) < 0) {
+        perror("Error listening on socket");
+        exit(1);
     }
-    
-    close(new_socket);
-    close(sockfd);
+
+    std::cout << "Server is listening on port 8080..." << std::endl;
+
+    // Accept incoming connections
+    clientSocket = accept(serverSocket, (struct sockaddr *)&clientAddr, &addrSize);
+    if (clientSocket < 0) {
+        perror("Error accepting connection");
+        exit(1);
+    }
+
+    // Handle the client connection here
+
+    // Close the sockets when done
+    close(clientSocket);
+    close(serverSocket);
+
     return 0;
 }
