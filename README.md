@@ -240,6 +240,8 @@ So, under the hood, a socket represents an endpoint for network communication, h
 
 ---
 
+<img src="https://miro.medium.com/v2/resize:fit:1400/1*e9YmYFnsU58ZuMSmFjWySA.png">
+
 <br>
 
 # Functions
