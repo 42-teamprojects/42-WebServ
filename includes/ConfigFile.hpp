@@ -1,26 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   WebServ.hpp                                        :+:      :+:    :+:   */
+/*   ConfigFile.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/31 22:14:47 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/03 11:53:49 by yelaissa         ###   ########.fr       */
+/*   Created: 2023/11/03 11:17:59 by yelaissa          #+#    #+#             */
+/*   Updated: 2023/11/03 14:46:57 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <iostream>
-#include <cstring>
-#include <cstdlib>
-#include <cstdio>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-
-#include "utils.hpp"
-
 #include <vector>
-#include "Location.hpp"
+#include "ServerContext.hpp"
+
+class ConfigFile
+{
+private:
+    std::vector<ServerContext>         servers;
+public:
+    ConfigFile();
+    ~ConfigFile();
+};

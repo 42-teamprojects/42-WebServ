@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 22:27:57 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/02 18:32:38 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/03 16:54:56 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ int main() {
         std::cout << buffer << std::endl;
 
         // Sending the response
-        std::string response = "HTTP/1.1 200 OK\r\nServer: Tawafan/0.0 (Alaqssa)\r\n\r\n<html><body><h1>Welcome</h1></body></html>";
+        std::string response = "HTTP/1.1 200 OK\r\nServerContext: Tawafan/0.0 (Alaqssa)\r\n\r\n<html><body><h1>Welcome</h1></body></html>";
         int bytesSent = send(clientSocket, response.c_str(), response.size(), 0);
         if (bytesSent < 0) {
             perror("Error sending data");
