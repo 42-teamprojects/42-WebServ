@@ -1,4 +1,4 @@
 webserv
 obj/
 *.o
-.vscode/
+# .vscode/
