@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Location.hpp                                       :+:      :+:    :+:   */
+/*   Server.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/05 13:51:36 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/05 22:49:18 by yelaissa         ###   ########.fr       */
+/*   Created: 2023/11/05 13:51:41 by yelaissa          #+#    #+#             */
+/*   Updated: 2023/11/05 14:15:27 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,25 +15,29 @@
 #include "webserv.hpp"
 #include "CommonDirectives.hpp"
 
-class Location : public CommonDirectives
+class Server : public CommonDirectives
 {
 private:
-    std::string                 path;
-    std::string                 redir;
-    // CgiInfo                     cgi;
+    std::string                 listen;
+    std::string                 host;
+    std::vector<std::string>    serverName;
+
 public:
-    Location();
-    ~Location();
+    Server();
+    ~Server();
 
     // Getters
-    std::string                 getPath() const;
-    std::string                 getRedir() const;
+    std::string                 getListen() const;
+    std::string                 getHost() const;
+    std::vector<std::string>    getServerName() const;
 
     // Setters
-    void                        setPath(const std::string& path);
-    void                        setRedir(const std::string& redir);
+    void                        setListen(const std::string& listen);
+    void                        setHost(const std::string& host);
+    void                        setServerName(const std::vector<std::string>& serverName);
 
     // Methods
     void                        print() const;
     void                        fill(std::string const &line, int &lineNb);
 };
+    

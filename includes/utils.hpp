@@ -1,13 +1,13 @@
 
 #include "webserv.hpp"
 
-// template <typename T>
-// std::string toString(T value)
-// {
-//     std::ostringstream os;
-//     os << value;
-//     return os.str();
-// }
+template <typename T>
+std::string toString(T value)
+{
+    std::ostringstream os;
+    os << value;
+    return os.str();
+}
 
 template <typename Container>
 Container ft_split(const std::string &s, const std::string &delimiters)

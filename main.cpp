@@ -1,15 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   globals.hpp                                        :+:      :+:    :+:   */
+/*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/03 11:48:41 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/03 11:50:36 by yelaissa         ###   ########.fr       */
+/*   Created: 2023/10/31 22:27:57 by yelaissa          #+#    #+#             */
+/*   Updated: 2023/11/05 22:08:53 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#include "webserv.hpp"
 
-#define std::vector<std::string>    StringVector;
+int main() 
+{
+    try {
+        ConfigParser::parseConfigFile("configs/default");
+    } catch (std::exception &e) {
+        std::cerr << "Config file: " << e.what() << std::endl;
+    }
+    return 0;
+}
