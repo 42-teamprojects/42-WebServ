@@ -1,0 +1,24 @@
+<server>
+    listen = 8080
+    host = 127.0.0.1
+    server_name = localhost
+    error_page = 404, /error/404.html
+    client_max_body_size = 1024
+    root = path/to/folder
+    index = index.html file.html
+
+    <location path="/page">
+        autoindex = on
+        allow_methods = POST GET
+        index = index.php index.html
+        return = redir/index.html
+        <location path="/other">
+            return = redir/other.html
+        </location>
+    </location>
+
+    <location path="cgi-bin">
+        cgi-ext = .py .sh
+    </location>
+
+</server>
