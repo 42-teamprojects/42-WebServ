@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 11:10:20 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/06 12:05:47 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/06 20:01:12 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,6 @@ void ConfigParser::parseConfigFile(std::string const &configPath)
         else {
             throw ServerException("Invalid config file", lineNb);
         }
-        std::cout << line << std::endl;
     }
 }
 
@@ -82,6 +81,7 @@ Server ConfigParser::parseServer(std::ifstream & file, std::string & line, int &
             std::string path = findLocation(line, lineNb);
             if (!path.empty()) {
                 Location location = parseLocation(file, line, lineNb, stateStack);
+                location.setPath(path);
                 server.addLocation(location);
             }
             continue;
@@ -91,7 +91,7 @@ Server ConfigParser::parseServer(std::ifstream & file, std::string & line, int &
         }
         else if (line.find("=") == std::string::npos)
             throw ServerException("Invalid server block", lineNb);
-        std::cout << line << std::endl;
+        server.fill(line, lineNb);
     }
     return server;
 }
@@ -117,14 +117,15 @@ Location ConfigParser::parseLocation(std::ifstream & file, std::string & line, i
         else if (line.substr(0, 9) == "<location") {
             std::string path = findLocation(line, lineNb);
             if (!path.empty()) {
-                Location newLocation = parseLocation(file, line, lineNb, stateStack);
-                location.addLocation(newLocation);
+                Location location = parseLocation(file, line, lineNb, stateStack);
+                location.setPath(path);
+                location.addLocation(location);
             }
             continue;
         }
         else if (line.find("=") == std::string::npos)
             throw ServerException("Invalid location block", lineNb);
-        std::cout << line << std::endl;
+        // std::cout << line << std::endl;
     } 
     return location;
 }
@@ -150,12 +151,7 @@ std::string ConfigParser::findLocation(std::string line, int lineNb)
     return path;
 }
 
-void ConfigParser::trim(std::string & s)
+std::vector<Server> ConfigParser::getServers()
 {
-    size_t start = s.find_first_not_of(" \t\r\n");
-    size_t end = s.find_last_not_of(" \t\r\n");
-    if (start == std::string::npos || end == std::string::npos)
-        s.clear();
-    else
-        s = s.substr(start, end - start + 1);
+    return servers;
 }

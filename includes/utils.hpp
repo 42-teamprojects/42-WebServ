@@ -10,6 +10,17 @@ std::string toString(T value)
 }
 
 template <typename Container>
+void trim(Container & s)
+{
+    size_t start = s.find_first_not_of(" \t\r\n");
+    size_t end = s.find_last_not_of(" \t\r\n");
+    if (start == std::string::npos || end == std::string::npos)
+        s.clear();
+    else
+        s = s.substr(start, end - start + 1);
+}
+
+template <typename Container>
 Container ft_split(const std::string &s, const std::string &delimiters)
 {
     Container splited;
@@ -23,9 +34,12 @@ Container ft_split(const std::string &s, const std::string &delimiters)
             break;
         size_t wordEnd = s.find_first_of(delimiters, i);
         
-        splited.push_back(s.substr(i, wordEnd - i));
+        std::string word = s.substr(i, wordEnd - i);
+        trim(word);
+        splited.push_back(word);
         
         i = wordEnd;
     }
     return splited;
 }
+

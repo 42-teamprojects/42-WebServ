@@ -18,26 +18,26 @@
 class Server : public Context
 {
 private:
-    std::string                 listen;
-    std::string                 host;
-    std::vector<std::string>    serverName;
-
+    size_t                          listen;
+    std::string                     host;
+    std::vector<std::string>        serverName;
+    static std::string              serverOptions[11];
 public:
     Server();
     ~Server();
 
     // Getters
-    std::string                 getListen() const;
+    size_t                      getListen() const;
     std::string                 getHost() const;
     std::vector<std::string>    getServerName() const;
 
     // Setters
-    void                        setListen(const std::string& listen);
-    void                        setHost(const std::string& host);
-    void                        setServerName(const std::vector<std::string>& serverName);
+    void                        setListen(const size_t &);
+    void                        setHost(const std::string &);
+    void                        setServerName(const std::vector<std::string>&);
 
     // Methods
     void                        print() const;
-    void                        fill(std::string const &line, int &lineNb);
+    void                        fill(std::string const &, int &);
 };
     

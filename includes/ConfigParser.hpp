@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 11:03:20 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/06 12:05:36 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/06 20:01:47 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,10 @@ private:
     ConfigParser();
     ~ConfigParser();
 public:
-    static void        parseConfigFile(std::string const &);
-    static Server      parseServer(std::ifstream &, std::string &, int &,  std::stack<state> &);
-    static Location    parseLocation(std::ifstream &, std::string &, int &, std::stack<state> &);
-    static void        trim(std::string &);
-    static std::string findLocation(std::string, int);
-    static std::string         blockTypeToString(state blockType);
+    static void                 parseConfigFile(std::string const &);
+    static Server               parseServer(std::ifstream &, std::string &, int &,  std::stack<state> &);
+    static Location             parseLocation(std::ifstream &, std::string &, int &, std::stack<state> &);
+    static std::string          findLocation(std::string, int);
+    static std::vector<Server>  getServers();
 };
 

@@ -52,5 +52,5 @@ public:
 
     // Methods
     virtual void                print() const = 0;
-    virtual void                fill(std::string const &line, int &lineNb) = 0;
+    virtual void                fill(std::string const &, int &) = 0;
 };
