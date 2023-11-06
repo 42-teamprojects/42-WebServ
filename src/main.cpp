@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 22:27:57 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/05 20:22:14 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/11/06 19:49:42 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,7 @@ int handle_select(int port)
 {
     int serverSocket;
     struct sockaddr_in serverAddr;
-    // socklen_t addrSize = sizeof(struct sockaddr_in);
-    // fd_set master;
-    // fd_set read_fds;
-
+    
     // Create a socket
     serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -36,7 +33,7 @@ int handle_select(int port)
     serverAddr.sin_addr.s_addr = htonl(INADDR_ANY); // htonl converts a long integer (e.g. address) to a network representation 
     serverAddr.sin_port = htons(port); // htons converts a short integer (e.g. port) to a network representation
     int yes = 1;
-    // lose the pesky "Address already in use" error message
+
     // setsockopt is used to allow the local address to be reused when the server is restarted before the required wait time expires
     // it works by setting the SO_REUSEADDR socket option
     if (setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) < 0)
@@ -45,7 +42,24 @@ int handle_select(int port)
 		close(serverSocket);
 		exit(1);
     }
-
+    
+    // enable non-blocking mode
+    
+    // int flags = fcntl(serverSocket, F_GETFL, 0);
+    // if (flags == -1)
+    // {
+    //     std::cerr << "error: fcntl() failed" << std::endl;
+    //     close(serverSocket);
+    //     exit(1);
+    // }
+    // if (fcntl(serverSocket, F_SETFL, flags | O_NONBLOCK) == -1)
+    // {
+    //     std::cerr << "error: fcntl() failed" << std::endl;
+    //     close(serverSocket);
+    //     exit(1);
+    // }
+    
+    
     // Bind the socket to the server address
     if (bind(serverSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0)
     {
@@ -59,11 +73,10 @@ int handle_select(int port)
         std::cerr << "error: listern call" << std::endl;
         exit(1);
     }
-    return serverSocket;
+    return (serverSocket);
 }
 int main()
 {
-    // int serverSocket, clientSocket;
     struct sockaddr_in clientAddr;
     socklen_t addrSize = sizeof(struct sockaddr_in);
     
@@ -77,7 +90,7 @@ int main()
     FD_ZERO(&master);
     FD_SET(var, &master);
     FD_SET(var2, &master);
-    int fdmax = 2;
+    int fdmax = std::max(var, var2);
 
     char    buffer[2048] = {0};
     while (true)
@@ -113,51 +126,10 @@ int main()
                         std::cerr << "error: send call" << std::endl;
                         exit(1); 
                     }
-                    close(clientSocket); // close the connection
+                    close(clientSocket);
             }
         }
-
-        // // Accept incoming connections
-        // clientSocket = accept(var, (struct sockaddr *)&clientAddr, &addrSize);
-        // if (clientSocket < 0)
-        // {
-	    //     std::cerr << "error: accept call" << std::endl;
-        //     exit(1);
-        // }
-
-        // // Handle the client connection
-        
-        // // if (connect(clientSocket, (struct sockaddr *)&clientAddr, sizeof(clientAddr)) < 0)
-        // // {
-        // //     std::cerr << "error: connect call" << std::endl;
-        // //     exit(1);
-        // // }
-        
-        // // Getting the request
-        // char    buffer[2048];
-        // int bytesReceived = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
-        // if (bytesReceived < 0)
-        // {
-        //     std::cerr << "error: recv call" << std::endl;
-        //     exit(1);
-        // }
-        // buffer[bytesReceived] = '\0';
-
-        // std::cout << buffer << std::endl;
-
-        // // Sending the response
-        // std::string response = "HTTP/1.1 200 OK\r\nServerContext: Tawafan/0.0 (Alaqssa)\r\n\r\n<html><body><h1>Welcome</h1></body></html>";
-        // int bytesSent = send(clientSocket, response.c_str(), response.size(), 0);
-        // if (bytesSent < 0)
-        // {
-        //     std::cerr << "error: send call" << std::endl;
-        //     exit(1); 
-        // }
-
-        // // Close the sockets when done
-        // close(clientSocket);
     }
     close(var);
-
     return 0;
 }
