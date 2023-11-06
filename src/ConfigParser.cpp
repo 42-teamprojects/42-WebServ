@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 11:10:20 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/05 22:05:39 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/06 12:05:47 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,18 +38,16 @@ void ConfigParser::parseConfigFile(std::string const &configPath)
         trim(line);
         if (line.empty())
             continue;
-        if (line == "<server>") {
+        else if (line == "<server>") {
             if (stateStack.top() != NONE)
                 throw ServerException("Server block not closed", lineNb);
             stateStack.push(SERVER);
             Server server = parseServer(file, line, lineNb, stateStack);
             servers.push_back(server);
+            continue;
         }
         else if (line == "</server>") {
-            if (stateStack.top() != SERVER)
-                throw ServerException("Server block not opened", lineNb);
-            stateStack.pop();
-            std::cout << "Server block closed" << std::endl;
+            throw ServerException("Server block not opened", lineNb);
         }
         else if (line.find("location") != std::string::npos) {
             throw ServerException("Location block is invalid", lineNb);
@@ -57,6 +55,7 @@ void ConfigParser::parseConfigFile(std::string const &configPath)
         else {
             throw ServerException("Invalid config file", lineNb);
         }
+        std::cout << line << std::endl;
     }
 }
 
@@ -72,26 +71,25 @@ Server ConfigParser::parseServer(std::ifstream & file, std::string & line, int &
         trim(line);
         if (line.empty())
             continue;
-        if (line == "</server>") {
+        else if (line == "</server>") {
             if (stateStack.top() != SERVER)
                 throw ServerException("Server block not opened", lineNb);
+            stateStack.pop();
+            std::cout << "Server block closed" << std::endl;
             break;
-        };
-        if (line.substr(0, 9) == "<location") {
+        }
+        else if (line.substr(0, 9) == "<location") {
             std::string path = findLocation(line, lineNb);
             if (!path.empty()) {
                 Location location = parseLocation(file, line, lineNb, stateStack);
                 server.addLocation(location);
             }
-        }
-        if (line == "</location>") {
-            if (stateStack.top() != LOCATION)
-                throw ServerException("Location block not opened", lineNb);
-            stateStack.pop();
-            std::cout << "Location block closed" << std::endl;
             continue;
         }
-        if (line.find("=") == std::string::npos)
+        else if (line == "</location>") {
+            throw ServerException("Location block not opened", lineNb);
+        }
+        else if (line.find("=") == std::string::npos)
             throw ServerException("Invalid server block", lineNb);
         std::cout << line << std::endl;
     }
@@ -109,19 +107,22 @@ Location ConfigParser::parseLocation(std::ifstream & file, std::string & line, i
         trim(line);
         if (line.empty())
             continue;
-        if (line.substr(0, 9) == "<location") {
+        else if (line == "</location>") {
+            if (stateStack.top() != LOCATION)
+                throw ServerException("Location block not opened", lineNb);
+            stateStack.pop();
+            std::cout << "Location block closed" << std::endl;
+            break; 
+        }
+        else if (line.substr(0, 9) == "<location") {
             std::string path = findLocation(line, lineNb);
             if (!path.empty()) {
                 Location newLocation = parseLocation(file, line, lineNb, stateStack);
                 location.addLocation(newLocation);
             }
+            continue;
         }
-        if (line == "</location>") {
-            if (stateStack.top() != LOCATION)
-                throw ServerException("Location block not opened", lineNb);
-            break; 
-        };
-        if (line.find("=") == std::string::npos)
+        else if (line.find("=") == std::string::npos)
             throw ServerException("Invalid location block", lineNb);
         std::cout << line << std::endl;
     } 

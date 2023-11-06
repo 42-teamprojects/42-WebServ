@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   CommonDirectives.hpp                               :+:      :+:    :+:   */
+/*   Context.hpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -17,7 +17,7 @@
 class Location;
 
 // Abstract class
-class CommonDirectives
+class Context
 {
 protected:
     std::vector<std::string>    errorPage;
@@ -28,8 +28,8 @@ protected:
     std::vector<std::string>    allowMethods;
     std::vector<Location>       locations;
 public:
-    CommonDirectives() {};
-    virtual ~CommonDirectives() {};
+    Context() {};
+    virtual ~Context() {};
 
     // Getters
     std::vector<std::string>    getErrorPage() const { return errorPage; }

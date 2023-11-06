@@ -13,9 +13,9 @@
 #pragma once
 
 #include "webserv.hpp"
-#include "CommonDirectives.hpp"
+#include "Context.hpp"
 
-class Server : public CommonDirectives
+class Server : public Context
 {
 private:
     std::string                 listen;

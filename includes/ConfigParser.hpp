@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 11:03:20 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/05 22:50:39 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/06 12:05:36 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,5 +37,6 @@ public:
     static Location    parseLocation(std::ifstream &, std::string &, int &, std::stack<state> &);
     static void        trim(std::string &);
     static std::string findLocation(std::string, int);
+    static std::string         blockTypeToString(state blockType);
 };
 
