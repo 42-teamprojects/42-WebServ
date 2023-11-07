@@ -6,14 +6,13 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 13:51:36 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/06 11:40:02 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/07 15:10:15 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "webserv.hpp"
-#include "Context.hpp"
 
 class Location : public Context
 {

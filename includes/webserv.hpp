@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 13:35:49 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/05 21:45:41 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/07 15:25:36 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,3 +31,4 @@
 #include "Server.hpp"
 #include "ConfigParser.hpp"
 #include "ServerException.hpp"
+#include "Context.hpp"

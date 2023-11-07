@@ -16,7 +16,6 @@
 
 class Location;
 
-// Abstract class
 class Context
 {
 protected:
@@ -28,29 +27,29 @@ protected:
     std::vector<std::string>    allowMethods;
     std::vector<Location>       locations;
 public:
-    Context() {};
-    virtual ~Context() {};
+    Context();
+    ~Context();
 
     // Getters
-    std::vector<std::string>    getErrorPage() const { return errorPage; }
-    size_t                      getClientMaxBodySize() const { return clientMaxBodySize; }
-    std::string                 getRoot() const { return root; }
-    std::vector<std::string>    getIndex() const { return index; }
-    bool                        getAutoIndex() const { return autoIndex; }
-    std::vector<std::string>    getAllowMethods() const { return allowMethods; }
-    std::vector<Location>       getLocations() const { return locations; }
+    std::vector<std::string>    getErrorPage() const;
+    size_t                      getClientMaxBodySize() const;
+    std::string                 getRoot() const;
+    std::vector<std::string>    getIndex() const;
+    bool                        getAutoIndex() const;
+    std::vector<std::string>    getAllowMethods() const;
+    std::vector<Location>       getLocations() const;
 
     // Setters
-    void                        setErrorPage(const std::vector<std::string>& errorPage) { this->errorPage = errorPage; }
-    void                        setClientMaxBodySize(size_t clientMaxBodySize) { this->clientMaxBodySize = clientMaxBodySize; }
-    void                        setRoot(const std::string& root) { this->root = root; }
-    void                        setIndex(const std::vector<std::string>& index) { this->index = index; }
-    void                        setAutoIndex(bool autoIndex) { this->autoIndex = autoIndex; }
-    void                        setAllowMethods(const std::vector<std::string>& allowMethods) { this->allowMethods = allowMethods; }
-    void                        setLocations(const std::vector<Location>& locations) { this->locations = locations; }
-    void                        addLocation(const Location& location) { this->locations.push_back(location); }
+    void                        setErrorPage(const std::vector<std::string>& errorPage);
+    void                        setClientMaxBodySize(size_t clientMaxBodySize);
+    void                        setRoot(const std::string& root);
+    void                        setIndex(const std::vector<std::string>& index);
+    void                        setAutoIndex(bool autoIndex);
+    void                        setAllowMethods(const std::vector<std::string>& allowMethods);
+    void                        setLocations(const std::vector<Location>& locations);
+    void                        addLocation(const Location& location);
 
     // Methods
-    virtual void                print() const = 0;
-    virtual void                fill(std::string const &, int &) = 0;
+    void                print() const;
+    void                fill(std::string &, std::string &, int &);
 };

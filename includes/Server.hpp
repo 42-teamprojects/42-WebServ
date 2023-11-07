@@ -13,7 +13,6 @@
 #pragma once
 
 #include "webserv.hpp"
-#include "Context.hpp"
 
 class Server : public Context
 {
@@ -21,7 +20,6 @@ private:
     size_t                          listen;
     std::string                     host;
     std::vector<std::string>        serverName;
-    static std::string              serverOptions[11];
 public:
     Server();
     ~Server();
