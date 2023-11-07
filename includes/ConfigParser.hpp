@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 11:03:20 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/06 20:01:47 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/07 16:07:34 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "webserv.hpp"
 #include <fstream>
 
+class Location;
 class Server;
 
 enum   state

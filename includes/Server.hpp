@@ -14,6 +14,8 @@
 
 #include "webserv.hpp"
 
+// class Context;
+
 class Server : public Context
 {
 private:

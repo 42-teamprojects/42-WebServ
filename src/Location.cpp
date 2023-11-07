@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 22:42:11 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/07 15:09:46 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/07 16:13:10 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void                        Location::print() const
         std::cout << "path: " << path << std::endl;
     if (redir.empty())
         std::cout << "return: " << redir << std::endl;
-    Context::print();
+    printCommon();
 }
 
 void                        Location::fill(std::string const &line, int &lineNb)
@@ -50,7 +50,7 @@ void                        Location::fill(std::string const &line, int &lineNb)
         setRedir(value);
     }
     else if (std::find(commonOptions, commonOptions + 6, option) != commonOptions + 6)
-        Context::fill(option, value, lineNb);
+        fillCommon(option, value, lineNb);
     else
         throw ServerException("Invalid server option", 0);
 }

@@ -50,6 +50,6 @@ public:
     void                        addLocation(const Location& location);
 
     // Methods
-    void                print() const;
-    void                fill(std::string &, std::string &, int &);
+    void                printCommon() const;
+    void                fillCommon(std::string &, std::string &, int &);
 };

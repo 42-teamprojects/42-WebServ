@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 22:16:34 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/07 14:36:42 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/07 16:14:30 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void                        Server::print() const
             std::cout << serverName[i] << " ";
         std::cout << std::endl;
     }
-    Context::print();
+    printCommon();
 }
 
 void                        Server::fill(std::string const &line, int &lineNb)
@@ -73,7 +73,7 @@ void                        Server::fill(std::string const &line, int &lineNb)
         setServerName(names);
     }
     else if (std::find(commonOptions, commonOptions + 6, option) != commonOptions + 6)
-        Context::fill(option, value, lineNb);
+        fillCommon(option, value, lineNb);
     else
         throw ServerException("Invalid server option", 0);
 }

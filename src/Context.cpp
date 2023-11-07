@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 13:24:34 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/07 14:28:33 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/07 16:12:08 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ void                        Context::addLocation(const Location& location)
 }
 
 // Methods
-void Context::print() const
+void Context::printCommon() const
 {
     if (!this->errorPage.empty())
     {
@@ -134,7 +134,7 @@ void Context::print() const
     }
 }
 
-void                        Context::fill(std::string & option, std::string & value, int & lineNb)
+void                        Context::fillCommon(std::string & option, std::string & value, int & lineNb)
 {
     if (option == "error_page") {
         std::vector<std::string>    errors = ft_split<std::vector<std::string> >(value, " ");
