@@ -12,9 +12,9 @@
 
 #pragma once
 
-#include "webserv.hpp"
-
-// class Context;
+#include "Context.hpp"
+#include <iostream>
+#include <vector>
 
 class Server : public Context
 {

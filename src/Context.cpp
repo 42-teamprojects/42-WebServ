@@ -6,11 +6,12 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 13:24:34 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/07 16:12:08 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/08 15:52:18 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Context.hpp"
+#include "webserv.hpp"
 
 Context::Context()
 {
@@ -51,7 +52,7 @@ std::vector<std::string>    Context::getAllowMethods() const
     return (this->allowMethods);
 }
 
-std::vector<Location>       Context::getLocations() const
+std::vector<Location*>       Context::getLocations() const
 {
     return (this->locations);
 }
@@ -87,14 +88,14 @@ void                        Context::setAllowMethods(const std::vector<std::stri
     this->allowMethods = allowMethods;
 }
 
-void                        Context::setLocations(const std::vector<Location>& locations)
+void                        Context::setLocations(const std::vector<Location*>& locations)
 {
     this->locations = locations;
 }
 
-void                        Context::addLocation(const Location& location)
+void                        Context::addLocation(Location& location)
 {
-    this->locations.push_back(location);
+    this->locations.push_back(&location);
 }
 
 // Methods
@@ -130,7 +131,7 @@ void Context::printCommon() const
     {
         std::cout << "locations: " << std::endl;
         for (size_t i = 0; i < this->locations.size(); i++)
-            this->locations[i].print();
+            this->locations[i]->print();
     }
 }
 

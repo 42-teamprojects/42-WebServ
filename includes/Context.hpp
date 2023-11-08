@@ -12,7 +12,8 @@
 
 #pragma once
 
-#include "webserv.hpp"
+#include <iostream>
+#include <vector>
 
 class Location;
 
@@ -25,7 +26,7 @@ protected:
     std::vector<std::string>    index;
     bool                        autoIndex;
     std::vector<std::string>    allowMethods;
-    std::vector<Location>       locations;
+    std::vector<Location*>       locations;
 public:
     Context();
     ~Context();
@@ -37,7 +38,7 @@ public:
     std::vector<std::string>    getIndex() const;
     bool                        getAutoIndex() const;
     std::vector<std::string>    getAllowMethods() const;
-    std::vector<Location>       getLocations() const;
+    std::vector<Location*>       getLocations() const;
 
     // Setters
     void                        setErrorPage(const std::vector<std::string>& errorPage);
@@ -46,8 +47,8 @@ public:
     void                        setIndex(const std::vector<std::string>& index);
     void                        setAutoIndex(bool autoIndex);
     void                        setAllowMethods(const std::vector<std::string>& allowMethods);
-    void                        setLocations(const std::vector<Location>& locations);
-    void                        addLocation(const Location& location);
+    void                        setLocations(const std::vector<Location*>& locations);
+    void                        addLocation(Location& location);
 
     // Methods
     void                printCommon() const;

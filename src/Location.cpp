@@ -6,11 +6,12 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 22:42:11 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/07 16:13:10 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/08 15:52:53 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Location.hpp"
+#include "webserv.hpp"
 
 Location::Location() {};
 Location::~Location() {};

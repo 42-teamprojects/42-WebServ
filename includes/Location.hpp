@@ -6,15 +6,17 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 13:51:36 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/07 16:32:08 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/08 15:48:42 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "webserv.hpp"
+#include "Context.hpp"
+#include <iostream>
+#include <vector>
 
-// class Context;
+class Context;
 
 class Location : public Context
 {
