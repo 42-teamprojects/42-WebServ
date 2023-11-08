@@ -6,15 +6,15 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 13:24:34 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/08 15:52:18 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/08 19:18:03 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Context.hpp"
 #include "webserv.hpp"
 
-Context::Context()
-{
+Context::Context() : errorPage(), clientMaxBodySize(0), root(""), index(), autoIndex(false), allowMethods(), locations()
+{   
 }
 
 Context::~Context()
@@ -93,9 +93,9 @@ void                        Context::setLocations(const std::vector<Location*>& 
     this->locations = locations;
 }
 
-void                        Context::addLocation(Location& location)
+void                        Context::addLocation(Location *location)
 {
-    this->locations.push_back(&location);
+    this->locations.push_back(location);
 }
 
 // Methods
@@ -130,8 +130,9 @@ void Context::printCommon() const
     if (!this->locations.empty())
     {
         std::cout << "locations: " << std::endl;
-        for (size_t i = 0; i < this->locations.size(); i++)
+        for (size_t i = 0; i < this->locations.size(); i++) {
             this->locations[i]->print();
+        }
     }
 }
 

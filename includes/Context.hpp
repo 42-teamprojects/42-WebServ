@@ -48,7 +48,7 @@ public:
     void                        setAutoIndex(bool autoIndex);
     void                        setAllowMethods(const std::vector<std::string>& allowMethods);
     void                        setLocations(const std::vector<Location*>& locations);
-    void                        addLocation(Location& location);
+    void                        addLocation(Location *location);
 
     // Methods
     void                printCommon() const;

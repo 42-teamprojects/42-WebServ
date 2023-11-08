@@ -8,7 +8,7 @@ OBJS := $(addprefix obj/, $(OBJS))
 
 CXX = c++
 
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -fsanitize=address
 
 INCLUDES = -I includes/
 
@@ -29,5 +29,10 @@ fclean: clean
 	rm -rf $(NAME)
 
 re: fclean all
+
+run: all
+	./$(NAME)
+
+re-run: fclean run
 
 .PHONY: all clean fclean re

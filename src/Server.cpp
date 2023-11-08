@@ -6,14 +6,14 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 22:16:34 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/08 15:52:44 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/08 19:19:31 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include "webserv.hpp"
 
-Server::Server() {};
+Server::Server() : Context(), listen(-1), host(""), serverName() {};
 Server::~Server() {};
 
 // Getters
