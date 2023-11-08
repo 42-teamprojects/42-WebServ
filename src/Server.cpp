@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 22:16:34 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/08 19:19:31 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/08 19:33:23 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void                        Server::setServerName(const std::vector<std::string>
 // Methods
 void                        Server::print() const
 {
-    if (!listen)
+    if (listen > 0)
         std::cout << "listen: " << listen << std::endl;
     if (!host.empty())
         std::cout << "host: " << host << std::endl;

@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 22:42:11 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/08 19:17:05 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/08 19:35:28 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,9 @@ void                        Location::setRedir(const std::string& redir) { this-
 // Methods
 void                        Location::print() const
 {
-    if (path.empty())
+    if (!path.empty())
         std::cout << "path: " << path << std::endl;
-    if (redir.empty())
+    if (!redir.empty())
         std::cout << "return: " << redir << std::endl;
     printCommon();
 }
