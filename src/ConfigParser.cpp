@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 11:10:20 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/08 19:29:26 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/08 19:57:54 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,6 @@ void ConfigParser::parseConfigFile(std::string const &configPath)
 
 Server *ConfigParser::parseServer(std::ifstream &file, std::string &line, int &lineNb, std::stack<state> &stateStack)
 {
-    std::cout << "Server block opened" << std::endl;
     stateStack.push(SERVER);
     Server *server = new Server();
     while (std::getline(file, line))
@@ -78,7 +77,6 @@ Server *ConfigParser::parseServer(std::ifstream &file, std::string &line, int &l
             if (stateStack.top() != SERVER)
                 throw ServerException("Server block not opened", lineNb);
             stateStack.pop();
-            std::cout << "Server block closed" << std::endl;
             break;
         }
         else if (line.substr(0, 9) == "<location")
@@ -105,7 +103,6 @@ Server *ConfigParser::parseServer(std::ifstream &file, std::string &line, int &l
 
 Location *ConfigParser::parseLocation(std::ifstream &file, std::string &line, int &lineNb, std::stack<state> &stateStack)
 {
-    std::cout << "Location block opened" << std::endl;
     stateStack.push(LOCATION);
     Location *location = new Location();
     while (std::getline(file, line))
@@ -119,7 +116,6 @@ Location *ConfigParser::parseLocation(std::ifstream &file, std::string &line, in
             if (stateStack.top() != LOCATION)
                 throw ServerException("Location block not opened", lineNb);
             stateStack.pop();
-            std::cout << "Location block closed" << std::endl;
             break;
         }
         else if (line.substr(0, 9) == "<location")
@@ -135,7 +131,7 @@ Location *ConfigParser::parseLocation(std::ifstream &file, std::string &line, in
         }
         else if (line.find("=") == std::string::npos)
             throw ServerException("Invalid location block", lineNb);
-        // location->fill(line, lineNb);
+        location->fill(line, lineNb);
     }
     return location;
 }
