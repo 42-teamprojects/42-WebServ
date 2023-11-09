@@ -19,7 +19,7 @@
 class Server : public Context
 {
 private:
-    size_t                          listen;
+    size_t                          port;
     std::string                     host;
     std::vector<std::string>        serverName;
 public:
@@ -27,12 +27,12 @@ public:
     ~Server();
 
     // Getters
-    size_t                      getListen() const;
+    size_t                      getPort() const;
     std::string                 getHost() const;
     std::vector<std::string>    getServerName() const;
 
     // Setters
-    void                        setListen(const size_t &);
+    void                        setPort(const size_t &);
     void                        setHost(const std::string &);
     void                        setServerName(const std::vector<std::string>&);
 

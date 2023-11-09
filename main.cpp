@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 22:27:57 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/08 19:29:59 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/09 09:49:25 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int main()
 
     std::vector<Server *> servers = ConfigParser::getServers(); 
     Server *server = servers[0];
-    // std::cout << "listen: " << server.getListen() << std::endl;
+    // std::cout << "port: " << server.getPort() << std::endl;
     // std::cout << "host: " << server.getHost() << std::endl;
     // std::cout << "server_name: ";
     // for (size_t i = 0; i < server.getServerName().size(); i++)

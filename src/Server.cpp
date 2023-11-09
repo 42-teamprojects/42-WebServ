@@ -6,31 +6,31 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 22:16:34 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/08 20:01:45 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/09 09:49:25 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include "webserv.hpp"
 
-Server::Server() : Context(), listen(-1), host(""), serverName() {};
+Server::Server() : Context(), port(-1), host(""), serverName() {};
 Server::~Server() {};
 
 // Getters
-size_t                      Server::getListen() const { return listen; }
+size_t                      Server::getPort() const { return port; }
 std::string                 Server::getHost() const { return host; }
 std::vector<std::string>    Server::getServerName() const { return serverName; }
 
 // Setters
-void                        Server::setListen(const size_t & listen) { this->listen = listen; }
+void                        Server::setPort(const size_t & port) { this->port = port; }
 void                        Server::setHost(const std::string & host) { this->host = host; }
 void                        Server::setServerName(const std::vector<std::string>& serverName) { this->serverName = serverName; }
 
 // Methods
 void                        Server::print() const
 {
-    if (listen > 0)
-        std::cout << "listen: " << listen << std::endl;
+    if (port > 0)
+        std::cout << "port: " << port << std::endl;
     if (!host.empty())
         std::cout << "host: " << host << std::endl;
     if (!serverName.empty()) {
@@ -57,12 +57,12 @@ void                        Server::fill(std::string const &line, int &lineNb)
     value = split[1];
     if (value.empty() || option.empty())
         throw ServerException("Invalid server line", lineNb);
-    if (option == "listen") {
+    if (option == "port") {
         char *end;
         size_t port = std::strtod(value.c_str(), &end);
         if (*end != '\0')
             throw ServerException("Invalid server line", lineNb); 
-        setListen(port);
+        setPort(port);
     }
     else if (option == "host") {
         setHost(value);
