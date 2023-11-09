@@ -6,18 +6,20 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 22:27:57 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/08 20:02:15 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/11/09 11:36:23 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-int handle_select(int port) {
+int handle_select(int port)
+{
     int serverSocket;
     struct sockaddr_in serverAddr;
     
     serverSocket = socket(AF_INET, SOCK_STREAM, 0);
-    if (serverSocket < 0) {
+    if (serverSocket < 0)
+    {
         std::cerr << "error: socket creation" << std::endl;
         exit(1);
     }
@@ -33,25 +35,28 @@ int handle_select(int port) {
     serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
     serverAddr.sin_port = htons(port);
     int yes = 1;
-    if (setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) < 0) {
+    if (setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) < 0)
+    {
         std::cerr << "error: setsockopt() failed" << std::endl;
         close(serverSocket);
         exit(1);
     }
     
-    if (bind(serverSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0) {
+    if (bind(serverSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0)
+    {
         std::cerr << "error: bind call" << std::endl;
         close(serverSocket);
         exit(1);
     }
 
-    if (listen(serverSocket, 5) < 0) {
+    if (listen(serverSocket, 5) < 0)
+    {
         std::cerr << "error: listen call" << std::endl;
         close(serverSocket);
         exit(1);
     }
 
-    return serverSocket;
+    return (serverSocket);
 }
 
 int main()
@@ -73,7 +78,7 @@ int main()
     while (true)
     {
         read_fds = master;
-        if (select(fdmax + 1, &read_fds, nullptr, nullptr, nullptr) == -1)
+        if (select(fdmax + 1, &read_fds, NULL, NULL, NULL) == -1)
         {
             std::cerr << "error: select call" << std::endl;
             exit(1);
@@ -86,41 +91,34 @@ int main()
                 if (i == var || i == var2)
                 {
                     struct sockaddr_in clientAddr;
-                    socklen_t addrSize = sizeof(struct sockaddr_in);
-                    clientSocket = accept(i, (struct sockaddr *)&clientAddr, &addrSize);
+                    socklen_t clientAddrLen = sizeof(clientAddr);
+                    clientSocket = accept(i, (struct sockaddr *)&clientAddr, &clientAddrLen);
                     if (clientSocket < 0)
                     {
                         std::cerr << "error: accept call" << std::endl;
-                        close(clientSocket);
-                        exit(1);
-                    }
-
-                    if (fcntl(clientSocket, F_SETFL, O_NONBLOCK | FD_CLOEXEC) == -1)
-                    {
-                        std::cerr << "error: fcntl() failed" << std::endl;
-                        close(clientSocket);
                         exit(1);
                     }
                     FD_SET(clientSocket, &master);
-                    fdmax = std::max(fdmax, clientSocket);
+                    if (clientSocket > fdmax)
+                        fdmax = clientSocket;
+                    std::cout << "New connection: " << clientSocket << std::endl;
                 }
                 else
                 {
-                    int bytesReceived = recv(i, buffer, sizeof(buffer), 0);
-                    if (bytesReceived < 0)
+                    bzero(buffer, sizeof(buffer));
+                    int recvSize = recv(i, buffer, sizeof(buffer), 0);
+                    if (recvSize < 0)
                     {
-                        std::cerr << "error: recv() failed" << std::endl;
-                        close(i);
+                        std::cerr << "error: recv call" << std::endl;
                         FD_CLR(i, &master);
-                        exit (1);
+                        close(i);
+                        exit(1);
                     }
-                    else if (bytesReceived == 0)
+                    else if (recvSize == 0)
                     {
-                        std::cout << "Client disconnected" << std::endl;
-                        close(i);
+                        std::cout << "Connection closed: " << i << std::endl;
                         FD_CLR(i, &master);
-                        exit (1);
-                        
+                        close(i);
                     }
                     else
                     {
@@ -135,13 +133,13 @@ int main()
                             exit (1);
                         }
                     }
-                    memset(buffer, 0, sizeof(buffer));
+                //     close(i);
                 }
+                // close(clientSocket);
             }
         }
     }
     close(var);
     close(var2);
-
     return 0;
 }
