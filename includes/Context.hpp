@@ -15,7 +15,7 @@
 #include <iostream>
 #include <vector>
 
-class Location;
+class Route;
 
 class Context
 {
@@ -26,7 +26,7 @@ protected:
     std::vector<std::string>    index;
     bool                        autoIndex;
     std::vector<std::string>    allowMethods;
-    std::vector<Location*>       locations;
+    std::vector<Route*>       routes;
 public:
     Context();
     ~Context();
@@ -38,7 +38,7 @@ public:
     std::vector<std::string>    getIndex() const;
     bool                        getAutoIndex() const;
     std::vector<std::string>    getAllowMethods() const;
-    std::vector<Location*>       getLocations() const;
+    std::vector<Route*>       getRoutes() const;
 
     // Setters
     void                        setErrorPage(const std::vector<std::string>& errorPage);
@@ -47,8 +47,8 @@ public:
     void                        setIndex(const std::vector<std::string>& index);
     void                        setAutoIndex(bool autoIndex);
     void                        setAllowMethods(const std::vector<std::string>& allowMethods);
-    void                        setLocations(const std::vector<Location*>& locations);
-    void                        addLocation(Location *location);
+    void                        setRoutes(const std::vector<Route*>& routes);
+    void                        addRoute(Route *route);
 
     // Methods
     void                printCommon() const;

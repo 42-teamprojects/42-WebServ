@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 11:03:20 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/08 19:21:59 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/10 20:08:02 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "webserv.hpp"
 #include <fstream>
 
-class Location;
+class Route;
 class Server;
 
 enum   state
@@ -35,8 +35,8 @@ private:
 public:
     static void                 parseConfigFile(std::string const &);
     static Server               *parseServer(std::ifstream &, std::string &, int &,  std::stack<state> &);
-    static Location             *parseLocation(std::ifstream &, std::string &, int &, std::stack<state> &);
-    static std::string          findLocation(std::string, int);
+    static Route             *parseRoute(std::ifstream &, std::string &, int &, std::stack<state> &);
+    static std::string          findRoute(std::string, int);
     static std::vector<Server*>  getServers();
 };
 

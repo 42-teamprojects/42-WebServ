@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 22:16:34 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/09 09:49:25 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/10 20:08:34 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,6 @@ void                        Server::fill(std::string const &line, int &lineNb)
     else if (std::find(commonOptions, commonOptions + 6, option) != commonOptions + 6)
         fillCommon(option, value, lineNb);
     else
-        std::cout << "Invalid location option: " << line << std::endl;
+        std::cout << "Invalid route option: " << line << std::endl;
         // throw ServerException("Invalid server option", lineNb);
 }

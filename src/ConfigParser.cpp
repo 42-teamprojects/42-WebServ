@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 11:10:20 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/08 19:57:54 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/10 21:38:13 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,9 @@ void ConfigParser::parseConfigFile(std::string const &configPath)
         {
             throw ServerException("Server block not opened", lineNb);
         }
-        else if (line.find("location") != std::string::npos)
+        else if (line.find("route") != std::string::npos)
         {
-            throw ServerException("Location block is invalid", lineNb);
+            throw ServerException("Route block is invalid", lineNb);
         }
         else
         {
@@ -79,20 +79,20 @@ Server *ConfigParser::parseServer(std::ifstream &file, std::string &line, int &l
             stateStack.pop();
             break;
         }
-        else if (line.substr(0, 9) == "<location")
+        else if (line.substr(0, 6) == "<route")
         {
-            std::string path = findLocation(line, lineNb);
+            std::string path = findRoute(line, lineNb);
             if (!path.empty())
             {
-                Location *location = parseLocation(file, line, lineNb, stateStack);
-                location->setPath(path);
-                server->addLocation(location);
+                Route *route = parseRoute(file, line, lineNb, stateStack);
+                route->setPath(path);
+                server->addRoute(route);
             }
             continue;
         }
-        else if (line == "</location>")
+        else if (line == "</route>")
         {
-            throw ServerException("Location block not opened", lineNb);
+            throw ServerException("Route block not opened", lineNb);
         }
         else if (line.find("=") == std::string::npos)
             throw ServerException("Invalid server block", lineNb);
@@ -101,61 +101,61 @@ Server *ConfigParser::parseServer(std::ifstream &file, std::string &line, int &l
     return server;
 }
 
-Location *ConfigParser::parseLocation(std::ifstream &file, std::string &line, int &lineNb, std::stack<state> &stateStack)
+Route *ConfigParser::parseRoute(std::ifstream &file, std::string &line, int &lineNb, std::stack<state> &stateStack)
 {
     stateStack.push(LOCATION);
-    Location *location = new Location();
+    Route *route = new Route();
     while (std::getline(file, line))
     {
         lineNb++;
         trim(line);
         if (line.empty())
             continue;
-        else if (line == "</location>")
+        else if (line == "</route>")
         {
             if (stateStack.top() != LOCATION)
-                throw ServerException("Location block not opened", lineNb);
+                throw ServerException("Route block not opened", lineNb);
             stateStack.pop();
             break;
         }
-        else if (line.substr(0, 9) == "<location")
+        else if (line.substr(0, 9) == "<route")
         {
-            std::string path = findLocation(line, lineNb);
+            std::string path = findRoute(line, lineNb);
             if (!path.empty())
             {
-                Location *location = parseLocation(file, line, lineNb, stateStack);
-                location->setPath(path);
-                location->addLocation(location);
+                Route *route = parseRoute(file, line, lineNb, stateStack);
+                route->setPath(path);
+                route->addRoute(route);
             }
             continue;
         }
         else if (line.find("=") == std::string::npos)
-            throw ServerException("Invalid location block", lineNb);
-        location->fill(line, lineNb);
+            throw ServerException("Invalid route block", lineNb);
+        route->fill(line, lineNb);
     }
-    return location;
+    return route;
 }
 
-std::string ConfigParser::findLocation(std::string line, int lineNb)
+std::string ConfigParser::findRoute(std::string line, int lineNb)
 {
     std::string path;
     size_t pathPos = line.find("path=\"");
     if (pathPos == std::string::npos)
     {
-        throw ServerException("Invalid location block, path not found", lineNb);
+        throw ServerException("Invalid route block, path not found", lineNb);
     }
     size_t endPos = line.find("\"", pathPos + 6);
     if (endPos == std::string::npos)
     {
-        throw ServerException("Invalid location block, unclosed path", lineNb);
+        throw ServerException("Invalid route block, unclosed path", lineNb);
     }
     path = line.substr(pathPos + 6, endPos - pathPos - 6);
     line.erase(pathPos, endPos - pathPos + 1);
     line.erase(std::remove(line.begin(), line.end(), ' '), line.end());
 
-    if (line != "<location>")
+    if (line != "<route>")
     {
-        throw ServerException("Invalid location block", lineNb);
+        throw ServerException("Invalid route block", lineNb);
     }
     return path;
 }

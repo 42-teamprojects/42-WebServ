@@ -8,19 +8,16 @@
     root = path/to/folder
     index = index.html file.html
 
-    <location path="/page">
+    <route path="/page">
         autoindex = on 
         allow_methods = POST GET
         index = index.php index.html
         return = redir/index.html
-        <location path="cgi-bin">
-            cgi-ext = .py .sh
-        </location>
-    </location>
+    </route>
 
-    <location path="cgi-bin">
+    <route path="cgi-bin">
         cgi-ext = .py .sh
-    </location>
+    </route>
 
 </server>
 

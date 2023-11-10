@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 13:35:49 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/08 12:54:44 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/10 20:08:02 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 
 #include "utils.hpp"
 
-#include "Location.hpp"
+#include "Route.hpp"
 #include "Server.hpp"
 #include "ConfigParser.hpp"
 #include "ServerException.hpp"

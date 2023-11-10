@@ -6,14 +6,14 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 13:24:34 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/08 19:34:29 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/10 20:08:34 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Context.hpp"
 #include "webserv.hpp"
 
-Context::Context() : errorPage(), clientMaxBodySize(0), root(""), index(), autoIndex(false), allowMethods(), locations()
+Context::Context() : errorPage(), clientMaxBodySize(0), root(""), index(), autoIndex(false), allowMethods(), routes()
 {   
 }
 
@@ -52,9 +52,9 @@ std::vector<std::string>    Context::getAllowMethods() const
     return (this->allowMethods);
 }
 
-std::vector<Location*>       Context::getLocations() const
+std::vector<Route*>       Context::getRoutes() const
 {
-    return (this->locations);
+    return (this->routes);
 }
 
 // Setters
@@ -88,14 +88,14 @@ void                        Context::setAllowMethods(const std::vector<std::stri
     this->allowMethods = allowMethods;
 }
 
-void                        Context::setLocations(const std::vector<Location*>& locations)
+void                        Context::setRoutes(const std::vector<Route*>& routes)
 {
-    this->locations = locations;
+    this->routes = routes;
 }
 
-void                        Context::addLocation(Location *location)
+void                        Context::addRoute(Route *route)
 {
-    this->locations.push_back(location);
+    this->routes.push_back(route);
 }
 
 // Methods
@@ -127,11 +127,11 @@ void Context::printCommon() const
             std::cout << this->allowMethods[i] << " ";
         std::cout << std::endl;
     }
-    if (!this->locations.empty())
+    if (!this->routes.empty())
     {
-        std::cout << "locations: " << std::endl;
-        for (size_t i = 0; i < this->locations.size(); i++) {
-            this->locations[i]->print();
+        std::cout << "routes: " << std::endl;
+        for (size_t i = 0; i < this->routes.size(); i++) {
+            this->routes[i]->print();
         }
     }
 }

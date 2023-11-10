@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Location.cpp                                       :+:      :+:    :+:   */
+/*   Route.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,22 +10,22 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Location.hpp"
+#include "Route.hpp"
 #include "webserv.hpp"
 
-Location::Location() : Context(), path(""), redir("") {};
-Location::~Location() {};
+Route::Route() : Context(), path(""), redir("") {};
+Route::~Route() {};
 
 // Getters
-std::string                 Location::getPath() const { return path; }
-std::string                 Location::getRedir() const { return redir; }
+std::string                 Route::getPath() const { return path; }
+std::string                 Route::getRedir() const { return redir; }
 
 // Setters
-void                        Location::setPath(const std::string& path) { this->path = path; }
-void                        Location::setRedir(const std::string& redir) { this->redir = redir; }
+void                        Route::setPath(const std::string& path) { this->path = path; }
+void                        Route::setRedir(const std::string& redir) { this->redir = redir; }
 
 // Methods
-void                        Location::print() const
+void                        Route::print() const
 {
     if (!path.empty())
         std::cout << "path: " << path << std::endl;
@@ -34,7 +34,7 @@ void                        Location::print() const
     printCommon();
 }
 
-void                        Location::fill(std::string const &line, int &lineNb)
+void                        Route::fill(std::string const &line, int &lineNb)
 {
     std::vector<std::string>    split;
     std::string                 option, value;
@@ -53,6 +53,6 @@ void                        Location::fill(std::string const &line, int &lineNb)
     else if (std::find(commonOptions, commonOptions + 6, option) != commonOptions + 6)
         fillCommon(option, value, lineNb);
     else
-        std::cout << "Invalid location option: " << line << std::endl;
+        std::cout << "Invalid route option: " << line << std::endl;
         // throw ServerException("Invalid server option", lineNb);
 }
