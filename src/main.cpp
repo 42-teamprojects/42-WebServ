@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 22:27:57 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/10 19:11:05 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/11/10 19:29:22 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,19 +71,19 @@ int main()
     FD_ZERO(&master);
     FD_SET(serverSocket[0], &master);
     FD_SET(serverSocket[1], &master);
-    int fdmax = std::max(serverSocket[0], serverSocket[1]);
+    // int fdmax = std::max(serverSocket[0], serverSocket[1]);
 
     char buffer[2048] = {0};
 
     while (true)
     {
         read_fds = master;
-        if (select(fdmax + 1, &read_fds, NULL, NULL, NULL) == -1)
+        if (select(FD_SETSIZE, &read_fds, NULL, NULL, NULL) == -1)
         {
             std::cerr << "error: select call" << std::endl;
             exit(1);
         }
-        for (int i = 0; i <= fdmax; i++)
+        for (int i = 0; i <= FD_SETSIZE; i++)
         {
             if (FD_ISSET(i, &read_fds))
             {
@@ -104,24 +104,18 @@ int main()
                         exit(1);
                     }
                     FD_SET(clientSocket, &master);
-                    fdmax = std::max(fdmax, clientSocket);
+                    // fdmax = std::max(fdmax, clientSocket);
                 }
                 else
                 {
                     bzero(buffer, sizeof(buffer));
                     int bytesReceived = recv(i, buffer, sizeof(buffer), 0);
-                    if (bytesReceived < 0)
+                    if (bytesReceived <= 0)
                     {
                         std::cerr << "error: recv() failed" << std::endl;
                         close(i);
                         FD_CLR(i, &master);
                         exit (1);
-                    }
-                    else if (bytesReceived == 0)
-                    {
-                        std::cout << "Client disconnected" << std::endl;
-                        close(i);
-                        FD_CLR(i, &master);                   
                     }
                     else
                     {
