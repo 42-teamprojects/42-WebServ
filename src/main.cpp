@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 22:27:57 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/09 19:10:44 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/11/10 19:11:05 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ struct sockaddr_in serverAddr[2];
 int serverSocket[2];
 
 void handle_select(int port, int idx)
-{
+{    
     serverSocket[idx] = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSocket[idx] < 0)
     {
@@ -24,17 +24,18 @@ void handle_select(int port, int idx)
         exit(1);
     }
 
-    // if (fcntl(serverSocket[idx], F_SETFL, O_NONBLOCK, FD_CLOEXEC) == -1)
-    // {
-    //     std::cerr << "error: fcntl() failed" << std::endl;
-    //     close(serverSocket[idx]);
-    //     exit(1);
-    // }
+    if (fcntl(serverSocket[idx], F_SETFL, O_NONBLOCK, O_CLOEXEC) == -1)
+    {
+        std::cerr << "error: fcntl() failed" << std::endl;
+        close(serverSocket[idx]);
+        exit(1);
+    }
 
     memset(&serverAddr[idx], 0, sizeof(serverAddr[idx]));
     serverAddr[idx].sin_family = AF_INET;
-    serverAddr[idx].sin_addr.s_addr = htonl(INADDR_ANY);
     serverAddr[idx].sin_port = htons(port);
+    serverAddr[idx].sin_addr.s_addr = htonl(INADDR_ANY);
+    
     int yes = 1;
     if (setsockopt(serverSocket[idx], SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) < 0)
     {
@@ -50,75 +51,96 @@ void handle_select(int port, int idx)
         exit(1);
     }
 
-    if (listen(serverSocket[idx], 20) < 0)
+    if (listen(serverSocket[idx], 5) < 0)
     {
         std::cerr << "error: listen call" << std::endl;
         close(serverSocket[idx]);
         exit(1);
     }
-
-    // return (serverSocket[idx]);
 }
 
 int main()
 {
     fd_set master;
     int clientSocket;
-    // fd_set read_fds;
-    struct timeval timeout;
-    timeout.tv_sec = 5;
-    timeout.tv_usec = 0;
+    fd_set read_fds;
 
     std::cout << "Server is listening on ports 8080 and 8090..." << std::endl;
     handle_select(8080, 0);
     handle_select(8090, 1);
+    FD_ZERO(&master);
+    FD_SET(serverSocket[0], &master);
+    FD_SET(serverSocket[1], &master);
+    int fdmax = std::max(serverSocket[0], serverSocket[1]);
 
     char buffer[2048] = {0};
-    FD_ZERO(&master);
-    for(int i = 0; i < 2; i++)
-        FD_SET(serverSocket[i], &master);
 
     while (true)
     {
-        fd_set read_fds = master;
-        int fdmax = std::max(serverSocket[0], serverSocket[1]);
-        if (select(fdmax + 1, &read_fds, NULL, NULL, &timeout) == -1)
+        read_fds = master;
+        if (select(fdmax + 1, &read_fds, NULL, NULL, NULL) == -1)
         {
             std::cerr << "error: select call" << std::endl;
             exit(1);
         }
-
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i <= fdmax; i++)
         {
-            if (FD_ISSET(serverSocket[i], &read_fds))
+            if (FD_ISSET(i, &read_fds))
             {
-                socklen_t addrSize = sizeof(struct sockaddr_in);
-                clientSocket = accept(serverSocket[i], (struct sockaddr *)&serverAddr[i], &addrSize);
-                if (clientSocket < 0)
+                if (serverSocket[0] == i || serverSocket[1] == i)
                 {
-                    std::cerr << "error: accept call" << std::endl;
-                    exit(1);
+                    socklen_t addrSize = sizeof(serverAddr[i]);
+                    clientSocket = accept(i, (struct sockaddr *)&serverAddr[i], &addrSize);
+                    if (clientSocket < 0)
+                    {
+                        std::cerr << "error: accept call" << std::endl;
+                        close(clientSocket);
+                        exit(1);
+                    }
+                    if (fcntl(clientSocket, F_SETFL, O_NONBLOCK, O_CLOEXEC) == -1)
+                    {
+                        std::cerr << "error: fcntl() failed" << std::endl;
+                        close(clientSocket);
+                        exit(1);
+                    }
+                    FD_SET(clientSocket, &master);
+                    fdmax = std::max(fdmax, clientSocket);
                 }
-                bzero(buffer, 2048);
-                int bytesReceived = recv(clientSocket, buffer, 2047, 0);
-                if (bytesReceived < 0)
+                else
                 {
-                    std::cerr << "error: recv call" << std::endl;
-                    exit(1);
+                    bzero(buffer, sizeof(buffer));
+                    int bytesReceived = recv(i, buffer, sizeof(buffer), 0);
+                    if (bytesReceived < 0)
+                    {
+                        std::cerr << "error: recv() failed" << std::endl;
+                        close(i);
+                        FD_CLR(i, &master);
+                        exit (1);
+                    }
+                    else if (bytesReceived == 0)
+                    {
+                        std::cout << "Client disconnected" << std::endl;
+                        close(i);
+                        FD_CLR(i, &master);                   
+                    }
+                    else
+                    {
+                        std::cout << buffer << std::endl;
+                        std::string response = "HTTP/1.1 200 OK\r\nServerContext: Tawafan/0.0 (Alaqssa)\r\n\r\n<html><body><h1>Welcome</h1></body></html>";
+                        int bytesSent = send(i, response.c_str(), response.size(), 0);
+                        if (bytesSent < 0)
+                        {
+                            std::cerr << "error: send call" << std::endl;
+                            FD_CLR(i, &master);
+                            close(i);
+                            exit (1);
+                        }
+                    }
+                    close(i);
+                    FD_CLR(i, &master);
                 }
-                std::cout << buffer << std::endl;
-                std::string response = "HTTP/1.1 200 OK\r\nServerContext: Tawafan/0.0 (Alaqssa)\r\n\r\n<html><body><h1>Welcome</h1></body></html>";
-                int bytesSent = send(clientSocket, response.c_str(), response.size(), 0);
-                if (bytesSent < 0)
-                {
-                    std::cerr << "error: send call" << std::endl;
-                    exit(1); 
-                }
-                close(clientSocket);
             }
         }
     }
-    // close(var);
-    // close(var2);
     return 0;
 }
