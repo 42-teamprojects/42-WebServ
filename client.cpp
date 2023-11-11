@@ -6,7 +6,7 @@
 
 #define PORT1 8080
 #define PORT2 8081
-#define SERVER_IP "10.11.3.1"  // Changed IP address to the one provided
+#define SERVER_IP "10.11.3.5"  // Changed IP address to the one provided
 #define BUFFER_SIZE 1024
 
 int send_request(int port) {
