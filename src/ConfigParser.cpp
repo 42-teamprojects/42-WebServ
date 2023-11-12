@@ -6,13 +6,13 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 11:10:20 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/10 21:38:13 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/12 18:31:15 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ConfigParser.hpp"
 
-std::vector<Server *> ConfigParser::servers;
+std::vector<VirtualServer> ConfigParser::servers;
 
 ConfigParser::ConfigParser()
 {
@@ -42,30 +42,23 @@ void ConfigParser::parseConfigFile(std::string const &configPath)
         {
             if (stateStack.top() != NONE)
                 throw ServerException("Server block not closed", lineNb);
-            stateStack.push(SERVER);
-            Server *server = parseServer(file, line, lineNb, stateStack);
+            VirtualServer server = parseVirtualServer(file, line, lineNb, stateStack);
             servers.push_back(server);
             continue;
         }
         else if (line == "</server>")
-        {
             throw ServerException("Server block not opened", lineNb);
-        }
         else if (line.find("route") != std::string::npos)
-        {
             throw ServerException("Route block is invalid", lineNb);
-        }
         else
-        {
             throw ServerException("Invalid config file", lineNb);
-        }
     }
 }
 
-Server *ConfigParser::parseServer(std::ifstream &file, std::string &line, int &lineNb, std::stack<state> &stateStack)
+VirtualServer ConfigParser::parseVirtualServer(std::ifstream &file, std::string &line, int &lineNb, std::stack<state> &stateStack)
 {
     stateStack.push(SERVER);
-    Server *server = new Server();
+    VirtualServer server = VirtualServer();
     while (std::getline(file, line))
     {
         lineNb++;
@@ -84,27 +77,28 @@ Server *ConfigParser::parseServer(std::ifstream &file, std::string &line, int &l
             std::string path = findRoute(line, lineNb);
             if (!path.empty())
             {
-                Route *route = parseRoute(file, line, lineNb, stateStack);
-                route->setPath(path);
-                server->addRoute(route);
+                Route route = parseRoute(file, line, lineNb, stateStack);
+                route.setPath(path);
+                server.addRoute(route);
             }
             continue;
         }
         else if (line == "</route>")
-        {
             throw ServerException("Route block not opened", lineNb);
-        }
         else if (line.find("=") == std::string::npos)
             throw ServerException("Invalid server block", lineNb);
-        server->fill(line, lineNb);
+        // else
+        //     throw ServerException("Invalid server block", lineNb);
+
+        server.fill(line, lineNb);
     }
     return server;
 }
 
-Route *ConfigParser::parseRoute(std::ifstream &file, std::string &line, int &lineNb, std::stack<state> &stateStack)
+Route ConfigParser::parseRoute(std::ifstream &file, std::string &line, int &lineNb, std::stack<state> &stateStack)
 {
-    stateStack.push(LOCATION);
-    Route *route = new Route();
+    stateStack.push(ROUTE);
+    Route route = Route();
     while (std::getline(file, line))
     {
         lineNb++;
@@ -113,25 +107,16 @@ Route *ConfigParser::parseRoute(std::ifstream &file, std::string &line, int &lin
             continue;
         else if (line == "</route>")
         {
-            if (stateStack.top() != LOCATION)
+            if (stateStack.top() != ROUTE)
                 throw ServerException("Route block not opened", lineNb);
             stateStack.pop();
             break;
         }
-        else if (line.substr(0, 9) == "<route")
-        {
-            std::string path = findRoute(line, lineNb);
-            if (!path.empty())
-            {
-                Route *route = parseRoute(file, line, lineNb, stateStack);
-                route->setPath(path);
-                route->addRoute(route);
-            }
-            continue;
-        }
+        else if (line.substr(0, 6) == "<route")
+            throw ServerException("Route block not closed", lineNb);
         else if (line.find("=") == std::string::npos)
             throw ServerException("Invalid route block", lineNb);
-        route->fill(line, lineNb);
+        route.fill(line, lineNb);
     }
     return route;
 }
@@ -160,7 +145,7 @@ std::string ConfigParser::findRoute(std::string line, int lineNb)
     return path;
 }
 
-std::vector<Server *> ConfigParser::getServers()
+std::vector<VirtualServer> ConfigParser::getVirtualServers()
 {
     return servers;
 }

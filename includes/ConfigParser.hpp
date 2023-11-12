@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 11:03:20 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/10 20:08:02 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/12 18:28:51 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,12 @@
 #include <fstream>
 
 class Route;
-class Server;
+class VirtualServer;
 
 enum   state
 {
     SERVER,
-    LOCATION,
+    ROUTE,
     NONE
 };
 
@@ -29,14 +29,14 @@ enum   state
 class ConfigParser 
 {
 private:
-    static std::vector<Server*> servers;
+    static std::vector<VirtualServer> servers;
     ConfigParser();
     ~ConfigParser();
 public:
     static void                 parseConfigFile(std::string const &);
-    static Server               *parseServer(std::ifstream &, std::string &, int &,  std::stack<state> &);
-    static Route             *parseRoute(std::ifstream &, std::string &, int &, std::stack<state> &);
+    static VirtualServer               parseVirtualServer(std::ifstream &, std::string &, int &,  std::stack<state> &);
+    static Route                parseRoute(std::ifstream &, std::string &, int &, std::stack<state> &);
     static std::string          findRoute(std::string, int);
-    static std::vector<Server*>  getServers();
+    static std::vector<VirtualServer>  getVirtualServers();
 };
 

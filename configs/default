@@ -1,24 +1,27 @@
-
 <server>
-    port = 8080
     host = 127.0.0.1
-    server_name = localhost
-    error_page = 404 /error/404.html
-    client_max_body_size = 1024
-    root = path/to/folder
-    index = index.html file.html
-
-    <route path="/page">
-        autoindex = on 
-        allow_methods = POST GET
-        index = index.php index.html
-        return = redir/index.html
+    port = 8080
+    server_names = localhost
+    client_max_body_size = 100000
+    root = /var/www/html
+    index = index.html
+    <route path="/index">
+        methods = GET, POST
+        cgi_extension = .php
+        cgi_path = /usr/bin/php
     </route>
-
-    <route path="cgi-bin">
-        cgi-ext = .py .sh
+    <route path="/images">
+        methods = GET
+        root = /var/www/images
+        index = images.html
+        allow_listing = false
     </route>
-
+    <route path="/uploads">
+        methods = POST
+        upload_dir = /var/www/uploads
+    </route>
+    <route path="/redirect">
+        methods = GET
+        redirect = index.html
+    </route>
 </server>
-
-

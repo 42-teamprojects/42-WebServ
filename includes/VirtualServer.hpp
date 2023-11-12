@@ -12,30 +12,42 @@
 
 #pragma once
 
-#include "Context.hpp"
 #include <iostream>
 #include <vector>
+#include "Route.hpp"
 
-class Server : public Context
+class VirtualServer
 {
 private:
-    size_t                          port;
+    int                             port;
     std::string                     host;
-    std::vector<std::string>        serverName;
+    std::vector<std::string>        serverNames;
+    size_t                          clientMaxBodySize;
+    std::string                     root;
+    std::vector<std::string>        index;
+    std::vector<Route>              routes;
+
 public:
-    Server();
-    ~Server();
+    VirtualServer();
+    ~VirtualServer();
 
     // Getters
-    size_t                      getPort() const;
+    int                         getPort() const;
     std::string                 getHost() const;
-    std::vector<std::string>    getServerName() const;
+    std::vector<std::string>    getServerNames() const;
+    size_t                      getClientMaxBodySize() const;
+    std::string                 getRoot() const;
+    std::vector<std::string>    getIndex() const;
+    std::vector<Route>          getRoutes() const;
 
     // Setters
-    void                        setPort(const size_t &);
+    void                        setPort(const int &);
     void                        setHost(const std::string &);
-    void                        setServerName(const std::vector<std::string>&);
-
+    void                        setServerNames(const std::vector<std::string>&);
+    void                        setClientMaxBodySize(const size_t &);
+    void                        setRoot(const std::string &);
+    void                        setIndex(const std::vector<std::string>&);
+    void                        addRoute(Route route);
     // Methods
     void                        print() const;
     void                        fill(std::string const &, int &);

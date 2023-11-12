@@ -43,3 +43,13 @@ Container ft_split(const std::string &s, const std::string &delimiters)
     return splited;
 }
 
+template <typename Container>
+void printContainer(const Container& c)
+{
+    typename Container::const_iterator it;
+    for (it = c.begin(); it != c.end(); ++it)
+    {
+        std::cout << *it << " ";
+    }
+    std::cout << std::endl;
+}

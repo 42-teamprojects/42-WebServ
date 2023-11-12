@@ -12,31 +12,50 @@
 
 #pragma once
 
-#include "Context.hpp"
 #include <iostream>
 #include <vector>
 
-class Context;
-
-class Route : public Context
+class Route
 {
 private:
-    std::string                 path;
-    std::string                 redir;
-    // CgiInfo                     cgi;
+    std::string                     path;
+    std::string                     root;
+    std::vector<std::string>        index;
+    std::string                     redirect;
+    std::vector<std::string>        methods;
+    std::string                     uploadDir;
+    bool                            allowListing;
+    std::vector<std::string>        cgiExt;
+    std::string                     cgiPath;
 public:
     Route();
     ~Route();
 
     // Getters
     std::string                 getPath() const;
-    std::string                 getRedir() const;
+    std::string                 getRoot() const;
+    std::vector<std::string>    getIndex() const;
+    std::string                 getRedirect() const;
+    std::vector<std::string>    getMethods() const;
+    std::string                 getUploadDir() const;
+    bool                        getAllowListing() const;
+    std::string                 getCgiPath() const;
+    std::vector<std::string>    getCgiExt() const;
 
     // Setters
     void                        setPath(const std::string& path);
-    void                        setRedir(const std::string& redir);
+    void                        setRoot(const std::string& root);
+    void                        setIndex(const std::vector<std::string>& index);
+    void                        setRedirect(const std::string& redirect);
+    void                        setMethods(const std::vector<std::string>& methods);
+    void                        setUploadDir(const std::string& uploadDir);
+    void                        setAllowListing(const bool& allowListing);
+    void                        setCgiPath(const std::string& cgiPath);
+    void                        setCgiExt(const std::vector<std::string>& cgiExt);
 
     // Methods
     void                        print() const;
     void                        fill(std::string const &line, int &lineNb);
 };
+
+
