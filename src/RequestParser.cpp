@@ -6,7 +6,7 @@
 /*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:07:44 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/12 22:12:14 by msodor           ###   ########.fr       */
+/*   Updated: 2023/11/12 23:09:38 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ std::string methods[] = {
   "PATCH",
 };
 
-
 void Request::parseMethod(std::string line)
 {
   std::string method;
@@ -53,7 +52,6 @@ void Request::parseMethod(std::string line)
   }
 }
 
-
 void Request::parse(std::string request)
 {
   std::string line;
@@ -64,16 +62,20 @@ void Request::parse(std::string request)
   }
   catch(const std::exception& e) {
     std::cerr << e.what() << std::endl;
+    return;
   }
+  int i = 0;
   while (std::getline(req, line))
   {
-    if (line == "\r")
-      break;
     std::string key;
     std::string value;
     std::stringstream ss(line);
     std::getline(ss, key, ':');
+    if (key[0] == ' ')
+      key.erase(0, 1);
     std::getline(ss, value);
+    if (value.empty())
+      break;
     headers[key] = value;
   }
   std::getline(req, body, '\0');
@@ -109,7 +111,8 @@ int main(void) {
   Accept-Language: en-us\r\n\
   DNT: 1\r\n\
   Accept-Encoding: gzip, deflate\r\n\
-  \r\n";
+  \r\n\
+  hello this is a body";
   Request req;
   req.parse(request);
   std::cout << "Method ==>" << req.getMethod() << std::endl;
@@ -117,8 +120,11 @@ int main(void) {
   std::cout << "Version ==>" << req.getVersion() << std::endl;
   std::map<std::string, std::string> headers = req.getHeaders();
   std::cout << "Headers ==>" << std::endl;
-  for (std::map<std::string, std::string>::iterator it=headers.begin(); it!=headers.end(); ++it)
+  std::map<std::string, std::string>::iterator it = headers.begin();
+  int i = 0;
+  for (; it != headers.end(); ++it){
     std::cout << it->first << " => " << it->second << '\n';
+  }
   std::cout << "Body ==>" << req.getBody() << std::endl;
   return 0;
 }
