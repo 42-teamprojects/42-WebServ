@@ -31,7 +31,7 @@ void Config::parse(std::string const &configPath)
     int lineNb = 0;
 
     if (!file.is_open())
-        throw ServerException("Cannot open config file", lineNb);
+        throw ServerException("Cannot open config file " + configPath);
     while (std::getline(file, line))
     {
         lineNb++;
