@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 13:35:49 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/06 19:19:03 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/11/13 21:52:52 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,15 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <fcntl.h>
-#include <unistd.h>
+#include <sstream>
+
+#include <vector>
+#include <map>
+#include <stack>
 
 #include "utils.hpp"
 
-#include <vector>
-#include "Location.hpp"
+#include "Route.hpp"
+#include "Server.hpp"
+#include "Config.hpp"
+#include "ServerException.hpp"
