@@ -3,6 +3,7 @@
     port = 8080
     server_names = localhost
     client_max_body_size = 100000
+    error_pages = 404.html 500.html
     root = /var/www/html
     index = index.html
     <route path="/index">
@@ -22,6 +23,6 @@
     </route>
     <route path="/redirect">
         methods = GET
-        redirect = index.html
+        redirect = 301 index.html
     </route>
 </server>

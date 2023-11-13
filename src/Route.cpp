@@ -77,6 +77,7 @@ void Route::setCgiExt(const std::vector<std::string>& cgiExt) {
 // Methods
 void                        Route::print() const
 {
+    std::cout << "***********" << std::endl;
     if (!path.empty())
         std::cout << "path: " << path << std::endl;
     if (!root.empty())
