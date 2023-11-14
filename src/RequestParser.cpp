@@ -6,13 +6,15 @@
 /*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:07:44 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/12 23:09:38 by msodor           ###   ########.fr       */
+/*   Updated: 2023/11/14 18:18:13 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/RequestParser.hpp"
-Request::Request(/* args */)
+
+Request::Request()
 {
+  this->isCunked = false;
 }
 
 Request::~Request()
@@ -34,21 +36,31 @@ std::string methods[] = {
 void Request::parseMethod(std::string line)
 {
   std::string method;
-  std::string path;
+  std::string uri;
   std::string version;
   std::stringstream ss(line);
   ss >> method;
-  ss >> path;
+  ss >> uri;
   ss >> version;
   if (std::find(std::begin(methods), std::end(methods), method) != std::end(methods))
   {
     this->method = method;
-    this->path = path;
+    this->uri = uri;
     this->version = version;
   }
   else
   {
     throw std::invalid_argument("Invalid method");
+  }
+}
+
+void  Request::checkIfChunked()
+{
+  std::map<std::string, std::string>::iterator it = headers.find("Transfer-Encoding");
+  if (it != headers.end())
+  {
+    if (it->second == "chunked")
+      this->isCunked = true;
   }
 }
 
@@ -85,8 +97,8 @@ std::string Request::getMethod(){
   return method;
 }
 
-std::string Request::getPath(){
-  return path;
+std::string Request::geturi(){
+  return uri;
 }
 
 std::string Request::getVersion(){
@@ -116,7 +128,7 @@ int main(void) {
   Request req;
   req.parse(request);
   std::cout << "Method ==>" << req.getMethod() << std::endl;
-  std::cout << "Path ==>" << req.getPath() << std::endl;
+  std::cout << "uri ==>" << req.geturi() << std::endl;
   std::cout << "Version ==>" << req.getVersion() << std::endl;
   std::map<std::string, std::string> headers = req.getHeaders();
   std::cout << "Headers ==>" << std::endl;
