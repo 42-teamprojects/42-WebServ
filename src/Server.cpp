@@ -1,31 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.cpp                                         :+:      :+:    :+:   */
+/*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/11 17:22:34 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/11/14 13:19:40 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-Server::Server()
+WebServer::WebServer()
 {
 	handle_select(8080, 0);
 	handle_select(8090, 1);
-    std::cout << "Server is listening on ports 8080 and 8090..." << std::endl;
+    std::cout << "WebServer is listening on ports 8080 and 8090..." << std::endl;
 }
 
-Server::~Server()
+WebServer::~WebServer()
 {
 	close(serverSocket[0]);
 	close(serverSocket[1]);
 }
 
-void Server::handle_select(int port, int idx)
+void WebServer::handle_select(int port, int idx)
 {
 	serverSocket[idx] = socket(AF_INET, SOCK_STREAM, 0);
 	if (serverSocket[idx] < 0)
@@ -69,7 +69,7 @@ void Server::handle_select(int port, int idx)
 	}
 }
 
-void Server::handle_accept(int i)
+void WebServer::handle_accept(int i)
 {
 	socklen_t addrSize = sizeof(serverAddr[i]);
     clientSocket = accept(i, (struct sockaddr *)&serverAddr[i], &addrSize);
@@ -87,7 +87,7 @@ void Server::handle_accept(int i)
     }
 }
 
-void Server::handle_receive(int i)
+void WebServer::handle_receive(int i)
 {
 	
 	bzero(buffer, sizeof(buffer));
@@ -112,7 +112,7 @@ void Server::handle_receive(int i)
     }
 }
 
-void Server::run()
+void WebServer::run()
 {
 	fd_set master;
 	fd_set read_fds;

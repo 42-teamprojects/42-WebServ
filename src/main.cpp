@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 22:27:57 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/11 17:27:30 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/11/14 13:19:48 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int main()
 {
-	Server server;
+	WebServer server;
 	server.run();
 	return (0);
 }
