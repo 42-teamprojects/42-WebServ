@@ -15,7 +15,6 @@ gantt
     Response Generation: done, des7, after des6, 5d
     Static Website Serving: done, des8, after des6, 4d
     Non-blocking I/O: done, des9, after des6, 6d
-    Client Handling: done, des10, after des6, 5d
     HTTP Methods: done, des11, after des6, 2d
     File Uploads: done, des12, after des6, 3d
     Security Measures: done, des13, after des6, 4d
