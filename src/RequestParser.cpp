@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RequestParser.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:07:44 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/15 14:32:43 by msodor           ###   ########.fr       */
+/*   Updated: 2023/11/15 15:20:36 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,6 @@ void Request::parse(std::string request)
     std::cerr << e.what() << std::endl;
     return;
   }
-  int i = 0;
   while (std::getline(req, line))
   {
     std::string key;
@@ -113,30 +112,29 @@ std::string Request::getBody(){
   return body;
 }
 
-int main(void) {
-  std::string request = "GET / HTTP/1.1\r\n\
-  Host: localhost:8080\r\n\
-  Connection: keep-alive\r\n\
-  Upgrade-Insecure-Requests: 1\r\n\
-  Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n\
-  User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/604.5.6 (KHTML, like Gecko) Version/11.0.3 Safari/604.5.6\r\n\
-  Accept-Language: en-us\r\n\
-  DNT: 1\r\n\
-  Accept-Encoding: gzip, deflate\r\n\
-  \r\n\
-  hello this is a body";
-  Request req;
-  req.parse(request);
-  std::cout << "Method ==>" << req.getMethod() << std::endl;
-  std::cout << "uri ==>" << req.geturi() << std::endl;
-  std::cout << "Version ==>" << req.getVersion() << std::endl;
-  std::map<std::string, std::string> headers = req.getHeaders();
-  std::cout << "Headers ==>" << std::endl;
-  std::map<std::string, std::string>::iterator it = headers.begin();
-  int i = 0;
-  for (; it != headers.end(); ++it){
-    std::cout << it->first << " => " << it->second << '\n';
-  }
-  std::cout << "Body ==>" << req.getBody() << std::endl;
-  return 0;
-}
+// int main(void) {
+//   std::string request = "GET / HTTP/1.1\r\n\
+//   Host: localhost:8080\r\n\
+//   Connection: keep-alive\r\n\
+//   Upgrade-Insecure-Requests: 1\r\n\
+//   Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n\
+//   User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/604.5.6 (KHTML, like Gecko) Version/11.0.3 Safari/604.5.6\r\n\
+//   Accept-Language: en-us\r\n\
+//   DNT: 1\r\n\
+//   Accept-Encoding: gzip, deflate\r\n\
+//   \r\n\
+//   hello this is a body";
+//   Request req;
+//   req.parse(request);
+//   std::cout << "Method ==>" << req.getMethod() << std::endl;
+//   std::cout << "uri ==>" << req.geturi() << std::endl;
+//   std::cout << "Version ==>" << req.getVersion() << std::endl;
+//   std::map<std::string, std::string> headers = req.getHeaders();
+//   std::cout << "Headers ==>" << std::endl;
+//   std::map<std::string, std::string>::iterator it = headers.begin();
+//   for (; it != headers.end(); ++it){
+//     std::cout << it->first << " => " << it->second << '\n';
+//   }
+//   std::cout << "Body ==>" << req.getBody() << std::endl;
+//   return 0;
+// }
