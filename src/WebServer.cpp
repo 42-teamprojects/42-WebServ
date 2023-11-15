@@ -3,26 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/15 15:50:16 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/11/15 18:57:41 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServer.hpp"
 
-WebServer::WebServer()
+WebServer::WebServer(std::vector<Server> &servers) : servers(servers)
 {
-	handle_select(8080, 0);
-	handle_select(8090, 1);
-    std::cout << "WebServer is listening on ports 8080 and 8090..." << std::endl;
+	serverSocket = new int[servers.size() + 1];
+	std::vector<Server>::iterator it = servers.begin();
+	int i = 0;
+	for (; it != servers.end(); ++it)
+	{
+		std::cout << "WebServer is listening on port " << it->getPort() << std::endl;
+		handle_select(it->getPort(), i++);
+	}
 }
 
 WebServer::~WebServer()
 {
-	close(serverSocket[0]);
-	close(serverSocket[1]);
+	for (size_t i = 0; i < servers.size(); i++)
+		close(serverSocket[i]);
 }
 
 void WebServer::handle_select(int port, int idx)
