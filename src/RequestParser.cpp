@@ -6,11 +6,11 @@
 /*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:07:44 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/14 18:18:13 by msodor           ###   ########.fr       */
+/*   Updated: 2023/11/15 14:30:28 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/RequestParser.hpp"
+#include "RequestParser.hpp"
 
 Request::Request()
 {
