@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 13:35:49 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/13 21:52:52 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/15 15:36:05 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <sstream>
+#include <fcntl.h>
 
 #include <vector>
 #include <map>
@@ -29,5 +30,6 @@
 
 #include "Route.hpp"
 #include "Server.hpp"
+#include "WebServer.hpp"
 #include "Config.hpp"
 #include "ServerException.hpp"

@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Server.cpp                                         :+:      :+:    :+:   */
+/*   WebServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/15 12:32:30 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/11/15 15:50:16 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Server.hpp"
+#include "WebServer.hpp"
 
 WebServer::WebServer()
 {
@@ -128,7 +128,7 @@ void WebServer::run()
 			std::cerr << "error: select call" << std::endl;
 			exit(1);
 		}
-		for (int i = 0; i <= FD_SETSIZE; i++)
+		for (int i = 0; i < FD_SETSIZE; i++)
 		{
 			if (FD_ISSET(i, &read_fds))
 			{
