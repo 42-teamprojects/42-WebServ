@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:15 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/14 13:18:57 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/11/15 12:51:48 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ class WebServer{
         struct sockaddr_in serverAddr[2];
         int serverSocket[2];
         int clientSocket;
-        char buffer[1024];
+        char buffer[2142400];
     public:
         WebServer();
         ~WebServer();
