@@ -6,7 +6,7 @@
 /*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:07:44 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/16 19:22:26 by msodor           ###   ########.fr       */
+/*   Updated: 2023/11/17 00:35:52 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,25 @@ void Request::parseHeaders(std::string& line)
     headers[key] = value;
 }
 
+void Request::checkIfChunked()
+{
+    std::map<std::string, std::string>::iterator it = headers.find("Transfer-Encoding");
+    if (it != headers.end())
+    {
+        if (it->second == "chunked")
+            this->isChunked = true;
+    }
+}
+
+int Request::badRequest()
+{
+    if (this->method == "POST" 
+    && (this->headers.find("Content-Length") == this->headers.end()
+    || this->headers.find("Transfer-Encoding") == this->headers.end()))
+        return 1;
+    return 0;
+}
+
 enum HttpStatusCode Request::parse(std::string request)
 {
     std::string line;
@@ -103,6 +122,9 @@ enum HttpStatusCode Request::parse(std::string request)
         parseHeaders(line);
     }
     parseHost();
+    checkIfChunked();
+    if (badRequest())
+        return BadRequest;
     std::getline(req, body, '\0');
     return OK;
 }
@@ -166,13 +188,3 @@ void Request::print()
     }
     std::cout << "Body : " << getBody() << std::endl;
 }
-
-// void Request::checkIfChunked()
-// {
-//     std::map<std::string, std::string>::iterator it = headers.find("Transfer-Encoding");
-//     if (it != headers.end())
-//     {
-//         if (it->second == "chunked")
-//             this->isCunked = true;
-//     }
-// }
