@@ -1,6 +1,6 @@
 <server>
     host = 127.0.0.1
-    port = 8080
+    port = 80
     server_names = localhost
     client_max_body_size = 100000
     error_pages = 404.html 500.html

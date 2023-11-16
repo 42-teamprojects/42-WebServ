@@ -6,7 +6,7 @@
 /*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 19:59:15 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/16 18:57:01 by msodor           ###   ########.fr       */
+/*   Updated: 2023/11/16 19:11:11 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,12 @@ public:
   Request(std::string request);
   ~Request();
 
-  void  parse(std::string request);
+  enum HttpStatusCode  parse(std::string request);
   int   parseStatusLine(std::string& line);
   int   uriCharCheck(std::string& uri);
   int   uriLenCheck(std::string& uri);
   void  parseHeaders(std::string& line);
-  void  Request::hostPort();
+  void  parseHost();
   void  checkIfChunked();
   void  print();
 

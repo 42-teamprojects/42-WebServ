@@ -6,7 +6,7 @@
 /*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:07:44 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/16 18:56:48 by msodor           ###   ########.fr       */
+/*   Updated: 2023/11/16 19:19:42 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int Request::uriCharCheck(std::string& uri)
     std::string::iterator it = uri.begin();
     for (; it != uri.end(); ++it)
     {
-        if (!isalnum(*it) || allowed.find(*it) == std::string::npos)
+        if (!isalnum(*it) && allowed.find(*it) == std::string::npos)
             return 1;
     }
     return 0;
@@ -74,43 +74,42 @@ int Request::parseStatusLine(std::string& line)
     return 0;
 }
 
-// void Request::checkIfChunked()
-// {
-//     std::map<std::string, std::string>::iterator it = headers.find("Transfer-Encoding");
-//     if (it != headers.end())
-//     {
-//         if (it->second == "chunked")
-//             this->isCunked = true;
-//     }
-// }
 
 void Request::parseHeaders(std::string& line)
 {
-    
+    std::string key;
+    std::string value;
+    std::stringstream ss(line);
+
+    std::getline(ss, key, ':');
+    std::getline(ss, value);
+    trim(value);
+    headers[key] = value;
 }
 
-void Request::parse(std::string request)
+enum HttpStatusCode Request::parse(std::string request)
 {
     std::string line;
     std::stringstream req(request);
     std::getline(req, line);
     parseStatusLine(line);
+    // if ()
+        // return BadRequest;
+    uriLenCheck(uri);
+    // if ()
+    //     return RequestURITooLong;
     while (std::getline(req, line))
     {
-        std::string key;
-        std::string value;
-        std::stringstream ss(line);
         if (line == "\r")
             break;
-        std::getline(ss, key, ':');
-        std::getline(ss, value);
-        trim(value);
-        headers[key] = value;
+        parseHeaders(line);
     }
+    parseHost();
     std::getline(req, body, '\0');
+    return OK;
 }
 
-void    Request::hostPort()
+void    Request::parseHost()
 {
     std::map<std::string, std::string>::iterator it = headers.find("Host");
     if (it != headers.end())
@@ -167,3 +166,13 @@ void Request::print()
     }
     std::cout << "Body : " << getBody() << std::endl;
 }
+
+// void Request::checkIfChunked()
+// {
+//     std::map<std::string, std::string>::iterator it = headers.find("Transfer-Encoding");
+//     if (it != headers.end())
+//     {
+//         if (it->second == "chunked")
+//             this->isCunked = true;
+//     }
+// }
