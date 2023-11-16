@@ -6,7 +6,7 @@
 /*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:07:44 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/16 19:19:42 by msodor           ###   ########.fr       */
+/*   Updated: 2023/11/16 19:22:26 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,12 +92,10 @@ enum HttpStatusCode Request::parse(std::string request)
     std::string line;
     std::stringstream req(request);
     std::getline(req, line);
-    parseStatusLine(line);
-    // if ()
-        // return BadRequest;
-    uriLenCheck(uri);
-    // if ()
-    //     return RequestURITooLong;
+    if (parseStatusLine(line))
+        return BadRequest;
+    if (uriLenCheck(uri))
+        return RequestURITooLong;
     while (std::getline(req, line))
     {
         if (line == "\r")
@@ -157,6 +155,8 @@ void Request::print()
     std::cout << "Method : " << getMethod() << std::endl;
     std::cout << "Uri : " << getUri() << std::endl;
     std::cout << "Version : " << getVersion() << std::endl;
+    std::cout << "Host : " << host << std::endl;
+    std::cout << "Port : " << port << std::endl;
     std::map<std::string, std::string> headers = getHeaders();
     std::cout << "Headers : " << std::endl;
     std::map<std::string, std::string>::iterator it = headers.begin();
