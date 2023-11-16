@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 13:35:49 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/16 12:02:19 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/16 16:13:54 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,3 +34,4 @@
 #include "WebServer.hpp"
 #include "Config.hpp"
 #include "ServerException.hpp"
+#include "Response.hpp"
