@@ -5,8 +5,8 @@
 #include <arpa/inet.h>
 
 #define PORT1 8080
-#define PORT2 8081
-#define SERVER_IP "10.11.3.5"  // Changed IP address to the one provided
+#define PORT2 3000
+#define SERVER_IP "127.0.0.1"  // Changed IP address to the one provided
 #define BUFFER_SIZE 1024
 
 int send_request(int port) {
@@ -46,7 +46,7 @@ int send_request(int port) {
 
 int main() {
     for (int i = 0; i < 8000; ++i) {
-        if(send_request(8090) == 1)
+        if(send_request(3000) == 1)
             continue;
         if(send_request(8080) == 1)
             continue;

@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/16 13:36:48 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/11/16 15:41:09 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,13 +133,8 @@ void WebServer::handle_receive(int i)
 
 void WebServer::run()
 {
-	// fd_set master;
 	fd_set read_fds;
 	
-	// FD_ZERO(&master);
-	// FD_ZERO(&read_fds);
-	// FD_SET(srvs[0].socket, &master);
-	// FD_SET(srvs[1].socket, &master);
 	while (true)
 	{
 		read_fds = master;
