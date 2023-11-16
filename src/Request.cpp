@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:07:44 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/16 14:17:49 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/16 19:22:26 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
-Request::Request(std::string request) : isCunked(false)
+Request::Request(std::string request) : isChunked(false)
 {
     parse(request);
 }
@@ -33,7 +33,28 @@ std::string methods[] = {
     "PATCH",
 };
 
-void Request::parseMethod(std::string line)
+int Request::uriCharCheck(std::string& uri)
+{
+    if (uri.empty())
+        return 1;
+    std::string allowed = "-._~:/?#[]@!$&'()*+,;=%";
+    std::string::iterator it = uri.begin();
+    for (; it != uri.end(); ++it)
+    {
+        if (!isalnum(*it) && allowed.find(*it) == std::string::npos)
+            return 1;
+    }
+    return 0;
+}
+
+int Request::uriLenCheck(std::string& uri)
+{
+    if (uri.length() > 2048)
+        return 1;
+    return 0;
+}
+
+int Request::parseStatusLine(std::string& line)
 {
     std::string method;
     std::string uri;
@@ -42,78 +63,88 @@ void Request::parseMethod(std::string line)
     ss >> method;
     ss >> uri;
     ss >> version;
-    if (std::find(std::begin(methods), std::end(methods), method) != std::end(methods))
-    {
+    if (std::find(std::begin(methods), std::end(methods), method) == std::end(methods)\
+    || version != "HTTP/1.1" || uriCharCheck(uri))
+        return 1;
+    else {
         this->method = method;
         this->uri = uri;
         this->version = version;
     }
-    else
-    {
-        throw std::invalid_argument("Invalid method");
-    }
+    return 0;
 }
 
-void Request::checkIfChunked()
+
+void Request::parseHeaders(std::string& line)
 {
-    std::map<std::string, std::string>::iterator it = headers.find("Transfer-Encoding");
-    if (it != headers.end())
-    {
-        if (it->second == "chunked")
-            this->isCunked = true;
-    }
+    std::string key;
+    std::string value;
+    std::stringstream ss(line);
+
+    std::getline(ss, key, ':');
+    std::getline(ss, value);
+    trim(value);
+    headers[key] = value;
 }
 
-void Request::parse(std::string request)
+enum HttpStatusCode Request::parse(std::string request)
 {
     std::string line;
     std::stringstream req(request);
     std::getline(req, line);
-    try
-    {
-        parseMethod(line);
-    }
-    catch (const std::exception &e)
-    {
-        std::cerr << e.what() << std::endl;
-        return;
-    }
+    if (parseStatusLine(line))
+        return BadRequest;
+    if (uriLenCheck(uri))
+        return RequestURITooLong;
     while (std::getline(req, line))
     {
-        std::string key;
-        std::string value;
-        std::stringstream ss(line);
-        std::getline(ss, key, ':');
-        std::getline(ss, value);
-        if (value.empty())
+        if (line == "\r")
             break;
-        trim(value);
-        headers[key] = value;
+        parseHeaders(line);
     }
+    parseHost();
     std::getline(req, body, '\0');
+    return OK;
 }
 
-std::string Request::getMethod()
+void    Request::parseHost()
+{
+    std::map<std::string, std::string>::iterator it = headers.find("Host");
+    if (it != headers.end())
+    {
+        std::string port;
+        std::string value = it->second;
+        std::stringstream ss(value);
+        std::getline(ss, this->host, ':');
+        std::getline(ss, port);
+        if (port.empty())
+            this->port = 80;
+        else
+            this->port = std::atoi(port.c_str());
+    }   
+}
+
+std::string Request::getMethod() const
 {
     return method;
 }
 
-std::string Request::getUri()
+std::string Request::getUri() const
 {
     return uri;
 }
 
-std::string Request::getVersion()
+std::string Request::getVersion() const
 {
     return version;
 }
 
-std::map<std::string, std::string> Request::getHeaders()
+std::map<std::string, std::string> Request::getHeaders() const
 {
     return headers;
 }
 
-std::string Request::getBody()
+std::string Request::getBody()  const
 {
     return body;
 }
@@ -124,6 +155,8 @@ void Request::print()
     std::cout << "Method : " << getMethod() << std::endl;
     std::cout << "Uri : " << getUri() << std::endl;
     std::cout << "Version : " << getVersion() << std::endl;
+    std::cout << "Host : " << host << std::endl;
+    std::cout << "Port : " << port << std::endl;
     std::map<std::string, std::string> headers = getHeaders();
     std::cout << "Headers : " << std::endl;
     std::map<std::string, std::string>::iterator it = headers.begin();
@@ -133,3 +166,13 @@ void Request::print()
     }
     std::cout << "Body : " << getBody() << std::endl;
 }
+
+// void Request::checkIfChunked()
+// {
+//     std::map<std::string, std::string>::iterator it = headers.find("Transfer-Encoding");
+//     if (it != headers.end())
+//     {
+//         if (it->second == "chunked")
+//             this->isCunked = true;
+//     }
+// }
