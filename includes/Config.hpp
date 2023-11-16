@@ -42,14 +42,14 @@ public:
 
     typedef std::vector<Server>::iterator iterator;
 
-    iterator begin() { return servers.begin(); }
-    iterator end() { return servers.end(); }
+    static iterator begin() { return servers.begin(); }
+    static iterator end() { return servers.end(); }
 
     // Helpers
-    iterator find(const std::string& path)
+    static iterator find(const std::string& host, int port)
     {
         for (iterator it = servers.begin(); it != servers.end(); ++it) {
-            if (it->find(path) != it->end()) {
+            if (it->getHost() == host && it->getPort() == port) {
                 return it;
             }
         }

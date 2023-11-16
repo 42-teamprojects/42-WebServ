@@ -4,27 +4,8 @@
     server_names = localhost
     client_max_body_size = 100000
     error_pages = 404.html 500.html
-    root = /var/www/html
+    root = error_pages
     index = index.html
-    <route path="/index">
-        methods = GET, POST
-        cgi_extension = .php
-        cgi_path = /usr/bin/php
-    </route>
-    <route path="/images">
-        methods = GET
-        root = /var/www/images
-        index = images.html
-        allow_listing = false
-    </route>
-    <route path="/uploads">
-        methods = POST
-        upload_dir = /var/www/uploads
-    </route>
-    <route path="/redirect">
-        methods = GET
-        redirect = 301 index.html
-    </route>
 </server>
 
 <server>
