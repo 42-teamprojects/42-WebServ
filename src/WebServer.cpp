@@ -6,15 +6,17 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/15 18:57:41 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/16 12:35:04 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServer.hpp"
+#include "webserv.hpp"
 
 WebServer::WebServer(std::vector<Server> &servers) : servers(servers)
 {
 	serverSocket = new int[servers.size() + 1];
+	serverAddr = new sockaddr_in[servers.size() + 1];
 	std::vector<Server>::iterator it = servers.begin();
 	int i = 0;
 	for (; it != servers.end(); ++it)
@@ -105,7 +107,9 @@ void WebServer::handle_receive(int i)
     }
     else
     {
-        std::cout << buffer << std::endl;
+        Request req(buffer);
+		req.print();
+		
 	    std::string response = "HTTP/1.1 200 OK\r\nServerContext: Tawafan/0.0 (Alaqssa)\r\n\r\n<html><body><h1>Welcome</h1></body></html>";
         int bytesSent = send(i, response.c_str(), response.size(), 0);
         if (bytesSent < 0)

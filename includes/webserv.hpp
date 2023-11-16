@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 13:35:49 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/15 15:36:05 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/11/16 12:02:19 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,9 @@
 
 #include "utils.hpp"
 
-#include "Route.hpp"
 #include "Server.hpp"
+#include "Route.hpp"
+#include "Request.hpp"
 #include "WebServer.hpp"
 #include "Config.hpp"
 #include "ServerException.hpp"
