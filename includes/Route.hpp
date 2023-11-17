@@ -29,6 +29,7 @@ private:
     std::string                     cgiPath;
 public:
     Route();
+    Route(std::string const & path);
     ~Route();
 
     // Getters

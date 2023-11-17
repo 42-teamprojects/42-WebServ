@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:07:44 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/16 19:22:26 by msodor           ###   ########.fr       */
+/*   Updated: 2023/11/17 11:26:14 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,6 @@ int Request::parseStatusLine(std::string& line)
     return 0;
 }
 
-
 void Request::parseHeaders(std::string& line)
 {
     std::string key;
@@ -87,7 +86,7 @@ void Request::parseHeaders(std::string& line)
     headers[key] = value;
 }
 
-enum HttpStatusCode Request::parse(std::string request)
+HttpStatusCode Request::parse(std::string request)
 {
     std::string line;
     std::stringstream req(request);
@@ -144,7 +143,16 @@ std::map<std::string, std::string> Request::getHeaders() const
     return headers;
 }
 
-std::string Request::getBody()  const
+std::string Request::getHost() const
+{
+    return host;
+}
+
+int Request::getPort() const
+{
+    return port;
+}
+std::string Request::getBody() const
 {
     return body;
 }

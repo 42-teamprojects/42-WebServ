@@ -5,7 +5,7 @@
     client_max_body_size = 100000
     error_pages = 404.html 500.html
     root = error_pages
-    index = index.html
+    index = 500.html
 </server>
 
 <server>

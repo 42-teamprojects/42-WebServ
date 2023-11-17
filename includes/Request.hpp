@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 19:59:15 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/16 20:07:33 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/17 11:17:05 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ public:
   Request(std::string request);
   ~Request();
 
-  enum HttpStatusCode  parse(std::string request);
+  HttpStatusCode  parse(std::string request);
   int   parseStatusLine(std::string& line);
   int   uriCharCheck(std::string& uri);
   int   uriLenCheck(std::string& uri);
@@ -44,5 +44,7 @@ public:
   std::string getUri() const;
   std::string getVersion() const;
   std::map<std::string, std::string> getHeaders() const;
+  std::string getHost() const;
+  int getPort() const;
   std::string getBody() const;
 };
