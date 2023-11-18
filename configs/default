@@ -1,30 +1,27 @@
 <server>
     host = 127.0.0.1
-    port = 8080
+    port = 80
     server_names = localhost
     client_max_body_size = 100000
     error_pages = 404.html 500.html
-    root = /var/www/html
+    root = static
     index = index.html
-    <route path="/index">
-        methods = GET, POST
-        cgi_extension = .php
-        cgi_path = /usr/bin/php
-    </route>
-    <route path="/images">
-        methods = GET
-        root = /var/www/images
-        index = images.html
-        allow_listing = false
-    </route>
-    <route path="/uploads">
+    <route path="/method">
         methods = POST
-        upload_dir = /var/www/uploads
     </route>
     <route path="/redirect">
-        methods = GET
-        redirect = 301 index.html
+        redirect = index.html
     </route>
+</server>
+
+<server>
+    host = 127.0.0.1
+    port = 6969
+    server_names = localhost
+    client_max_body_size = 100000
+    error_pages = 404.html 500.html
+    root = static/error_pages
+    index = 500.html
 </server>
 
 <server>
@@ -33,8 +30,8 @@
     server_names = localhost
     client_max_body_size = 100000
     error_pages = 404.html 500.html
-    root = /var/www/html
-    index = index.html
+    root = static
+    index = error_pages/404.html
     <route path="/index">
         methods = GET, POST
         cgi_extension = .php
@@ -52,6 +49,6 @@
     </route>
     <route path="/redirect">
         methods = GET
-        redirect = 301 index.html
+        redirect = index.html
     </route>
 </server>

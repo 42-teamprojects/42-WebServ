@@ -14,6 +14,7 @@
 #include "webserv.hpp"
 
 Route::Route() : path(""), root(""), index(), redirect(), methods(), uploadDir(""), allowListing(0), cgiExt(), cgiPath("") {};
+Route::Route(std::string const & path) : path(path), root(""), index(), redirect(), methods(), uploadDir(""), allowListing(0), cgiExt(), cgiPath("") {};
 Route::~Route() {};
 
 // Getters

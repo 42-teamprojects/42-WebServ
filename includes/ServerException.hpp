@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 21:33:59 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/13 21:52:52 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/16 20:01:29 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include "Response.hpp"
 
 class ServerException : public std::exception
 {
@@ -24,6 +25,7 @@ private:
 public:
     ServerException(std::string const &msg) throw();
     ServerException(std::string const &msg, int line) throw();
+    ServerException(HttpStatusCode code) throw();
     virtual ~ServerException() throw();
     virtual const char *what() const throw();
 };

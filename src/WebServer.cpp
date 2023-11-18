@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/16 15:41:09 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/11/18 16:05:42 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,21 +106,34 @@ int WebServer::find_server(int socket)
 
 void WebServer::handle_receive(int i)
 {
-	
-	bzero(buffer, sizeof(buffer));
-    int bytesReceived = recv(i, buffer, sizeof(buffer), 0);
-    if (bytesReceived <= 0)
-    {
-        std::cerr << "error: recv() failed" << std::endl;
-        close(i);
-        exit (1);
-    }
+	// bzero(buffer, sizeof(buffer));
+    // int bytesReceived = recv(i, buffer, sizeof(buffer), 0);
+    // if (bytesReceived <= 0)
+    // {
+    //     std::cerr << "error: recv() failed" << std::endl;
+    //     close(i);
+    //     exit (1);
+    // }
+	int bytesReceived;
+	char buf[1024];
+	bzero(buf, 1024);
+	while ((bytesReceived = recv(i, buf, sizeof(buf), 0)) > 0)
+	{
+		buffer.append(buf);
+		if (bytesReceived < 1023)
+			break ;
+	}
+	if (bytesReceived <= 0)
+	{
+		std::cerr << "error: recv() failed" << std::endl;
+		close(i);
+		exit(1);
+	}
     else
     {
-        Request req(buffer);
-		req.print();
-		
-	    std::string response = "HTTP/1.1 200 OK\r\nServerContext: Tawafan/0.0 (Alaqssa)\r\n\r\n<html><body><h1>Welcome</h1></body></html>";
+		Response res(buffer);
+		buffer.clear();
+	    std::string response = res.getResponse();
         int bytesSent = send(i, response.c_str(), response.size(), 0);
         if (bytesSent < 0)
         {
@@ -156,8 +169,8 @@ void WebServer::run()
 				else
 					{
 						handle_receive(i);
-						close(i);
 						FD_CLR(i, &master);
+						close(i);
 					}
 
 			}
