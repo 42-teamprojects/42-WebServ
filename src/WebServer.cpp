@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/18 14:15:37 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/18 14:34:25 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,7 @@ int WebServer::find_server(int socket)
 
 void WebServer::handle_receive(int i)
 {
+	
 	bzero(buffer, sizeof(buffer));
     int bytesReceived = recv(i, buffer, sizeof(buffer), 0);
     if (bytesReceived <= 0)
