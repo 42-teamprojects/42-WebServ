@@ -4,7 +4,7 @@
     server_names = localhost
     client_max_body_size = 100000
     error_pages = 404.html 500.html
-    root = static/
+    root = static
     index = index.html
 </server>
 
@@ -14,8 +14,8 @@
     server_names = localhost
     client_max_body_size = 100000
     error_pages = 404.html 500.html
-    root = /var/www/html
-    index = index.html
+    root = static
+    index = error_pages/404.html
     <route path="/index">
         methods = GET, POST
         cgi_extension = .php

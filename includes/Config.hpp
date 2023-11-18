@@ -49,7 +49,8 @@ public:
     static iterator find(const std::string& host, int port)
     {
         for (iterator it = servers.begin(); it != servers.end(); ++it) {
-            if (it->getHost() == host && it->getPort() == port) {
+            std::vector<std::string> sNames = it->getServerNames();
+            if ((host == it->getHost() || std::find(sNames.begin(), sNames.end(), host) != sNames.end()) && it->getPort() == port) {
                 return it;
             }
         }
