@@ -6,7 +6,7 @@
 /*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 19:59:15 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/17 00:31:48 by msodor           ###   ########.fr       */
+/*   Updated: 2023/11/18 14:40:47 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,22 +26,29 @@ private:
     std::map<std::string, std::string> headers;
     std::string body;
     
-    bool isChunked;
+    bool    isChunked;
+    int     contentLength;
+
+    enum HttpStatusCode  statusCode;
 
 public:
     Request(std::string request);
     ~Request();
     
-    enum HttpStatusCode  parse(std::string request);
-    int     parseStatusLine(std::string& line);
-    int     uriCharCheck(std::string& uri);
-    int     uriLenCheck(std::string& uri);
+    void    parse(std::string request);
+    void    parseStatusLine(std::string& line);
     void    parseHeaders(std::string& line);
     void    parseHost();
-    void    checkIfChunked();
-    int     badRequest();
-    
-    void  print();
+    void    saveEncoding();
+    int     uriCharCheck(std::string& uri);
+    int     uriLenCheck(std::string& uri);
+    int     versionCheck(std::string& version);
+    int     methodCheck(std::string& method);
+    void    statusLineCheck();
+    int     encodingCheck();
+    void    checkError();
+
+    void    print();
     
     std::string getMethod() const;
     std::string getUri() const;
