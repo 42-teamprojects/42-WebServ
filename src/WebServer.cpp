@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/18 12:31:27 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/18 12:52:59 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,8 +117,10 @@ void WebServer::handle_receive(int i)
     }
     else
     {
-		Response res(buffer);
-	    std::string response = res.getResponse();
+        Request req(buffer);
+		req.print();
+		
+	    std::string response = "HTTP/1.1 200 OK\r\nServerContext: Tawafan/0.0 (Alaqssa)\r\n\r\n<html><body><h1>Welcome</h1></body></html>";
         int bytesSent = send(i, response.c_str(), response.size(), 0);
         if (bytesSent < 0)
         {
