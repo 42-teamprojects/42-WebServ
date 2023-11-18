@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/17 12:11:26 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/18 12:28:23 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,10 +117,8 @@ void WebServer::handle_receive(int i)
     }
     else
     {
-        
 		Response res(buffer);
 	    std::string response = res.getResponse();
-		std::cout << response << std::endl;
         int bytesSent = send(i, response.c_str(), response.size(), 0);
         if (bytesSent < 0)
         {
