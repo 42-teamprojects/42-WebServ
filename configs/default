@@ -6,6 +6,12 @@
     error_pages = 404.html 500.html
     root = static
     index = index.html
+    <route path="/method">
+        methods = POST
+    </route>
+    <route path="/redirect">
+        redirect = index.html
+    </route>
 </server>
 
 <server>
@@ -43,6 +49,6 @@
     </route>
     <route path="/redirect">
         methods = GET
-        redirect = 301 index.html
+        redirect = index.html
     </route>
 </server>

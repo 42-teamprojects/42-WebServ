@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/18 12:34:06 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/18 15:50:30 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void Response::serveStaticFile(std::string const &filePath) {
         file.close();
     } else {
         code = NotFound;
-        body = "404 Not Found";
+        body = getStatusMessage(code);
     }
 }
 
@@ -66,21 +66,29 @@ Server Response::getServer(Request const & req) {
     return *(Config::begin());
 }
 
-Route Response::getRoute(Server & server, std::string const & path) {
-    if (path.back() == '/' && !(server.getRoot().empty() && server.getIndex().empty())) {
+Route Response::getRoute(Server & server, Request const & req) {
+    if (req.getUri().back() == '/' && !(server.getRoot().empty() && server.getIndex().empty())) {
         return Route();
     }
-    std::vector<Route>::iterator it = server.find(path);
-    if (it == server.end()) {
+    std::vector<Route>::iterator it = server.find(req.getUri());
+    if (it == server.end()) { // Get matched route for request
         throw ServerException(NotFound);
+    }
+    if (!it->getRedirect().empty()) { // Check if route have redirection
+        headers["Location"] = it->getRedirect();
+        throw ServerException(MovedPermanently);
+    }
+    std::vector<std::string> methods = it->getMethods(); // Check if route have allowed methods
+    if (std::find(methods.begin(), methods.end(), req.getMethod()) == methods.end()) {
+        throw ServerException(MethodNotAllowed);
     }
     return *it;
 }
 
 void Response::handleResponse(Request const & request) {
-    Server server = getServer(request);
     try {
-        Route route = getRoute(server, request.getUri());
+        Server server = getServer(request);
+        Route route = getRoute(server, request);
         std::string filePath = server.getRoot() + route.getPath();
         if (request.getUri().back() == '/') {
             filePath += "/" + server.getIndex()[0];
@@ -88,12 +96,11 @@ void Response::handleResponse(Request const & request) {
         std::cout << filePath << std::endl;
         serveStaticFile(filePath);
     } catch (ServerException & e) {
-        if (e.what() == toString(NotFound)) {
-            code = NotFound;
-            body = "404 Not Found";
-        } else {
-            code = NotImplemented;
-            body = "501 Not Implemented";
-        }
+        code = static_cast<HttpStatusCode>(std::atoi(e.what()));
+        body = getStatusMessage(code);
+    } catch (std::exception & e) {
+        code = ServerError;
+        body = getStatusMessage(code);
+        std::cout << e.what() << std::endl;
     }
 }

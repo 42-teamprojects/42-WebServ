@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 15:46:37 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/17 12:10:13 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/18 14:44:57 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ public:
 
     Server getServer(Request const &req);
 
-    Route getRoute(Server &server, std::string const &path);
+    Route getRoute(Server &server, Request const &req);
 
     void handleResponse(Request const &request);
 };
