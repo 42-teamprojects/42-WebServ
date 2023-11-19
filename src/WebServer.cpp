@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/19 20:59:11 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/19 21:27:31 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,13 @@ WebServer::WebServer(std::vector<Server> &servers) : servers(servers)
 	std::vector<Server>::iterator it = servers.begin();
 	FD_ZERO(&master); 
 	int i = 0;
+	std::string ports = "\033[1;32m";
 	for (; it != servers.end(); ++it)
 	{
-		Logger::info("WebServ is listening on port \033[1;32m" + toString(it->getPort()) + "\033[0m");
+		ports += toString(it->getPort()) + (it != servers.end() - 1 ? ", " : "");
 		handle_select(it->getPort(), i++);
 	}
+	Logger::info("WebServ is listening on ports " + ports + "\033[0m");
 }
 
 WebServer::~WebServer()

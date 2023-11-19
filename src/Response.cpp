@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/19 20:33:02 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/19 21:29:58 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,6 @@ void Response::handleGet(Server const & server, Route const & route, Request con
 }
 
 void Response::handleResponse(Request const & req) {
-    req.print();
     try {
         Server server = getServer(req);
         Route route = getRoute(server, req);
