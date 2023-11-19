@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/19 19:26:48 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/19 20:33:02 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ std::string Response::getFilePath(Server const & server, Route const & route, Re
 
     filePath = root + "/" + index;
     removeConsecutiveChars(filePath, '/');
-    std::cout << filePath << std::endl;
+    Logger::info("Serving file: " + filePath);
     return filePath;
 }
 
@@ -140,6 +140,7 @@ void Response::handleGet(Server const & server, Route const & route, Request con
 }
 
 void Response::handleResponse(Request const & req) {
+    req.print();
     try {
         Server server = getServer(req);
         Route route = getRoute(server, req);
@@ -159,9 +160,10 @@ void Response::handleResponse(Request const & req) {
     } catch (ServerException & e) {
         code = static_cast<HttpStatusCode>(std::atoi(e.what()));
         body = getStatusMessage(code);
+        Logger::warning(getStatusMessage(code));
     } catch (std::exception & e) {
         code = ServerError;
         body = getStatusMessage(code);
-        std::cout << e.what() << std::endl;
+        Logger::error(getStatusMessage(code));
     }
 }

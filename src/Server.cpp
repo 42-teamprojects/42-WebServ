@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 22:16:34 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/19 19:06:37 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/19 20:21:51 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,6 @@ void Server::fill(std::string const &line, int &lineNb)
             throw ServerException("Invalid server line", lineNb);
     }
     else
-        std::cout << "Invalid server option: " << line << std::endl;
+        Logger::error("Invalid server option: " + line);
         // throw ServerException("Invalid server option", lineNb);
 }
