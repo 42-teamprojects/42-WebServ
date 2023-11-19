@@ -12,6 +12,10 @@
     <route path="/redirect">
         redirect = index.html
     </route>
+    <route path="/301">
+        root = static/error_pages
+        index = adsfa.html 301.html
+    </route>
 </server>
 
 <server>
@@ -21,7 +25,7 @@
     client_max_body_size = 100000
     error_pages = 404.html 500.html
     root = static/error_pages
-    index = 500.html
+    index = index.html 500.html
 </server>
 
 <server>

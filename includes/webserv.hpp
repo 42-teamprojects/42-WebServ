@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 13:35:49 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/17 11:25:41 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/19 18:40:17 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,3 +35,7 @@
 #include "WebServer.hpp"
 #include "Config.hpp"
 #include "ServerException.hpp"
+
+#ifndef DEFAULT_ROOT
+# define DEFAULT_ROOT "/var/www/html"
+#endif

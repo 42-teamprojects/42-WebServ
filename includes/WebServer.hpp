@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:15 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/18 15:44:00 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/11/19 14:13:30 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ private:
     std::vector<Server> servers;
     std::vector<t_server> srvs;
     int clientSocket;
-    // char buffer[9999];
     std::string buffer;
 public:
     WebServer(std::vector<Server> &);

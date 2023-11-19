@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:07:44 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/17 11:26:14 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/19 14:33:25 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,7 +157,7 @@ std::string Request::getBody() const
     return body;
 }
 
-void Request::print()
+void Request::print() const
 {
     std::cout << "---------------------" << std::endl;
     std::cout << "Method : " << getMethod() << std::endl;

@@ -6,14 +6,14 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 22:16:34 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/13 22:00:10 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/19 19:06:37 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include "webserv.hpp"
 
-Server::Server() : port(-1), host(""), serverNames(), clientMaxBodySize(0), root(""), index(), routes() {};
+Server::Server() : port(-1), host(""), serverNames(), clientMaxBodySize(0), root(DEFAULT_ROOT), index(), allowListing(false), routes() {};
 Server::~Server() {};
 
 // Getters
@@ -23,6 +23,7 @@ std::vector<std::string>    Server::getServerNames() const { return serverNames;
 size_t                      Server::getClientMaxBodySize() const { return clientMaxBodySize; }
 std::string                 Server::getRoot() const { return root; }
 std::vector<std::string>    Server::getIndex() const { return index; }
+bool                        Server::getAllowListing() const { return allowListing;}
 std::vector<std::string>    Server::getErrorPages() const { return errorPages; }
 std::vector<Route>          Server::getRoutes() const { return (this->routes); }
 
@@ -32,6 +33,7 @@ void                        Server::setHost(const std::string & host) { this->ho
 void                        Server::setServerNames(const std::vector<std::string>& serverNames) { this->serverNames = serverNames; }
 void                        Server::setClientMaxBodySize(const size_t & clientMaxBodySize) { this->clientMaxBodySize = clientMaxBodySize; }
 void                        Server::setRoot(const std::string & root) { this->root = root; }
+void                        Server::setAllowListing(const bool & allowListing) { this->allowListing = allowListing; }
 void                        Server::setErrorPages(const std::vector<std::string>& errorPages) { this->errorPages = errorPages; }
 void                        Server::setIndex(const std::vector<std::string>& index) { this->index = index; }
 void                        Server::addRoute(Route route) { this->routes.push_back(route); }
@@ -60,6 +62,7 @@ void                        Server::print() const
         std::cout << "error_pages: ";
         printContainer(errorPages);
     }
+    std::cout << "allow_listing: " << allowListing << std::endl;
     if (!routes.empty()) {
         std::cout << "routes: " << std::endl;
         for (std::vector<Route>::const_iterator it = routes.begin(); it != routes.end(); ++it)
@@ -67,7 +70,7 @@ void                        Server::print() const
     }
 }
 
-void                        Server::fill(std::string const &line, int &lineNb)
+void Server::fill(std::string const &line, int &lineNb)
 {
     std::vector<std::string>    split;
     std::string                 option, value;
@@ -118,6 +121,14 @@ void                        Server::fill(std::string const &line, int &lineNb)
         if (pages.empty())
             throw ServerException("Invalid server line", lineNb);
         setErrorPages(pages);
+    }
+    else if (option == "allow_listing") {
+        if (value == "on" || value == "1" || value == "true")
+            setAllowListing(true);
+        else if (value == "off" || value == "0" || value == "false")
+            setAllowListing(false);
+        else
+            throw ServerException("Invalid server line", lineNb);
     }
     else
         std::cout << "Invalid server option: " << line << std::endl;

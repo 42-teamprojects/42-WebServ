@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 11:27:18 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/17 11:27:26 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/19 14:58:09 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,4 +77,21 @@ void printContainer(const Container& c)
         std::cout << *it << " ";
     }
     std::cout << std::endl;
+}
+
+template <typename Container>
+void removeConsecutiveChars(Container& s, char c)
+{
+    Container result;
+    typename Container::iterator it;
+    
+    for (it = s.begin(); it != s.end(); ++it)
+    {
+        if (result.empty() || *it != c || result.back() != c)
+        {
+            result.push_back(*it);
+        }
+    }
+    
+    s = result;
 }

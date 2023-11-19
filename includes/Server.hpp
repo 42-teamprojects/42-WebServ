@@ -26,6 +26,7 @@ private:
     std::string                     root;
     std::vector<std::string>        index;
     std::vector<std::string>        errorPages;
+    bool                            allowListing;
     std::vector<Route>              routes;
 
 public:
@@ -40,6 +41,7 @@ public:
     std::string                 getRoot() const;
     std::vector<std::string>    getIndex() const;
     std::vector<std::string>    getErrorPages() const;
+    bool                        getAllowListing() const;
     std::vector<Route>          getRoutes() const;
 
     // Setters
@@ -48,6 +50,7 @@ public:
     void                        setServerNames(const std::vector<std::string>&);
     void                        setClientMaxBodySize(const size_t &);
     void                        setRoot(const std::string &);
+    void                        setAllowListing(const bool &);
     void                        setIndex(const std::vector<std::string>&);
     void                        setErrorPages(const std::vector<std::string>&);
     void                        addRoute(Route route);
