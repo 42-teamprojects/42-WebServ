@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/18 15:50:30 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/19 20:33:02 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,10 +66,25 @@ Server Response::getServer(Request const & req) {
     return *(Config::begin());
 }
 
+std::string Response::getRequestedResource(std::string const & uri) {
+    std::string resource = uri;
+    size_t pos = resource.find('?');
+    if (pos != std::string::npos) {
+        resource = resource.substr(0, pos);
+    }
+    return resource;
+}
+
 Route Response::getRoute(Server & server, Request const & req) {
-    if (req.getUri().back() == '/' && !(server.getRoot().empty() && server.getIndex().empty())) {
+    // Check if request is for default "/"
+    if (req.getUri().back() == '/') {
         return Route();
     }
+    // Check if request is for a resource file
+    std::string resource = getRequestedResource(req.getUri());
+    if (resource.find(".") != std::string::npos)
+        return Route("/" + resource);
+
     std::vector<Route>::iterator it = server.find(req.getUri());
     if (it == server.end()) { // Get matched route for request
         throw ServerException(NotFound);
@@ -79,28 +94,76 @@ Route Response::getRoute(Server & server, Request const & req) {
         throw ServerException(MovedPermanently);
     }
     std::vector<std::string> methods = it->getMethods(); // Check if route have allowed methods
-    if (std::find(methods.begin(), methods.end(), req.getMethod()) == methods.end()) {
+    if (!methods.empty() && std::find(methods.begin(), methods.end(), req.getMethod()) == methods.end()) {
         throw ServerException(MethodNotAllowed);
     }
     return *it;
 }
 
-void Response::handleResponse(Request const & request) {
-    try {
-        Server server = getServer(request);
-        Route route = getRoute(server, request);
-        std::string filePath = server.getRoot() + route.getPath();
-        if (request.getUri().back() == '/') {
-            filePath += "/" + server.getIndex()[0];
+std::string Response::tryFiles(Server const & server, Route const & route, Request const & req, std::string const & root) {
+    (void) req;
+
+    std::vector<std::string> indexes;
+    // Check if route is a file if not get index
+    if (!route.getPath().empty() && route.getPath().find('.') != std::string::npos) {
+        indexes.push_back(route.getPath());
+    } else {
+        indexes = route.getIndex().empty() ? (server.getIndex().empty() ? std::vector<std::string>() : server.getIndex()) : route.getIndex();
+    }
+    std::string filePath;
+    for (std::vector<std::string>::iterator it = indexes.begin(); it != indexes.end(); it++) {
+        filePath = root + "/" + *it;
+        std::ifstream file(filePath);
+        if (file.good()) {
+            file.close();
+            return *it;
         }
-        std::cout << filePath << std::endl;
-        serveStaticFile(filePath);
+        file.close();
+    }
+    throw ServerException(NotFound);
+}
+
+std::string Response::getFilePath(Server const & server, Route const & route, Request const & req) {
+    std::string filePath;
+    std::string root = route.getRoot().empty() ? server.getRoot() : route.getRoot();
+    std::string index = tryFiles(server, route, req, root);
+
+    filePath = root + "/" + index;
+    removeConsecutiveChars(filePath, '/');
+    Logger::info("Serving file: " + filePath);
+    return filePath;
+}
+
+void Response::handleGet(Server const & server, Route const & route, Request const & req) {
+    std::string filePath = getFilePath(server, route, req);
+    serveStaticFile(filePath);
+}
+
+void Response::handleResponse(Request const & req) {
+    req.print();
+    try {
+        Server server = getServer(req);
+        Route route = getRoute(server, req);
+
+        if (req.getMethod() == "GET") {
+            handleGet(server, route, req);
+        }
+        else if (req.getMethod() == "POST") {
+            std::cout << "POST" << std::endl;
+        }
+        else if (req.getMethod() == "DELETE") {
+            std::cout << "DELETE" << std::endl;
+        }
+        else {
+            throw ServerException(NotImplemented);
+        }
     } catch (ServerException & e) {
         code = static_cast<HttpStatusCode>(std::atoi(e.what()));
         body = getStatusMessage(code);
+        Logger::warning(getStatusMessage(code));
     } catch (std::exception & e) {
         code = ServerError;
         body = getStatusMessage(code);
-        std::cout << e.what() << std::endl;
+        Logger::error(getStatusMessage(code));
     }
 }

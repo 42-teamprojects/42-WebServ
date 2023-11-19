@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 19:59:15 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/17 11:17:05 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/19 14:33:14 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ public:
   void  parseHeaders(std::string& line);
   void  parseHost();
   void  checkIfChunked();
-  void  print();
+  void  print() const;
 
   std::string getMethod() const;
   std::string getUri() const;
