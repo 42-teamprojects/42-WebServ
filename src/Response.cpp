@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/19 19:14:00 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/19 19:26:48 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,15 +76,15 @@ std::string Response::getRequestedResource(std::string const & uri) {
 }
 
 Route Response::getRoute(Server & server, Request const & req) {
+    // Check if request is for default "/"
     if (req.getUri().back() == '/') {
         return Route();
     }
+    // Check if request is for a resource file
     std::string resource = getRequestedResource(req.getUri());
-    if (resource.find(".") != std::string::npos) {
-        Route route = Route("/" + resource);
-        // route.setRoot(server.getRoot());
-        return route;
-    }
+    if (resource.find(".") != std::string::npos)
+        return Route("/" + resource);
+
     std::vector<Route>::iterator it = server.find(req.getUri());
     if (it == server.end()) { // Get matched route for request
         throw ServerException(NotFound);
@@ -104,6 +104,7 @@ std::string Response::tryFiles(Server const & server, Route const & route, Reque
     (void) req;
 
     std::vector<std::string> indexes;
+    // Check if route is a file if not get index
     if (!route.getPath().empty() && route.getPath().find('.') != std::string::npos) {
         indexes.push_back(route.getPath());
     } else {
