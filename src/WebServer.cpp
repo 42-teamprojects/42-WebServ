@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/19 21:27:31 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/20 11:39:11 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,15 @@ WebServer::WebServer(std::vector<Server> &servers) : servers(servers)
 	FD_ZERO(&master); 
 	int i = 0;
 	std::string ports = "\033[1;32m";
+	std::vector<int> portsList;
 	for (; it != servers.end(); ++it)
 	{
+		if (std::find(portsList.begin(), portsList.end(), it->getPort()) != portsList.end()) {
+			Logger::warning("Port " + toString(it->getPort()) + " is duplicated");
+			continue;
+		}
 		ports += toString(it->getPort()) + (it != servers.end() - 1 ? ", " : "");
+		portsList.push_back(it->getPort());
 		handle_select(it->getPort(), i++);
 	}
 	Logger::info("WebServ is listening on ports " + ports + "\033[0m");
@@ -39,14 +45,14 @@ void WebServer::handle_select(int port, int idx)
 	srvs[idx].socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (srvs[idx].socket < 0)
 	{
-		std::cerr << "error: socket creation" << std::endl;
-		exit(1);
+		Logger::error("socket() failed");
+		return ;
 	}
 	if (fcntl(srvs[idx].socket, F_SETFL, O_NONBLOCK, O_CLOEXEC) == -1)
 	{
-		std::cerr << "error: fcntl() failed" << std::endl;
+		Logger::error("fcntl() failed");
 		close(srvs[idx].socket);
-		exit(1);
+		return ; 
 	}
 	FD_SET(srvs[idx].socket, &master);
 
@@ -58,23 +64,23 @@ void WebServer::handle_select(int port, int idx)
 	int yes = 1;
 	if (setsockopt(srvs[idx].socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) < 0)
 	{
-		std::cerr << "error: setsockopt() failed" << std::endl;
+		Logger::error("setsockopt() failed");
 		close(srvs[idx].socket);
-		exit(1);
+		return ; 
 	}
 
 	if (bind(srvs[idx].socket, (struct sockaddr *)&srvs[idx].addr, sizeof(srvs[idx].addr)) < 0)
 	{
-		std::cerr << "error: bind call" << std::endl;
+		Logger::error("Bind() failed");
 		close(srvs[idx].socket);
-		exit(1);
+		return ;
 	}
 
 	if (listen(srvs[idx].socket, 20) < 0)
 	{
-		std::cerr << "error: listen call" << std::endl;
+		Logger::error("Listen() failed");
 		close(srvs[idx].socket);
-		exit(1);
+		return ;
 	}
 }
 
@@ -84,15 +90,15 @@ void WebServer::handle_accept(int i)
     clientSocket = accept(srvs[i].socket, (struct sockaddr *)&srvs[i].addr, &addrSize);
     if (clientSocket < 0)
     {
-        std::cerr << "error: accept call" << std::endl;
+		Logger::error("Accept() failed");
         close(clientSocket);
-        exit(1);
+        return ; 
     }
     if (fcntl(clientSocket, F_SETFL, O_NONBLOCK, O_CLOEXEC) == -1)
     {
-        std::cerr << "error: fcntl() failed" << std::endl;
+		Logger::error("fcntl() failed");
         close(clientSocket);
-        exit(1);
+        return; 
     }
 }
 
@@ -120,9 +126,9 @@ void WebServer::handle_receive(int i)
 	}
 	if (bytesReceived <= 0)
 	{
-		std::cerr << "error: recv() failed" << std::endl;
 		close(i);
-		exit(1);
+		Logger::warning("Client " + toString(i) + " disconnected");
+		return ; 
 	}
     else
     {
@@ -132,9 +138,10 @@ void WebServer::handle_receive(int i)
         int bytesSent = send(i, response.c_str(), response.size(), 0);
         if (bytesSent < 0)
         {
-            std::cerr << "error: send call" << std::endl;
+			Logger::error("Send() failed");
             close(i);
-            exit (1);
+			Logger::warning("Client " + toString(i) + " disconnected");
+            return ; 
         }
     }
 }
@@ -148,8 +155,8 @@ void WebServer::run()
 		read_fds = master;
 		if (select(FD_SETSIZE, &read_fds, NULL, NULL, NULL) == -1)
 		{
-			std::cerr << "error: select call" << std::endl;
-			exit(1);
+			Logger::error("Select() failed");
+			return ; 
 		}
 		for (int i = 0; i < FD_SETSIZE; i++)
 		{
@@ -157,17 +164,16 @@ void WebServer::run()
 			{
 				int var = find_server(i);
 				if (var != -1)
-					{
-						handle_accept(var);
-						FD_SET(clientSocket, &master);
-					}
+				{
+					handle_accept(var);
+					FD_SET(clientSocket, &master);
+				}
 				else
-					{
-						handle_receive(i);
-						FD_CLR(i, &master);
-						close(i);
-					}
-
+				{
+					handle_receive(i);
+					FD_CLR(i, &master);
+					close(i);
+				}
 			}
 		}
 	}
