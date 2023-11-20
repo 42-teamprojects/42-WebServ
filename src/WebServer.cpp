@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/20 11:39:11 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/20 15:31:21 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ void WebServer::handle_accept(int i)
     }
 }
 
-int WebServer::find_server(int socket)
+int WebServer::find_socket(int socket)
 {
 	for (size_t i = 0; i < servers.size(); i++)
 	{
@@ -162,7 +162,7 @@ void WebServer::run()
 		{
 			if (FD_ISSET(i, &read_fds))
 			{
-				int var = find_server(i);
+				int var = find_socket(i);
 				if (var != -1)
 				{
 					handle_accept(var);
