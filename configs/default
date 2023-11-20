@@ -19,9 +19,10 @@
 </server>
 
 <server>
+    host = 127.0.0.1
     port = 80
-    server_names = localhost youssef.com
-    client_max_body_size = 100000
+    server_names = localhost youssef.com isawi.me
+    client_max_body_size = 100
     error_pages = 404.html 500.html
     root = static/QuizApp
     index = index.html
@@ -37,7 +38,7 @@
     index = error_pages/404.html
     <route path="/index">
         methods = GET, POST
-        cgi_extension = .php
+        cgi_extension = .php 
         cgi_path = /usr/bin/php
     </route>
     <route path="/images">

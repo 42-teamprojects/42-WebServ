@@ -167,7 +167,7 @@ But what are Sockets?
 
 You've probably heard of IP addresses, right? In a very general sense, an IP address is how you distinguish different machines, or hosts. For example, when you connect to Amazon, you need a way to specify the physical server you want your messages to be sent to. That's what the IP address is for.
 
-Great, right? The IP address helps you distinguish between physical machines (typically called hosts), and that is all you need to do be able to do, right?
+Great, right? The IP address helps you distinguish between physical machines (typically called hosts), and that is all, right?
 
 Not quite! While IP addressing helps you distinguish between hosts, what about different processes on your computer? When a message (sometimes called a packet, or segment, in this context) reaches your computer, how does your Operating System know which process that message was meant for? You might be browsing reddit while checking your email while playing a game while streaming music. How does your OS know that the message it just received was meant for Spotify or for Web Browsing? The IP address can't distinguish between the two.
 
