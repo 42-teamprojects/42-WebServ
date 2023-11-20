@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/18 16:49:29 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/11/19 14:41:44 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,14 +106,6 @@ int WebServer::find_server(int socket)
 
 void WebServer::handle_receive(int i)
 {
-	// bzero(buffer, sizeof(buffer));
-    // int bytesReceived = recv(i, buffer, sizeof(buffer), 0);
-    // if (bytesReceived <= 0)
-    // {
-    //     std::cerr << "error: recv() failed" << std::endl;
-    //     close(i);
-    //     exit (1);
-    // }
 	int bytesReceived;
 	char buf[1024];
 	bzero(buf, 1024);
