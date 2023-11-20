@@ -19,13 +19,12 @@
 </server>
 
 <server>
-    host = 127.0.0.1
-    port = 6969
-    server_names = localhost
+    port = 80
+    server_names = localhost youssef.com
     client_max_body_size = 100000
     error_pages = 404.html 500.html
-    root = static/error_pages
-    index = index.html 500.html
+    root = static/QuizApp
+    index = index.html
 </server>
 
 <server>
