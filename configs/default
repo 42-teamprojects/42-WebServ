@@ -19,7 +19,7 @@
 </server>
 
 <server>
-    host = 127.0.0.1
+    host = 192.168.1.103
     port = 80
     server_names = localhost youssef.com isawi.me
     client_max_body_size = 100

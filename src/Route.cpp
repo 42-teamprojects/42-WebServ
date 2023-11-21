@@ -161,6 +161,6 @@ void                        Route::fill(std::string const &line, int &lineNb)
         setCgiExt(cgiExt);
     }
     else
-        Logger::error("Invalid route option: " + line);
+        Console::error("Invalid route option: " + line);
         // throw ServerException("Invalid server option", lineNb);
 }

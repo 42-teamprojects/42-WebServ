@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 22:27:57 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/19 20:25:58 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/21 14:29:37 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,12 @@ int main(int argc, char **argv)
         Config::parse(configPath);
         std::vector<Server> servers = Config::getServers(); 
 
-        Logger::log(INFO, "Starting server");
+        Console::log(INFO, "Starting server");
         WebServer server(servers);
         server.run();
         
     } catch (ServerException &e) {
-        Logger::error("Config file: " + std::string(e.what()));
+        Console::error("Config file: " + std::string(e.what()));
     }
 
     return 0;

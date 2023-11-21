@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Logger.hpp                                         :+:      :+:    :+:   */
+/*   Console.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -22,7 +22,7 @@
 # define ERROR 2
 # define DEBUG 3
 
-class Logger {
+class Console {
 public:
     static void info(const std::string& message) {
         log(INFO, message);
@@ -46,8 +46,8 @@ public:
     }
 
 private:
-    Logger() {}
-    ~Logger() {}
+    Console() {}
+    ~Console() {}
 
     static std::string getCurrentTime() {
         std::time_t now = std::time(NULL);

@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/20 15:31:21 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/21 14:29:37 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,14 @@ WebServer::WebServer(std::vector<Server> &servers) : servers(servers)
 	for (; it != servers.end(); ++it)
 	{
 		if (std::find(portsList.begin(), portsList.end(), it->getPort()) != portsList.end()) {
-			Logger::warning("Port " + toString(it->getPort()) + " is duplicated");
+			Console::warning("Port " + toString(it->getPort()) + " is duplicated");
 			continue;
 		}
 		ports += toString(it->getPort()) + (it != servers.end() - 1 ? ", " : "");
 		portsList.push_back(it->getPort());
 		handle_select(it->getPort(), i++);
 	}
-	Logger::info("WebServ is listening on ports " + ports + "\033[0m");
+	Console::info("WebServ is listening on ports " + ports + "\033[0m");
 }
 
 WebServer::~WebServer()
@@ -45,12 +45,12 @@ void WebServer::handle_select(int port, int idx)
 	srvs[idx].socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (srvs[idx].socket < 0)
 	{
-		Logger::error("socket() failed");
+		Console::error("socket() failed");
 		return ;
 	}
 	if (fcntl(srvs[idx].socket, F_SETFL, O_NONBLOCK, O_CLOEXEC) == -1)
 	{
-		Logger::error("fcntl() failed");
+		Console::error("fcntl() failed");
 		close(srvs[idx].socket);
 		return ; 
 	}
@@ -64,21 +64,21 @@ void WebServer::handle_select(int port, int idx)
 	int yes = 1;
 	if (setsockopt(srvs[idx].socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) < 0)
 	{
-		Logger::error("setsockopt() failed");
+		Console::error("setsockopt() failed");
 		close(srvs[idx].socket);
 		return ; 
 	}
 
 	if (bind(srvs[idx].socket, (struct sockaddr *)&srvs[idx].addr, sizeof(srvs[idx].addr)) < 0)
 	{
-		Logger::error("Bind() failed");
+		Console::error("Bind() failed");
 		close(srvs[idx].socket);
 		return ;
 	}
 
 	if (listen(srvs[idx].socket, 20) < 0)
 	{
-		Logger::error("Listen() failed");
+		Console::error("Listen() failed");
 		close(srvs[idx].socket);
 		return ;
 	}
@@ -90,13 +90,13 @@ void WebServer::handle_accept(int i)
     clientSocket = accept(srvs[i].socket, (struct sockaddr *)&srvs[i].addr, &addrSize);
     if (clientSocket < 0)
     {
-		Logger::error("Accept() failed");
+		Console::error("Accept() failed");
         close(clientSocket);
         return ; 
     }
     if (fcntl(clientSocket, F_SETFL, O_NONBLOCK, O_CLOEXEC) == -1)
     {
-		Logger::error("fcntl() failed");
+		Console::error("fcntl() failed");
         close(clientSocket);
         return; 
     }
@@ -127,7 +127,7 @@ void WebServer::handle_receive(int i)
 	if (bytesReceived <= 0)
 	{
 		close(i);
-		Logger::warning("Client " + toString(i) + " disconnected");
+		Console::warning("Client " + toString(i) + " disconnected");
 		return ; 
 	}
     else
@@ -138,9 +138,9 @@ void WebServer::handle_receive(int i)
         int bytesSent = send(i, response.c_str(), response.size(), 0);
         if (bytesSent < 0)
         {
-			Logger::error("Send() failed");
+			Console::error("Send() failed");
             close(i);
-			Logger::warning("Client " + toString(i) + " disconnected");
+			Console::warning("Client " + toString(i) + " disconnected");
             return ; 
         }
     }
@@ -155,7 +155,7 @@ void WebServer::run()
 		read_fds = master;
 		if (select(FD_SETSIZE, &read_fds, NULL, NULL, NULL) == -1)
 		{
-			Logger::error("Select() failed");
+			Console::error("Select() failed");
 			return ; 
 		}
 		for (int i = 0; i < FD_SETSIZE; i++)
