@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 22:16:34 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/21 14:29:37 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/21 21:46:43 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void Server::fill(std::string const &line, int &lineNb)
     std::vector<std::string>    split;
     std::string                 option, value;
 
-    split = ft_split<std::vector<std::string> >(line, "=");
+    split = ft_split(line, "=");
 
     if (split.size() != 2)
         throw ServerException("Invalid server line", lineNb);
@@ -84,45 +84,45 @@ void Server::fill(std::string const &line, int &lineNb)
 
     if (value.empty() || option.empty())
         throw ServerException("Invalid server line", lineNb);
-    if (option == "port") {
+    if (option == "port" && port == -1) {
         char *end;
         size_t port = std::strtod(value.c_str(), &end);
         if (*end != '\0')
             throw ServerException("Invalid server line", lineNb); 
         setPort(port);
     }
-    else if (option == "host") {
+    else if (option == "host" && host.empty()) {
         setHost(value);
     }
-    else if (option == "server_names") {
-        std::vector<std::string>    names = ft_split<std::vector<std::string> >(value, ", ");
+    else if (option == "server_names" && serverNames.empty()) {
+        std::vector<std::string>    names = ft_split(value, ", ");
         if (names.empty())
             throw ServerException("Invalid server line", lineNb);
         setServerNames(names);
     }
-    else if (option == "client_max_body_size") {
+    else if (option == "client_max_body_size" && clientMaxBodySize == 0) {
         char *end;
         double size = std::strtod(value.c_str(), &end);
         if (*end != '\0')
             throw ServerException("Invalid body size", lineNb);   
         setClientMaxBodySize(size);
     }
-    else if (option == "root") {
+    else if (option == "root" && root == DEFAULT_ROOT) {
         setRoot(value);
     }
-    else if (option == "index") {
-        std::vector<std::string>    index = ft_split<std::vector<std::string> >(value, ", ");
+    else if (option == "index" && index.empty()) {
+        std::vector<std::string>    index = ft_split(value, ", ");
         if (index.empty())
             throw ServerException("Invalid server line", lineNb);
         setIndex(index);
     }
-    else if (option == "error_pages") {
-        std::vector<std::string>    pages = ft_split<std::vector<std::string> >(value, ", ");
+    else if (option == "error_pages" && errorPages.empty()) {
+        std::vector<std::string>    pages = ft_split(value, ", ");
         if (pages.empty())
             throw ServerException("Invalid server line", lineNb);
         setErrorPages(pages);
     }
-    else if (option == "allow_listing") {
+    else if (option == "allow_listing" && allowListing == false) {
         if (value == "on" || value == "1" || value == "true")
             setAllowListing(true);
         else if (value == "off" || value == "0" || value == "false")
@@ -131,6 +131,6 @@ void Server::fill(std::string const &line, int &lineNb)
             throw ServerException("Invalid server line", lineNb);
     }
     else
-        Console::error("Invalid server option: " + line);
+        Console::warning("Invalid server option: " + line);
         // throw ServerException("Invalid server option", lineNb);
 }

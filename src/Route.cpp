@@ -111,7 +111,7 @@ void                        Route::fill(std::string const &line, int &lineNb)
     std::vector<std::string>    split;
     std::string                 option, value;
 
-    split = ft_split<std::vector<std::string> >(line, "=");
+    split = ft_split(line, "=");
 
     
     if (split.size() != 2)
@@ -120,31 +120,31 @@ void                        Route::fill(std::string const &line, int &lineNb)
     value = split[1];
     if (value.empty() || option.empty())
         throw ServerException("Invalid route line", lineNb);
-    if (option == "path") {
+    if (option == "path" && path.empty()) {
         setPath(value);
     }
-    else if (option == "root") {
+    else if (option == "root" && root.empty()) {
         setRoot(value);
     }
-    else if (option == "index") {
-        std::vector<std::string>    index = ft_split<std::vector<std::string> >(value, ", ");
+    else if (option == "index" && index.empty()) {
+        std::vector<std::string>    index = ft_split(value, ", ");
         if (index.empty())
             throw ServerException("Invalid route line", lineNb);
         setIndex(index);
     }
-    else if (option == "redirect") {
+    else if (option == "redirect" && redirect.empty()) {
         setRedirect(value);
     }
-    else if (option == "methods") {
-        std::vector<std::string>    methods = ft_split<std::vector<std::string> >(value, ", ");
+    else if (option == "methods" && methods.empty()) {
+        std::vector<std::string>    methods = ft_split(value, ", ");
         if (methods.empty())
             throw ServerException("Invalid route line", lineNb);
         setMethods(methods);
     }
-    else if (option == "upload_dir") {
+    else if (option == "upload_dir" && uploadDir.empty()) {
         setUploadDir(value);
     }
-    else if (option == "allow_listing") {
+    else if (option == "allow_listing" && allowListing == 0) {
         if (value == "on" || value == "1" || value == "true")
             setAllowListing(true);
         else if (value == "off" || value == "0" || value == "false")
@@ -152,16 +152,16 @@ void                        Route::fill(std::string const &line, int &lineNb)
         else
             throw ServerException("Invalid route line", lineNb);
     }
-    else if (option == "cgi_path") {
+    else if (option == "cgi_path" && cgiPath.empty()) {
         setCgiPath(value);
     }
-    else if (option == "cgi_ext" || option == "cgi_extension") {
-        std::vector<std::string>    cgiExt = ft_split<std::vector<std::string> >(value, ", ");
+    else if ((option == "cgi_ext" || option == "cgi_extension") && cgiExt.empty()) {
+        std::vector<std::string>    cgiExt = ft_split(value, ", ");
         if (cgiExt.empty())
             throw ServerException("Invalid route line", lineNb);
         setCgiExt(cgiExt);
     }
     else
-        Console::error("Invalid route option: " + line);
+        Console::warning("Invalid route option: " + line);
         // throw ServerException("Invalid server option", lineNb);
 }

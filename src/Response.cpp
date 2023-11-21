@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/21 17:33:33 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/21 22:07:25 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ Response::Response(std::string const & buffer) {
 
 Response::~Response() {}
 
-const char* Response::getStatusMessage(HttpStatusCode code) {
+std::string Response::getStatusMessage(HttpStatusCode code) {
     switch (code) {
         case BadRequest: return "Bad Request";
         case Unauthorized: return "Unauthorized";
@@ -37,6 +37,7 @@ const char* Response::getStatusMessage(HttpStatusCode code) {
 std::string Response::getResponse() {
     std::stringstream ss;
     ss << "HTTP/1.1 " << toString(code) << " " << getStatusMessage(code) << "\r\n";
+    ss << "Connection: keep-alive\r\n";
     for (std::map<std::string, std::string>::iterator it = headers.begin(); it != headers.end(); it++) {
         ss << it->first << ": " << it->second << "\r\n";
     }
@@ -45,7 +46,7 @@ std::string Response::getResponse() {
     return ss.str();
 }
 
-void Response::serveStaticFile(std::string const &filePath) {
+void Response::serveStaticFile(std::string const &filePath, HttpStatusCode code) {
     std::ifstream file(filePath);
     if (file.is_open()) {
         std::stringstream buffer;
@@ -53,8 +54,8 @@ void Response::serveStaticFile(std::string const &filePath) {
         body = buffer.str();
         file.close();
     } else {
-        code = NotFound;
-        body = getStatusMessage(code);
+        code = code == OK ? NotFound : code;
+        body = "<h1>" + getStatusMessage(code) + "</h1>";
     }
 }
 
@@ -73,24 +74,6 @@ std::string Response::getRequestedResource(std::string const & uri) {
         resource = resource.substr(0, pos);
     }
     return resource;
-}
-
-static bool isDirectory(std::string path)
-{
-    struct stat stat_buf;
-    if (stat(path.c_str(), &stat_buf) != 0)
-        return false;
-
-    return S_ISDIR(stat_buf.st_mode);
-}
-
-static bool isFile(std::string path)
-{
-    struct stat stat_buf;
-    if (stat(path.c_str(), &stat_buf) != 0)
-        return false;
-
-    return S_ISREG(stat_buf.st_mode);
 }
 
 Route Response::getRoute(Server & server, Request const & req) {
@@ -141,53 +124,6 @@ std::string Response::tryFiles(Server const & server, Route const & route, Reque
     throw ServerException(NotFound);
 }
 
-std::vector<std::string> getFilesInDirectory(std::string const & directoryPath) {
-    std::vector<std::string> files;
-
-    DIR* dir = opendir(directoryPath.c_str());
-    if (dir == NULL) {
-        Console::error("Error opening directory: " + directoryPath);
-        throw ServerException(ServerError);
-    }
-
-    struct dirent* entry;
-    while ((entry = readdir(dir)) != NULL) {
-        // Ignore "." and ".." entries
-        if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) {
-            if (entry->d_type == DT_DIR)
-                files.push_back(entry->d_name + std::string("/"));
-            else
-                files.push_back(entry->d_name);
-        }
-    }
-
-    closedir(dir);
-
-    return files;
-}
-
-std::string generateHtmlListing(const std::vector<std::string>& files) {
-    std::string htmlFilePath = "/tmp/listing.html";
-
-    std::ofstream htmlFile(htmlFilePath);
-
-    if (!htmlFile.is_open()) {
-        Console::error("Error opening HTML file for writing listings");
-        return NULL;
-    }
-    
-    htmlFile << "<!DOCTYPE html>\n<html>\n<head>\n<title>File Listing</title>\n</head>\n<body>\n";
-    htmlFile << "<ul>\n";
-    for (size_t i = 0; i < files.size(); ++i) {
-        htmlFile << "  <li><a href='" << files[i] << "'>" << files[i] << "</a></li>\n";
-    }
-    htmlFile << "</ul>\n";
-    htmlFile << "</body>\n</html>\n";
-    htmlFile.close();
-
-    return htmlFilePath;
-}
-
 std::string Response::getFilePath(Server const & server, Route const & route, Request const & req) {
     if (route.getRouteType() == Route::FILE) {
         return route.getRoot() + "/" + route.getPath();
@@ -214,7 +150,7 @@ void Response::handleGet(Server const & server, Route const & route, Request con
     std::string filePath = getFilePath(server, route, req);
     removeConsecutiveChars(filePath, '/');
     Console::info("Serving file: " + filePath);
-    serveStaticFile(filePath);
+    serveStaticFile(filePath, OK);
 }
 
 void Response::handleResponse(Request const & req) {
@@ -236,11 +172,11 @@ void Response::handleResponse(Request const & req) {
         }
     } catch (ServerException & e) {
         code = static_cast<HttpStatusCode>(std::atoi(e.what()));
-        body = getStatusMessage(code);
-        Console::warning(getStatusMessage(code));
+        serveStaticFile("static/error_pages/" + toString(code) + ".html", code);
+        Console::warning(req.getUri() + " : " + getStatusMessage(code));
     } catch (std::exception & e) {
         code = ServerError;
-        body = getStatusMessage(code);
+        serveStaticFile("static/error_pages/500.html", code);
         Console::error(getStatusMessage(code));
     }
 }

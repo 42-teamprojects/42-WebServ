@@ -51,12 +51,10 @@ public:
     void                        setCgiPath(const std::string& cgiPath);
     void                        setCgiExt(const std::vector<std::string>& cgiExt);
 
-    // Getter for route type
     RouteType getRouteType() const {
         return routeType;
     }
 
-    // Setter for route type
     void setRouteType(RouteType type) {
         routeType = type;
     }

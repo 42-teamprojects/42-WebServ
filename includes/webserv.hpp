@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 13:35:49 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/21 17:02:28 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/21 21:26:21 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,3 @@
 #include "Console.hpp"
 
 # define DEFAULT_ROOT "/var/www/html"
-

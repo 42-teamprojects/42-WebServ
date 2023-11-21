@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 15:46:37 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/19 17:55:27 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/21 22:03:04 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,11 @@ public:
     Response(std::string const &buffer);
     ~Response();
 
-    const char *getStatusMessage(HttpStatusCode);
+    std::string getStatusMessage(HttpStatusCode);
 
     std::string getResponse();
 
-    void serveStaticFile(std::string const &);
+    void serveStaticFile(std::string const &, HttpStatusCode);
 
     Server getServer(Request const &);
 
