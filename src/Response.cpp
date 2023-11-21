@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/21 14:29:37 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/21 17:33:33 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,19 +75,37 @@ std::string Response::getRequestedResource(std::string const & uri) {
     return resource;
 }
 
-Route Response::getRoute(Server & server, Request const & req) {
-    // Check if request is for default "/"
-    if (req.getUri().back() == '/') {
-        return Route();
-    }
-    // Check if request is for a resource file
-    std::string resource = getRequestedResource(req.getUri());
-    if (resource.find(".") != std::string::npos)
-        return Route("/" + resource);
+static bool isDirectory(std::string path)
+{
+    struct stat stat_buf;
+    if (stat(path.c_str(), &stat_buf) != 0)
+        return false;
 
-    std::vector<Route>::iterator it = server.find(req.getUri());
+    return S_ISDIR(stat_buf.st_mode);
+}
+
+static bool isFile(std::string path)
+{
+    struct stat stat_buf;
+    if (stat(path.c_str(), &stat_buf) != 0)
+        return false;
+
+    return S_ISREG(stat_buf.st_mode);
+}
+
+Route Response::getRoute(Server & server, Request const & req) {
+    std::string resource = getRequestedResource(req.getUri());
+
+    std::vector<Route>::iterator it = server.find(resource);
     if (it == server.end()) { // Get matched route for request
-        throw ServerException(NotFound);
+        if (isDirectory(server.getRoot() + resource)) { // Check if resource is a directory
+            return Route(server.getRoot() + "/" + resource, "", Route::DIRECTORY);
+        }
+        else if (isFile(server.getRoot() + resource)) { // Check if resource is a file
+            return Route(server.getRoot(), resource, Route::FILE);
+        }
+        else
+            throw ServerException(NotFound);
     }
     if (!it->getRedirect().empty()) { // Check if route have redirection
         headers["Location"] = it->getRedirect();
@@ -105,7 +123,7 @@ std::string Response::tryFiles(Server const & server, Route const & route, Reque
 
     std::vector<std::string> indexes;
     // Check if route is a file if not get index
-    if (!route.getPath().empty() && route.getPath().find('.') != std::string::npos) {
+    if (route.getRouteType() == Route::FILE) {
         indexes.push_back(route.getPath());
     } else {
         indexes = route.getIndex().empty() ? (server.getIndex().empty() ? std::vector<std::string>() : server.getIndex()) : route.getIndex();
@@ -123,19 +141,79 @@ std::string Response::tryFiles(Server const & server, Route const & route, Reque
     throw ServerException(NotFound);
 }
 
+std::vector<std::string> getFilesInDirectory(std::string const & directoryPath) {
+    std::vector<std::string> files;
+
+    DIR* dir = opendir(directoryPath.c_str());
+    if (dir == NULL) {
+        Console::error("Error opening directory: " + directoryPath);
+        throw ServerException(ServerError);
+    }
+
+    struct dirent* entry;
+    while ((entry = readdir(dir)) != NULL) {
+        // Ignore "." and ".." entries
+        if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) {
+            if (entry->d_type == DT_DIR)
+                files.push_back(entry->d_name + std::string("/"));
+            else
+                files.push_back(entry->d_name);
+        }
+    }
+
+    closedir(dir);
+
+    return files;
+}
+
+std::string generateHtmlListing(const std::vector<std::string>& files) {
+    std::string htmlFilePath = "/tmp/listing.html";
+
+    std::ofstream htmlFile(htmlFilePath);
+
+    if (!htmlFile.is_open()) {
+        Console::error("Error opening HTML file for writing listings");
+        return NULL;
+    }
+    
+    htmlFile << "<!DOCTYPE html>\n<html>\n<head>\n<title>File Listing</title>\n</head>\n<body>\n";
+    htmlFile << "<ul>\n";
+    for (size_t i = 0; i < files.size(); ++i) {
+        htmlFile << "  <li><a href='" << files[i] << "'>" << files[i] << "</a></li>\n";
+    }
+    htmlFile << "</ul>\n";
+    htmlFile << "</body>\n</html>\n";
+    htmlFile.close();
+
+    return htmlFilePath;
+}
+
 std::string Response::getFilePath(Server const & server, Route const & route, Request const & req) {
+    if (route.getRouteType() == Route::FILE) {
+        return route.getRoot() + "/" + route.getPath();
+    }
+    
     std::string filePath;
     std::string root = route.getRoot().empty() ? server.getRoot() : route.getRoot();
-    std::string index = tryFiles(server, route, req, root);
-
-    filePath = root + "/" + index;
-    removeConsecutiveChars(filePath, '/');
-    Console::info("Serving file: " + filePath);
-    return filePath;
+    try {
+        std::string index = tryFiles(server, route, req, root);
+        
+        filePath = root + "/" + index;
+        return filePath;
+    } catch (ServerException & e) {
+        if (e.what() == toString(NotFound) \
+            && (route.getAllowListing() || (route.getRouteType() == Route::DIRECTORY && server.getAllowListing()))) {
+            std::vector<std::string> files = getFilesInDirectory(root);
+            return generateHtmlListing(files);
+        }
+        throw ServerException(Forbidden);
+    }
 }
 
 void Response::handleGet(Server const & server, Route const & route, Request const & req) {
     std::string filePath = getFilePath(server, route, req);
+    removeConsecutiveChars(filePath, '/');
+    Console::info("Serving file: " + filePath);
     serveStaticFile(filePath);
 }
 

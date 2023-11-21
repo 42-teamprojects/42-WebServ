@@ -6,6 +6,7 @@
     error_pages = 404.html 500.html
     root = static
     index = index.html
+    allow_listing = true
     <route path="/method">
         methods = POST
     </route>
@@ -14,7 +15,7 @@
     </route>
     <route path="/301">
         root = static/error_pages
-        index = adsfa.html 301.html
+        allow_listing = true
     </route>
 </server>
 

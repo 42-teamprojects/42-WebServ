@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 13:35:49 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/21 14:29:37 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/21 17:02:28 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,11 @@
 #include <netinet/in.h>
 #include <sstream>
 #include <fcntl.h>
-
 #include <vector>
 #include <map>
 #include <stack>
+#include <sys/stat.h>
+#include <dirent.h>
 
 #include "utils.hpp"
 
@@ -38,3 +39,4 @@
 #include "Console.hpp"
 
 # define DEFAULT_ROOT "/var/www/html"
+

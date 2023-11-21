@@ -13,8 +13,9 @@
 #include "Route.hpp"
 #include "webserv.hpp"
 
-Route::Route() : path(""), root(""), index(), redirect(), methods(), uploadDir(""), allowListing(0), cgiExt(), cgiPath("") {};
-Route::Route(std::string const & path) : path(path), root(""), index(), redirect(), methods(), uploadDir(""), allowListing(0), cgiExt(), cgiPath("") {};
+Route::Route() : path(""), root(""), index(), redirect(), methods(), uploadDir(""), allowListing(0), cgiExt(), cgiPath(""), routeType(OTHER) {};
+Route::Route(std::string const & path) : path(path), root(""), index(), redirect(), methods(), uploadDir(""), allowListing(0), cgiExt(), cgiPath(""), routeType(OTHER) {};
+Route::Route(std::string const & root, std::string const & path, RouteType routeType) : path(path), root(root), index(), redirect(), methods(), uploadDir(""), allowListing(0), cgiExt(), cgiPath(""), routeType(routeType) {};
 Route::~Route() {};
 
 // Getters

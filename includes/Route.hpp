@@ -17,19 +17,16 @@
 
 class Route
 {
-private:
-    std::string                     path;
-    std::string                     root;
-    std::vector<std::string>        index;
-    std::string                     redirect;
-    std::vector<std::string>        methods;
-    std::string                     uploadDir;
-    bool                            allowListing;
-    std::vector<std::string>        cgiExt;
-    std::string                     cgiPath;
 public:
+    enum RouteType {
+        FILE,
+        DIRECTORY,
+        OTHER
+    };
+    
     Route();
     Route(std::string const & path);
+    Route(std::string const & root, std::string const & path, RouteType routeType);
     ~Route();
 
     // Getters
@@ -54,9 +51,32 @@ public:
     void                        setCgiPath(const std::string& cgiPath);
     void                        setCgiExt(const std::vector<std::string>& cgiExt);
 
+    // Getter for route type
+    RouteType getRouteType() const {
+        return routeType;
+    }
+
+    // Setter for route type
+    void setRouteType(RouteType type) {
+        routeType = type;
+    }
+
     // Methods
     void                        print() const;
     void                        fill(std::string const &line, int &lineNb);
+private:
+    std::string                     path;
+    std::string                     root;
+    std::vector<std::string>        index;
+    std::string                     redirect;
+    std::vector<std::string>        methods;
+    std::string                     uploadDir;
+    bool                            allowListing;
+    std::vector<std::string>        cgiExt;
+    std::string                     cgiPath;
+
+    RouteType                       routeType;
+
 };
 
 
