@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/18 17:18:52 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/19 14:21:41 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/11/21 15:39:04 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ class Cgi
 	private :
 		std::string path;
 		std::string filename;
+		std::string responseBody;
 	public :
 		Cgi();
 		Cgi(std::string path, std::string filename);
@@ -32,5 +33,6 @@ class Cgi
 		void setFilename(std::string filename);
 		std::string getPath();
 		std::string getFilename();
-		void executCgi(Request &req, Response &res, Server &serv);
+		std::string getResponseBody();
+		void executCgi();
 };

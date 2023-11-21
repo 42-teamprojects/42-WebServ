@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/19 14:41:44 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/11/21 15:52:15 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,9 @@ void WebServer::handle_receive(int i)
 		Response res(buffer);
 		buffer.clear();
 	    std::string response = res.getResponse();
+		// Cgi test;
+		// test.executCgi();
+		// response = test.getResponseBody();
         int bytesSent = send(i, response.c_str(), response.size(), 0);
         if (bytesSent < 0)
         {

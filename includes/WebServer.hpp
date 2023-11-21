@@ -6,13 +6,14 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:15 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/19 14:38:24 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/11/21 15:41:54 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "webserv.hpp"
+#include "Cgi.hpp"
 
 typedef struct s_server
 {

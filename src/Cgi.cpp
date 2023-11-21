@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/18 17:18:58 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/20 17:34:27 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/11/21 15:51:47 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 
 Cgi::Cgi()
 {
-	this->path = "";
-	this->filename = "";
+	this->path = "/usr/bin/php";
+	this->filename = "/Users/htalhaou/Desktop/42-WebServ/test.php";
 }
 
 Cgi::Cgi(std::string path, std::string filename)
@@ -64,7 +64,12 @@ std::string Cgi::getFilename()
 	return (this->filename);
 }
 
-void Cgi::executCgi(Request &req, Response &res, Server &serv)
+std::string Cgi::getResponseBody()
+{
+	return (this->responseBody);
+}
+
+void Cgi::executCgi()
 {
 	std::string cgiPath;
 	int fd[2];
@@ -74,12 +79,11 @@ void Cgi::executCgi(Request &req, Response &res, Server &serv)
 	{
 		close(fd[0]);
 		dup2(fd[1], 1);
-		dup2(fd[1], 2);
+		char *argv[] = {const_cast<char *>(this->path.c_str()), const_cast<char *>(filename.c_str()), NULL};
+		execve(this->path.c_str(), argv, NULL);
+		std::cerr << "error: execve" << std::endl;
 		close(fd[1]);
-		cgiPath = this->path + this->filename;
-		char *argv[] = {const_cast<char *>(cgiPath.c_str()), NULL};
-		execve(cgiPath.c_str(), argv, NULL);
-		exit(0);
+		exit(1);
 	}
 	else if (pid > 0)
 	{
@@ -88,13 +92,14 @@ void Cgi::executCgi(Request &req, Response &res, Server &serv)
 		char buffer[1024];
 		std::string body;
 		int ret;
-		while ((ret = recv(fd[0], buffer, 1023, 0)) > 0)
+		while ((ret = read(fd[0], buffer, 1023)) > 0)
 		{
 			buffer[ret] = '\0';
 			body += buffer;
 		}
+		std::cout << body << std::endl;
+		this->responseBody = body;
 		close(fd[0]);
-		res.setBody(body);
 	}
 	else
 	{
