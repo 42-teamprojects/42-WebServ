@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 13:35:49 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/21 21:26:21 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/22 12:59:32 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,14 @@
 #include <dirent.h>
 
 #include "utils.hpp"
+#include "Console.hpp"
 
 #include "Server.hpp"
 #include "Route.hpp"
+#include "Config.hpp"
 #include "Request.hpp"
 #include "Response.hpp"
 #include "WebServer.hpp"
-#include "Config.hpp"
 #include "ServerException.hpp"
-#include "Console.hpp"
 
 # define DEFAULT_ROOT "/var/www/html"

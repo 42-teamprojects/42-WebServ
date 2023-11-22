@@ -3,7 +3,7 @@
     port = 80
     server_names = localhost
     client_max_body_size = 100000
-    error_pages = 404.html 500.html
+    error_pages = 404:static/error_pages/404.html 500:static/error_pages/500.html
     root = static
     index = index.html
     allow_listing = true
@@ -13,18 +13,18 @@
     <route path="/redirect">
         redirect = index.html
     </route>
-    <route path="/301">
+    <route path="/errors">
         root = static/error_pages
         allow_listing = true
     </route>
 </server>
 
 <server>
-    host = 192.168.1.103
+    host = 10.12.11.5
     port = 80
-    server_names = localhost youssef.com isawi.me
+    server_names = localhost 192.168.1.103 10.12.11.5 youssef.com isawi.me
     client_max_body_size = 100
-    error_pages = 404.html 500.html
+    error_pages = 404:static/error_pages/404.html
     root = static/QuizApp
     index = index.html
 </server>
@@ -34,9 +34,9 @@
     port = 3000
     server_names = localhost
     client_max_body_size = 100000
-    error_pages = 404.html 500.html
+    error_pages = 404:static/error_pages/404.html
     root = static
-    index = error_pages/404.html
+    allow_listing = true
     <route path="/index">
         methods = GET, POST
         cgi_extension = .php 

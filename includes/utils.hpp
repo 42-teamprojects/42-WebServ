@@ -6,12 +6,13 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 11:27:18 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/21 21:49:53 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/22 15:17:24 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webserv.hpp"
+#pragma once
 
+#include "webserv.hpp"
 typedef enum e_HttpStatusCode {
     OK = 200,
     MovedPermanently = 301,
@@ -45,12 +46,23 @@ void printContainer(const Container& c)
     std::cout << std::endl;
 }
 
+template <typename Container>
+void printMap(const Container& c)
+{
+    typename Container::const_iterator it;
+    for (it = c.begin(); it != c.end(); ++it)
+    {
+        std::cout << it->first << " : " << it->second << std::endl;    
+    }
+    std::cout << std::endl;
+}
 
-std::vector<std::string>    getFilesInDirectory(std::string const &);
+
+std::vector<std::string>    getFilesInDirectory(std::string const &, std::string const &);
 std::string                 generateHtmlListing(const std::vector<std::string>&);
 void                        removeConsecutiveChars(std::string &, char);
 void                        trim(std::string &);
 std::vector<std::string>    ft_split(const std::string &, const std::string &);
-
-bool isDirectory(std::string);
-bool isFile(std::string);
+bool                        mapErrorPages(std::map<int, std::string> & errorPages, std::string const & value);
+bool                        isDirectory(std::string);
+bool                        isFile(std::string);

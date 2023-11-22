@@ -13,84 +13,106 @@
 #include "Route.hpp"
 #include "webserv.hpp"
 
-Route::Route() : path(""), root(""), index(), redirect(), methods(), uploadDir(""), allowListing(0), cgiExt(), cgiPath(""), routeType(OTHER) {};
-Route::Route(std::string const & path) : path(path), root(""), index(), redirect(), methods(), uploadDir(""), allowListing(0), cgiExt(), cgiPath(""), routeType(OTHER) {};
-Route::Route(std::string const & root, std::string const & path, RouteType routeType) : path(path), root(root), index(), redirect(), methods(), uploadDir(""), allowListing(0), cgiExt(), cgiPath(""), routeType(routeType) {};
-Route::~Route() {};
+Route::Route() : path(""), root(""), index(), redirect(), methods(), uploadDir(""), errorPages(), allowListing(0), cgiExt(), cgiPath(""), routeType(OTHER) {};
+Route::Route(std::string const &path) : path(path), root(""), index(), redirect(), methods(), uploadDir(""), errorPages(), allowListing(0), cgiExt(), cgiPath(""), routeType(OTHER) {};
+Route::Route(std::string const &root, std::string const &path, RouteType routeType) : path(path), root(root), index(), redirect(), methods(), uploadDir(""), errorPages(), allowListing(0), cgiExt(), cgiPath(""), routeType(routeType){};
+Route::~Route(){};
 
 // Getters
-std::string Route::getPath() const {
+std::string Route::getPath() const
+{
     return path;
 }
-std::string Route::getRoot() const {
+std::string Route::getRoot() const
+{
     return root;
 }
-std::vector<std::string> Route::getIndex() const {
+std::vector<std::string> Route::getIndex() const
+{
     return index;
 }
-std::string Route::getRedirect() const {
+std::string Route::getRedirect() const
+{
     return redirect;
 }
-std::vector<std::string> Route::getMethods() const {
+std::vector<std::string> Route::getMethods() const
+{
     return methods;
 }
-std::string Route::getUploadDir() const {
+std::string Route::getUploadDir() const
+{
     return uploadDir;
 }
-bool Route::getAllowListing() const {
+bool Route::getAllowListing() const
+{
     return allowListing;
 }
-std::string Route::getCgiPath() const {
+std::map<int, std::string> Route::getErrorPages() const { return errorPages; }
+std::string Route::getCgiPath() const
+{
     return cgiPath;
 }
-std::vector<std::string> Route::getCgiExt() const {
+std::vector<std::string> Route::getCgiExt() const
+{
     return cgiExt;
 }
 
 // Setters
-void Route::setPath(const std::string& path) {
+void Route::setPath(const std::string &path)
+{
     this->path = path;
 }
-void Route::setRoot(const std::string& root) {
+void Route::setRoot(const std::string &root)
+{
     this->root = root;
 }
-void Route::setIndex(const std::vector<std::string>& index) {
+void Route::setIndex(const std::vector<std::string> &index)
+{
     this->index = index;
 }
-void Route::setRedirect(const std::string& redirect) {
+void Route::setRedirect(const std::string &redirect)
+{
     this->redirect = redirect;
 }
-void Route::setMethods(const std::vector<std::string>& methods) {
+void Route::setMethods(const std::vector<std::string> &methods)
+{
     this->methods = methods;
 }
-void Route::setUploadDir(const std::string& uploadDir) {
+void Route::setUploadDir(const std::string &uploadDir)
+{
     this->uploadDir = uploadDir;
 }
-void Route::setAllowListing(const bool& allowListing) {
+void Route::setAllowListing(const bool &allowListing)
+{
     this->allowListing = allowListing;
 }
-void Route::setCgiPath(const std::string& cgiPath) {
+void    Route::setErrorPages(const std::map<int, std::string> & errorPages) { this->errorPages = errorPages; }
+void Route::setCgiPath(const std::string &cgiPath)
+{
     this->cgiPath = cgiPath;
 }
-void Route::setCgiExt(const std::vector<std::string>& cgiExt) {
+void Route::setCgiExt(const std::vector<std::string> &cgiExt)
+{
     this->cgiExt = cgiExt;
 }
 
 // Methods
-void                        Route::print() const
+void Route::print() const
 {
     std::cout << "***********" << std::endl;
     if (!path.empty())
         std::cout << "path: " << path << std::endl;
     if (!root.empty())
         std::cout << "root: " << root << std::endl;
-    if (!index.empty()) {
+    if (!index.empty())
+    {
         std::cout << "index: ";
         printContainer(index);
     }
     if (!redirect.empty())
         std::cout << "redirect: " << redirect << std::endl;
-    if (!methods.empty()) {
+    if (!methods.empty())
+    {
         std::cout << "methods: ";
         printContainer(methods);
     }
@@ -98,53 +120,65 @@ void                        Route::print() const
         std::cout << "uploadDir: " << uploadDir << std::endl;
     if (allowListing)
         std::cout << "allowListing: " << allowListing << std::endl;
+    if (!errorPages.empty()) {
+        std::cout << "error_pages: ";
+        printMap(errorPages);
+    }
+    std::cout << routeType << std::endl;
     if (!cgiPath.empty())
         std::cout << "cgiPath: " << cgiPath << std::endl;
-    if (!cgiExt.empty()) {
+    if (!cgiExt.empty())
+    {
         std::cout << "cgiExt: ";
         printContainer(cgiExt);
     }
 }
 
-void                        Route::fill(std::string const &line, int &lineNb)
+void Route::fill(std::string const &line, int &lineNb)
 {
-    std::vector<std::string>    split;
-    std::string                 option, value;
+    std::vector<std::string> split;
+    std::string option, value;
 
     split = ft_split(line, "=");
 
-    
     if (split.size() != 2)
         throw ServerException("Invalid route line", lineNb);
     option = split[0];
     value = split[1];
     if (value.empty() || option.empty())
         throw ServerException("Invalid route line", lineNb);
-    if (option == "path" && path.empty()) {
+    if (option == "path" && path.empty())
+    {
         setPath(value);
     }
-    else if (option == "root" && root.empty()) {
+    else if (option == "root" && root.empty())
+    {
         setRoot(value);
     }
-    else if (option == "index" && index.empty()) {
-        std::vector<std::string>    index = ft_split(value, ", ");
+    else if (option == "index" && index.empty())
+    {
+        std::vector<std::string> index = ft_split(value, ", ");
         if (index.empty())
             throw ServerException("Invalid route line", lineNb);
         setIndex(index);
     }
-    else if (option == "redirect" && redirect.empty()) {
+    else if (option == "redirect" && redirect.empty())
+    {
         setRedirect(value);
     }
-    else if (option == "methods" && methods.empty()) {
-        std::vector<std::string>    methods = ft_split(value, ", ");
+    else if (option == "methods" && methods.empty())
+    {
+        std::vector<std::string> methods = ft_split(value, ", ");
         if (methods.empty())
             throw ServerException("Invalid route line", lineNb);
         setMethods(methods);
     }
-    else if (option == "upload_dir" && uploadDir.empty()) {
+    else if (option == "upload_dir" && uploadDir.empty())
+    {
         setUploadDir(value);
     }
-    else if (option == "allow_listing" && allowListing == 0) {
+    else if (option == "allow_listing" && allowListing == 0)
+    {
         if (value == "on" || value == "1" || value == "true")
             setAllowListing(true);
         else if (value == "off" || value == "0" || value == "false")
@@ -152,16 +186,22 @@ void                        Route::fill(std::string const &line, int &lineNb)
         else
             throw ServerException("Invalid route line", lineNb);
     }
-    else if (option == "cgi_path" && cgiPath.empty()) {
+    else if (option == "error_pages" && errorPages.empty()) {
+        if (!mapErrorPages(errorPages, value))
+            throw ServerException("Invalid server line", lineNb);
+    }
+    else if (option == "cgi_path" && cgiPath.empty())
+    {
         setCgiPath(value);
     }
-    else if ((option == "cgi_ext" || option == "cgi_extension") && cgiExt.empty()) {
-        std::vector<std::string>    cgiExt = ft_split(value, ", ");
+    else if ((option == "cgi_ext" || option == "cgi_extension") && cgiExt.empty())
+    {
+        std::vector<std::string> cgiExt = ft_split(value, ", ");
         if (cgiExt.empty())
             throw ServerException("Invalid route line", lineNb);
         setCgiExt(cgiExt);
     }
     else
         Console::warning("Invalid route option: " + line);
-        // throw ServerException("Invalid server option", lineNb);
+    // throw ServerException("Invalid server option", lineNb);
 }

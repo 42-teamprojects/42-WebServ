@@ -6,29 +6,33 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 21:19:31 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/21 22:24:36 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/22 18:33:24 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-std::vector<std::string> getFilesInDirectory(std::string const & directoryPath) {
+std::vector<std::string> getFilesInDirectory(std::string const & rootPath, std::string const & reqPath) {
     std::vector<std::string> files;
+    std::string              directoryPath = rootPath + "/" + reqPath;
 
+    std::cout << directoryPath << std::endl;
     DIR* dir = opendir(directoryPath.c_str());
     if (dir == NULL) {
         Console::error("Error opening directory: " + directoryPath);
-        throw ServerException(ServerError);
+        throw ServerException(NotFound);
     }
 
     struct dirent* entry;
     while ((entry = readdir(dir)) != NULL) {
         // Ignore "." and ".." entries
         if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) {
+            std::string path = reqPath + "/" + entry->d_name;
+            removeConsecutiveChars(path, '/');
             if (entry->d_type == DT_DIR)
-                files.push_back(entry->d_name + std::string("/"));
+                files.push_back(path + std::string("/"));
             else
-                files.push_back(entry->d_name);
+                files.push_back(path);
         }
     }
 
@@ -57,6 +61,23 @@ std::string generateHtmlListing(const std::vector<std::string>& files) {
     htmlFile.close();
 
     return htmlFilePath;
+}
+
+bool    mapErrorPages(std::map<int, std::string> & errorPages, std::string const & value)
+{
+    std::vector<std::string>    pages = ft_split(value, ", ");
+    for (std::vector<std::string>::iterator it = pages.begin(); it != pages.end(); ++it) {
+        std::vector<std::string>    page = ft_split(*it, ":");
+        if (page.size() != 2)
+            return false;
+        int code = std::atoi(page[0].c_str());
+        if (code < 300 || code > 599)
+            return false;
+        errorPages[code] = page[1];
+    }
+    if (pages.empty())
+        return false;
+    return true;
 }
 
 bool isDirectory(std::string path)

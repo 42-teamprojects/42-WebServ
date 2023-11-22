@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 15:46:37 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/21 22:03:04 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/22 16:01:06 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ class Request;
 class Response
 {
 private:
+    Request *request;
     HttpStatusCode code;
     std::map<std::string, std::string> headers;
     std::string body;
@@ -33,17 +34,17 @@ public:
 
     void serveStaticFile(std::string const &, HttpStatusCode);
 
-    Server getServer(Request const &);
+    Server getServer();
 
-    Route getRoute(Server &, Request const &);
+    Route getRoute(Server &);
 
-    void handleResponse(Request const &);
+    void handleResponse();
 
-    void handleGet(Server const &, Route const &, Request const &);
+    void handleGet(Server const &, Route const &);
 
     std::string getRequestedResource(std::string const &);
 
-    std::string getFilePath(Server const &, Route const &, Request const &);
+    std::string getFilePath(Server const &, Route const &);
 
-    std::string tryFiles(Server const &, Route const &, Request const &, std::string const &);
+    std::string tryFiles(Server const &, Route const &, std::string const &);
 };

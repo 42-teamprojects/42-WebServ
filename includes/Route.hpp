@@ -14,7 +14,9 @@
 
 #include <iostream>
 #include <vector>
-
+#include <map>
+// #include "utils.hpp"
+// #include "webserv.hpp"
 class Route
 {
 public:
@@ -30,26 +32,28 @@ public:
     ~Route();
 
     // Getters
-    std::string                 getPath() const;
-    std::string                 getRoot() const;
-    std::vector<std::string>    getIndex() const;
-    std::string                 getRedirect() const;
-    std::vector<std::string>    getMethods() const;
-    std::string                 getUploadDir() const;
-    bool                        getAllowListing() const;
-    std::string                 getCgiPath() const;
-    std::vector<std::string>    getCgiExt() const;
+    std::string                                 getPath() const;
+    std::string                                 getRoot() const;
+    std::vector<std::string>                    getIndex() const;
+    std::string                                 getRedirect() const;
+    std::vector<std::string>                    getMethods() const;
+    std::string                                 getUploadDir() const;
+    bool                                        getAllowListing() const;
+    std::map<int, std::string>                  getErrorPages() const;
+    std::string                                 getCgiPath() const;
+    std::vector<std::string>                    getCgiExt() const;
 
     // Setters
-    void                        setPath(const std::string& path);
-    void                        setRoot(const std::string& root);
-    void                        setIndex(const std::vector<std::string>& index);
-    void                        setRedirect(const std::string& redirect);
-    void                        setMethods(const std::vector<std::string>& methods);
-    void                        setUploadDir(const std::string& uploadDir);
-    void                        setAllowListing(const bool& allowListing);
-    void                        setCgiPath(const std::string& cgiPath);
-    void                        setCgiExt(const std::vector<std::string>& cgiExt);
+    void                                        setPath(const std::string& path);
+    void                                        setRoot(const std::string& root);
+    void                                        setIndex(const std::vector<std::string>& index);
+    void                                        setRedirect(const std::string& redirect);
+    void                                        setMethods(const std::vector<std::string>& methods);
+    void                                        setUploadDir(const std::string& uploadDir);
+    void                                        setAllowListing(const bool& allowListing);
+    void                                        setErrorPages(const std::map<int, std::string>&);
+    void                                        setCgiPath(const std::string& cgiPath);
+    void                                        setCgiExt(const std::vector<std::string>& cgiExt);
 
     RouteType getRouteType() const {
         return routeType;
@@ -63,17 +67,18 @@ public:
     void                        print() const;
     void                        fill(std::string const &line, int &lineNb);
 private:
-    std::string                     path;
-    std::string                     root;
-    std::vector<std::string>        index;
-    std::string                     redirect;
-    std::vector<std::string>        methods;
-    std::string                     uploadDir;
-    bool                            allowListing;
-    std::vector<std::string>        cgiExt;
-    std::string                     cgiPath;
+    std::string                             path;
+    std::string                             root;
+    std::vector<std::string>                index;
+    std::string                             redirect;
+    std::vector<std::string>                methods;
+    std::string                             uploadDir;
+    std::map<int, std::string>   errorPages;
+    bool                                    allowListing;
+    std::vector<std::string>                cgiExt;
+    std::string                             cgiPath;
 
-    RouteType                       routeType;
+    RouteType                               routeType;
 
 };
 
