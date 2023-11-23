@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 15:46:37 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/22 16:01:06 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/23 16:23:14 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,5 +46,5 @@ public:
 
     std::string getFilePath(Server const &, Route const &);
 
-    std::string tryFiles(Server const &, Route const &, std::string const &);
+    std::string tryFiles(Server const &, Route const &, std::string &);
 };

@@ -5,17 +5,12 @@
     client_max_body_size = 100000
     error_pages = 404:static/error_pages/404.html 500:static/error_pages/500.html
     root = static
-    index = index.html
     allow_listing = true
     <route path="/method">
         methods = POST
     </route>
     <route path="/redirect">
         redirect = index.html
-    </route>
-    <route path="/errors">
-        root = static/error_pages
-        allow_listing = true
     </route>
 </server>
 

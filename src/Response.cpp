@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/22 18:54:17 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/23 16:42:05 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void Response::serveStaticFile(std::string const &filePath, HttpStatusCode code)
         file.close();
     } else {
         code = code == OK ? NotFound : code;
-        body = "<h1>" + getStatusMessage(code) + "</h1>";
+        body = "<html><h1>" + toString(code) + " " + getStatusMessage(code) + "</h1></html>";
     }
 }
 
@@ -80,7 +80,7 @@ std::string Response::getRequestedResource(std::string const & uri) {
 
 Route Response::getRoute(Server & server) {
     std::string resource = getRequestedResource(request->getUri());
-
+    
     std::vector<Route>::iterator it = server.find(resource);
     if (it == server.end()) { // Get matched route for request
         if (isDirectory(server.getRoot() + resource)) { // Check if resource is a directory
@@ -107,17 +107,17 @@ Route Response::getRoute(Server & server) {
     return *it;
 }
 
-std::string Response::tryFiles(Server const & server, Route const & route, std::string const & root) {
-    if ((route.getRouteType() == Route::DIRECTORY && server.getIndex().empty()) \
-        || (route.getRouteType() == Route::OTHER && route.getIndex().empty()))
-        throw ServerException(Forbidden);
+std::string Response::tryFiles(Server const & server, Route const & route, std::string & root) {
+    if (route.getRouteType() == Route::DIRECTORY)
+        root += route.getPath();
 
     std::vector<std::string> indexes;
     if (route.getRouteType() == Route::FILE)
         indexes.push_back(route.getPath());
     else
         indexes = route.getIndex().empty() ? (server.getIndex().empty() ? std::vector<std::string>() : server.getIndex()) : route.getIndex();
-
+    
+    indexes.push_back("index.html");
     std::string filePath;
     for (std::vector<std::string>::iterator it = indexes.begin(); it != indexes.end(); it++) {
         filePath = root + "/" + *it;
@@ -128,6 +128,8 @@ std::string Response::tryFiles(Server const & server, Route const & route, std::
         }
         file.close();
     }
+    if (route.getRouteType() == Route::DIRECTORY || (route.getRouteType() == Route::OTHER && route.getAllowListing()))
+        throw ServerException(Forbidden);
     throw ServerException(NotFound);
 }
 
@@ -145,10 +147,11 @@ std::string Response::getFilePath(Server const & server, Route const & route) {
     } catch (ServerException & e) {
         if (e.getCode() == Forbidden) {
             std::vector<std::string> files;
-            if (route.getRouteType() == Route::DIRECTORY && server.getAllowListing())
-                files = getFilesInDirectory(route.getRoot(), route.getPath());
+            if (route.getRouteType() == Route::DIRECTORY && server.getAllowListing()) {
+                files = getFilesInDirectory(server.getRoot(), route.getPath());
+            }
             else if (route.getRouteType() == Route::OTHER && route.getAllowListing())
-                files = getFilesInDirectory(route.getRoot(), "");
+                files = getFilesInDirectory(route.getRoot(), route.getPath());
             else
                 throw ServerException(Forbidden);
             return generateHtmlListing(files);
