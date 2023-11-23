@@ -3,20 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/18 17:18:58 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/21 15:51:47 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/11/23 16:47:50 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cgi.hpp"
 
-
 Cgi::Cgi()
 {
 	this->path = "/usr/bin/php";
-	this->filename = "/Users/htalhaou/Desktop/42-WebServ/test.php";
+	this->filename = "test.php";
 }
 
 Cgi::Cgi(std::string path, std::string filename)
