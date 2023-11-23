@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/23 16:42:05 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/23 22:49:53 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,8 +85,7 @@ Route Response::getRoute(Server & server) {
     if (it == server.end()) { // Get matched route for request
         if (isDirectory(server.getRoot() + resource)) { // Check if resource is a directory
             if (resource.back() != '/') {
-                resource += "/";
-                headers["Location"] = resource;
+                headers["Location"] = resource + "/";
                 throw ServerException(MovedPermanently);
             }
             return Route(server.getRoot(), resource, Route::DIRECTORY);
@@ -163,6 +162,15 @@ std::string Response::getFilePath(Server const & server, Route const & route) {
 void Response::handleGet(Server const & server, Route const & route) {
     std::string filePath = getFilePath(server, route);
     removeConsecutiveChars(filePath, '/');
+    // Cgi cgi("/usr/local/bin/php", filePath);
+    // body = cgi.getResponseBody();
+    // return; 
+    if (route.getRouteType() == Route::CGI) {
+        Console::info("Serving CGI file: " + filePath);
+        Cgi cgi(route.getCgiPath(), filePath);
+        body = cgi.getResponseBody();
+        return; 
+    }
     Console::info("Serving file: " + filePath);
     serveStaticFile(filePath, OK);
 }

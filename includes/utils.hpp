@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 11:27:18 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/23 15:48:48 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/23 22:02:12 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,5 +65,7 @@ std::vector<std::string>    ft_split(const std::string &, const std::string &);
 bool                        mapErrorPages(std::map<int, std::string> & errorPages, std::string const & value);
 bool                        isDirectory(std::string);
 bool                        isFile(std::string);
-std::string isPathMatched(std::string serverRootPath, std::string path);
+bool                        isPathMatched(std::string serverRootPath, std::string path);
+std::string                 getMatchedPath(std::string serverRootPath, std::string path);
+
 

@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 21:19:31 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/23 16:36:43 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/23 22:00:54 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,23 @@ std::vector<std::string> ft_split(const std::string &s, const std::string &delim
     return splited;
 }
 
-std::string isPathMatched(std::string serverRootPath, std::string path) {
+bool isPathMatched(std::string serverRootPath, std::string path) {
+// Remove trailing slashes from server root path and path
+    while (!serverRootPath.empty() && serverRootPath.back() == '/')
+        serverRootPath.pop_back();
+    while (!path.empty() && path.back() == '/')
+        path.pop_back();
+
+    // Check if the server root path is a prefix of the path
+    if (path.find(serverRootPath) == 0) {
+        // Check if the next character after the server root path is a slash or the end of the string
+        if (path.length() == serverRootPath.length() || path[serverRootPath.length()] == '/')
+            return true; // Return true if the path matches the server root path
+    }
+    return false; // Return false if the path doesn't match the server root path
+}
+
+std::string getMatchedPath(std::string serverRootPath, std::string path) {
     // Remove trailing slashes from server root path and path
     while (!serverRootPath.empty() && serverRootPath.back() == '/')
         serverRootPath.pop_back();

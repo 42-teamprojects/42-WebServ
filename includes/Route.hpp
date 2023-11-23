@@ -23,6 +23,7 @@ public:
     enum RouteType {
         FILE,
         DIRECTORY,
+        CGI,
         OTHER
     };
     
@@ -73,7 +74,7 @@ private:
     std::string                             redirect;
     std::vector<std::string>                methods;
     std::string                             uploadDir;
-    std::map<int, std::string>   errorPages;
+    std::map<int, std::string>              errorPages;
     bool                                    allowListing;
     std::vector<std::string>                cgiExt;
     std::string                             cgiPath;

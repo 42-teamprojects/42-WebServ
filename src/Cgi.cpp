@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/18 17:18:58 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/23 16:47:50 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/23 22:44:20 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,14 @@ Cgi::Cgi()
 {
 	this->path = "/usr/bin/php";
 	this->filename = "test.php";
+	executCgi();
 }
 
 Cgi::Cgi(std::string path, std::string filename)
 {
 	this->path = path;
 	this->filename = filename;
+	executCgi();
 }
 
 Cgi::Cgi(Cgi const& other)
@@ -96,7 +98,6 @@ void Cgi::executCgi()
 			buffer[ret] = '\0';
 			body += buffer;
 		}
-		std::cout << body << std::endl;
 		this->responseBody = body;
 		close(fd[0]);
 	}

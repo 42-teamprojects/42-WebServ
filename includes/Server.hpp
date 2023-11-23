@@ -70,6 +70,7 @@ public:
     iterator find(const std::string& path)
     {
         for (iterator it = routes.begin(); it != routes.end(); ++it) {
+            // if (it->getPath() == path || isPathMatched(it->getPath(), path)) {
             if (it->getPath() == path) {
                 return it;
             }

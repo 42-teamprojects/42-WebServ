@@ -192,6 +192,7 @@ void Route::fill(std::string const &line, int &lineNb)
     }
     else if (option == "cgi_path" && cgiPath.empty())
     {
+        setRouteType(CGI);
         setCgiPath(value);
     }
     else if ((option == "cgi_ext" || option == "cgi_extension") && cgiExt.empty())
