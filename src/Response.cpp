@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/23 22:49:53 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/24 23:11:07 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,22 +78,35 @@ std::string Response::getRequestedResource(std::string const & uri) {
     return resource;
 }
 
+Route Response::findBestMatch(Server & server, std::string const & resource) {
+    // std::vector<Route> routes = server.getRoutes();
+    // for (std::vector<Route>::iterator it = routes.begin(); it != routes.end(); it++) {
+    //     if (isPathMatched(it->getPath(), resource)) {
+    //         std::string newPath = getMatchedPath(it->getPath(), resource);
+    //         Console::debug("Matched path: " + newPath);
+    //         it->setPath(newPath);
+    //         return *it;
+    //     }
+    // }
+    if (isDirectory(server.getRoot() + resource)) { // Check if resource is a directory
+        if (resource.back() != '/') {
+            headers["Location"] = resource + "/";
+            throw ServerException(MovedPermanently);
+        }
+        return Route(server.getRoot(), resource, Route::DIRECTORY);
+    }
+    else if (isFile(server.getRoot() + resource)) { // Check if resource is a file
+        return Route(server.getRoot(), resource, Route::FILE);
+    }
+    throw ServerException(NotFound);
+}
+
 Route Response::getRoute(Server & server) {
     std::string resource = getRequestedResource(request->getUri());
     
     std::vector<Route>::iterator it = server.find(resource);
     if (it == server.end()) { // Get matched route for request
-        if (isDirectory(server.getRoot() + resource)) { // Check if resource is a directory
-            if (resource.back() != '/') {
-                headers["Location"] = resource + "/";
-                throw ServerException(MovedPermanently);
-            }
-            return Route(server.getRoot(), resource, Route::DIRECTORY);
-        }
-        else if (isFile(server.getRoot() + resource)) { // Check if resource is a file
-            return Route(server.getRoot(), resource, Route::FILE);
-        }
-        throw ServerException(NotFound);
+        return findBestMatch(server, resource); 
     }
     if (!it->getRedirect().empty()) { // Check if route have redirection
         headers["Location"] = it->getRedirect();
