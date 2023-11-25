@@ -24,12 +24,12 @@ int main(int argc, char **argv)
         Config::parse(configPath);
         std::vector<Server> servers = Config::getServers(); 
 
-        Logger::log(INFO, "Starting server");
+        Console::log(INFO, "Starting server");
         WebServer server(servers);
         server.run();
         
     } catch (ServerException &e) {
-        Logger::error("Config file: " + std::string(e.what()));
+        Console::error("Config file: " + std::string(e.what()));
     }
 
     return 0;

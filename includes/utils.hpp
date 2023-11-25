@@ -6,12 +6,13 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 11:27:18 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/19 14:58:09 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/23 22:02:12 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webserv.hpp"
+#pragma once
 
+#include "webserv.hpp"
 typedef enum e_HttpStatusCode {
     OK = 200,
     MovedPermanently = 301,
@@ -35,40 +36,6 @@ std::string toString(T value)
 }
 
 template <typename Container>
-void trim(Container & s)
-{
-    size_t start = s.find_first_not_of(" \t\r\n");
-    size_t end = s.find_last_not_of(" \t\r\n");
-    if (start == std::string::npos || end == std::string::npos)
-        s.clear();
-    else
-        s = s.substr(start, end - start + 1);
-}
-
-template <typename Container>
-Container ft_split(const std::string &s, const std::string &delimiters)
-{
-    Container splited;
-    size_t i = 0;
-
-    while (i < s.length())
-    {
-        i = s.find_first_not_of(delimiters, i);
-        
-        if (i == std::string::npos)
-            break;
-        size_t wordEnd = s.find_first_of(delimiters, i);
-        
-        std::string word = s.substr(i, wordEnd - i);
-        trim(word);
-        splited.push_back(word);
-        
-        i = wordEnd;
-    }
-    return splited;
-}
-
-template <typename Container>
 void printContainer(const Container& c)
 {
     typename Container::const_iterator it;
@@ -80,18 +47,25 @@ void printContainer(const Container& c)
 }
 
 template <typename Container>
-void removeConsecutiveChars(Container& s, char c)
+void printMap(const Container& c)
 {
-    Container result;
-    typename Container::iterator it;
-    
-    for (it = s.begin(); it != s.end(); ++it)
+    typename Container::const_iterator it;
+    for (it = c.begin(); it != c.end(); ++it)
     {
-        if (result.empty() || *it != c || result.back() != c)
-        {
-            result.push_back(*it);
-        }
+        std::cout << it->first << " : " << it->second << std::endl;    
     }
-    
-    s = result;
+    std::cout << std::endl;
 }
+
+std::vector<std::string>    getFilesInDirectory(std::string const &, std::string const &);
+std::string                 generateHtmlListing(const std::vector<std::string>&);
+void                        removeConsecutiveChars(std::string &, char);
+void                        trim(std::string &);
+std::vector<std::string>    ft_split(const std::string &, const std::string &);
+bool                        mapErrorPages(std::map<int, std::string> & errorPages, std::string const & value);
+bool                        isDirectory(std::string);
+bool                        isFile(std::string);
+bool                        isPathMatched(std::string serverRootPath, std::string path);
+std::string                 getMatchedPath(std::string serverRootPath, std::string path);
+
+
