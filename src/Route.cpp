@@ -124,7 +124,7 @@ void Route::print() const
         std::cout << "error_pages: ";
         printMap(errorPages);
     }
-    std::cout << routeType << std::endl;
+    std::cout << "RouteType: " << (routeType == 0 ? "FILE" : (routeType == 1 ? "DIRECTORY" : (routeType == 2 ? "CGI" : "OTHER"))) << std::endl;
     if (!cgiPath.empty())
         std::cout << "cgiPath: " << cgiPath << std::endl;
     if (!cgiExt.empty())

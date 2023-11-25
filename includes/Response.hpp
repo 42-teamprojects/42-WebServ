@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 15:46:37 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/24 16:03:16 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/25 16:06:41 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,5 +48,6 @@ public:
 
     std::string tryFiles(Server const &, Route const &, std::string &);
     Route findBestMatch(Server & server, std::string const & resource);
+    Route findBestMatch(Route & route, std::string const & resource);
 
 };

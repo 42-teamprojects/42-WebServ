@@ -6,15 +6,15 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 21:19:31 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/23 22:00:54 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/25 16:32:53 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-std::vector<std::string> getFilesInDirectory(std::string const & rootPath, std::string const & reqPath) {
+std::vector<std::string> getFilesInDirectory(std::string const & rootPath, std::string const & reqPath, bool isRoute) {
     std::vector<std::string> files;
-    std::string              directoryPath = rootPath + "/" + reqPath;
+    std::string              directoryPath = rootPath + "/" + (!isRoute ? reqPath : "");
 
     DIR* dir = opendir(directoryPath.c_str());
     if (dir == NULL) {

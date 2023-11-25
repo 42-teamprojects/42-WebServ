@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/24 23:11:07 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/25 16:53:44 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,16 +78,22 @@ std::string Response::getRequestedResource(std::string const & uri) {
     return resource;
 }
 
+Route Response::findBestMatch(Route & route, std::string const & resource) {
+    if (isDirectory(route.getRoot() + resource)) { // Check if resource is a directory
+        if (resource.back() != '/') {
+            //  Fix multiple redirections problem here
+            headers["Location"] = resource + "/";
+            throw ServerException(MovedPermanently);
+        }
+        return Route(route.getRoot(), resource, Route::DIRECTORY);
+    }
+    else if (isFile(route.getRoot() + resource)) { // Check if resource is a file
+        return Route(route.getRoot(), resource, Route::FILE);
+    }
+    throw ServerException(NotFound);
+}
+
 Route Response::findBestMatch(Server & server, std::string const & resource) {
-    // std::vector<Route> routes = server.getRoutes();
-    // for (std::vector<Route>::iterator it = routes.begin(); it != routes.end(); it++) {
-    //     if (isPathMatched(it->getPath(), resource)) {
-    //         std::string newPath = getMatchedPath(it->getPath(), resource);
-    //         Console::debug("Matched path: " + newPath);
-    //         it->setPath(newPath);
-    //         return *it;
-    //     }
-    // }
     if (isDirectory(server.getRoot() + resource)) { // Check if resource is a directory
         if (resource.back() != '/') {
             headers["Location"] = resource + "/";
@@ -106,6 +112,14 @@ Route Response::getRoute(Server & server) {
     
     std::vector<Route>::iterator it = server.find(resource);
     if (it == server.end()) { // Get matched route for request
+        std::vector<Route> routes = server.getRoutes();
+        for (std::vector<Route>::iterator it = routes.begin(); it != routes.end(); it++) {
+            if (isPathMatched(it->getPath(), resource)) {
+                std::string newResource = "/" + getMatchedPath(it->getPath(), resource);
+                Console::debug("Matched path: " + newResource);
+                return findBestMatch(*it, newResource); 
+            }
+        }
         return findBestMatch(server, resource); 
     }
     if (!it->getRedirect().empty()) { // Check if route have redirection
@@ -140,7 +154,7 @@ std::string Response::tryFiles(Server const & server, Route const & route, std::
         }
         file.close();
     }
-    if (route.getRouteType() == Route::DIRECTORY || (route.getRouteType() == Route::OTHER && route.getAllowListing()))
+    if (route.getRouteType() == Route::DIRECTORY || (route.getRouteType() == Route::OTHER && (route.getAllowListing() || server.getAllowListing())))
         throw ServerException(Forbidden);
     throw ServerException(NotFound);
 }
@@ -160,10 +174,10 @@ std::string Response::getFilePath(Server const & server, Route const & route) {
         if (e.getCode() == Forbidden) {
             std::vector<std::string> files;
             if (route.getRouteType() == Route::DIRECTORY && server.getAllowListing()) {
-                files = getFilesInDirectory(server.getRoot(), route.getPath());
+                files = getFilesInDirectory(server.getRoot(), route.getPath(), 0);
             }
-            else if (route.getRouteType() == Route::OTHER && route.getAllowListing())
-                files = getFilesInDirectory(route.getRoot(), route.getPath());
+            else if (route.getRouteType() == Route::OTHER && (route.getAllowListing() || server.getAllowListing()))
+                files = getFilesInDirectory(route.getRoot(), route.getPath(), 1);
             else
                 throw ServerException(Forbidden);
             return generateHtmlListing(files);
@@ -175,12 +189,9 @@ std::string Response::getFilePath(Server const & server, Route const & route) {
 void Response::handleGet(Server const & server, Route const & route) {
     std::string filePath = getFilePath(server, route);
     removeConsecutiveChars(filePath, '/');
-    // Cgi cgi("/usr/local/bin/php", filePath);
-    // body = cgi.getResponseBody();
-    // return; 
     if (route.getRouteType() == Route::CGI) {
         Console::info("Serving CGI file: " + filePath);
-        Cgi cgi(route.getCgiPath(), filePath);
+        Cgi cgi("/usr/bin/php", filePath);
         body = cgi.getResponseBody();
         return; 
     }
@@ -188,11 +199,17 @@ void Response::handleGet(Server const & server, Route const & route) {
     serveStaticFile(filePath, OK);
 }
 
+/* 
+TODO:
+    - handle listing in alias locations
+    - body max size
+    - handle cgi
+    - refinements
+ */
 void Response::handleResponse() {
     Server server = getServer();
     try {
         Route route = getRoute(server);
-
         if (request->getMethod() == "GET") {
             handleGet(server, route);
         }
@@ -212,6 +229,6 @@ void Response::handleResponse() {
     } catch (std::exception & e) {
         code = ServerError;
         serveStaticFile(server.getErrorPages()[code], code);
-        Console::error(getStatusMessage(code));
+        Console::error(e.what());
     }
 }
