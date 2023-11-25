@@ -6,7 +6,7 @@
 /*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:07:44 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/25 14:47:08 by msodor           ###   ########.fr       */
+/*   Updated: 2023/11/25 15:03:38 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void Request::statusLineCheck()
     }
     if (uriCharCheck(this->uri) ||
         versionCheck(this->version) ||
-        methodCheck(this->method))
+          methodCheck(this->method))
     {
         this->statusCode = BadRequest;
         return ;
