@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:15 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/16 13:22:08 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/11/23 16:46:15 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "webserv.hpp"
+#include "Cgi.hpp"
 
 typedef struct s_server
 {
@@ -26,15 +27,14 @@ private:
     std::vector<Server> servers;
     std::vector<t_server> srvs;
     int clientSocket;
-    char buffer[9999];
-
+    std::string buffer;
+    fd_set master;
 public:
     WebServer(std::vector<Server> &);
     ~WebServer();
     void handle_select(int port, int idx);
     void handle_accept(int i);
     void handle_receive(int i);
-    int find_server(int socket);
+    int  find_socket(int socket);
     void run();
-    fd_set master;
 };

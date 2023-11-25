@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 13:35:49 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/16 16:13:54 by msodor           ###   ########.fr       */
+/*   Updated: 2023/11/23 21:38:02 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,17 +21,22 @@
 #include <netinet/in.h>
 #include <sstream>
 #include <fcntl.h>
-
 #include <vector>
 #include <map>
 #include <stack>
+#include <sys/stat.h>
+#include <dirent.h>
 
 #include "utils.hpp"
+#include "Console.hpp"
 
 #include "Server.hpp"
 #include "Route.hpp"
-#include "Request.hpp"
-#include "WebServer.hpp"
 #include "Config.hpp"
-#include "ServerException.hpp"
+#include "Request.hpp"
 #include "Response.hpp"
+#include "WebServer.hpp"
+#include "ServerException.hpp"
+#include "Cgi.hpp"
+
+# define DEFAULT_ROOT "/var/www/html"

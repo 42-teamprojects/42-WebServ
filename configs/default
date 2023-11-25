@@ -3,28 +3,34 @@
     port = 80
     server_names = localhost
     client_max_body_size = 100000
-    error_pages = 404.html 500.html
-    root = /var/www/html
-    index = index.html
-    <route path="/index">
+    error_pages = 404:static/error_pages/404.html 500:static/error_pages/500.html
+    root = static
+    allow_listing = true
+    <route path="/kapouet">
+        root = static/error_pages
+        
+    </route>
+    <route path="/cgi-bin">
         methods = GET, POST
-        cgi_extension = .php
-        cgi_path = /usr/bin/php
+        cgi_extension = .py 
+        cgi_path = /Library/Frameworks/Python.framework/Versions/3.11/bin/python3
     </route>
-    <route path="/images">
-        methods = GET
-        root = /var/www/images
-        index = images.html
-        allow_listing = false
-    </route>
-    <route path="/uploads">
+    <route path="/method">
         methods = POST
-        upload_dir = /var/www/uploads
     </route>
     <route path="/redirect">
-        methods = GET
-        redirect = 301 index.html
+        redirect = index.html
     </route>
+</server>
+
+<server>
+    host = 10.12.11.5
+    port = 80
+    server_names = localhost 192.168.1.103 10.12.11.5 youssef.com isawi.me
+    client_max_body_size = 100
+    error_pages = 404:static/error_pages/404.html
+    root = static/QuizApp
+    index = index.html
 </server>
 
 <server>
@@ -32,12 +38,12 @@
     port = 3000
     server_names = localhost
     client_max_body_size = 100000
-    error_pages = 404.html 500.html
-    root = /var/www/html
-    index = index.html
+    error_pages = 404:static/error_pages/404.html
+    root = static
+    allow_listing = true
     <route path="/index">
         methods = GET, POST
-        cgi_extension = .php
+        cgi_extension = .php 
         cgi_path = /usr/bin/php
     </route>
     <route path="/images">
@@ -52,6 +58,6 @@
     </route>
     <route path="/redirect">
         methods = GET
-        redirect = 301 index.html
+        redirect = index.html
     </route>
 </server>

@@ -6,14 +6,14 @@
 /*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 19:59:15 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/18 14:40:47 by msodor           ###   ########.fr       */
+/*   Updated: 2023/11/25 14:54:41 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "webserv.hpp"
-#include "Response.hpp"
+#include "utils.hpp"
 
 class Request
 {
@@ -29,7 +29,7 @@ private:
     bool    isChunked;
     int     contentLength;
 
-    enum HttpStatusCode  statusCode;
+    HttpStatusCode  statusCode;
 
 public:
     Request(std::string request);
@@ -48,8 +48,10 @@ public:
     int     encodingCheck();
     void    checkError();
 
-    void    print();
-    
+    std::string getHost() const;
+    int getPort() const;
+    void print() const;
+       
     std::string getMethod() const;
     std::string getUri() const;
     std::string getVersion() const;

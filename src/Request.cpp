@@ -6,7 +6,7 @@
 /*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:07:44 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/18 15:46:13 by msodor           ###   ########.fr       */
+/*   Updated: 2023/11/25 14:47:08 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,12 +209,21 @@ std::map<std::string, std::string> Request::getHeaders() const
     return headers;
 }
 
-std::string Request::getBody()  const
+std::string Request::getHost() const
+{
+    return host;
+}
+
+int Request::getPort() const
+{
+    return port;
+}
+std::string Request::getBody() const
 {
     return body;
 }
 
-void Request::print()
+void Request::print() const
 {
     std::cout << "---------------------" << std::endl;
     std::cout << "Method : " << getMethod() << std::endl;
