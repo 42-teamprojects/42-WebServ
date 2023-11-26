@@ -14,7 +14,7 @@ INCLUDES = -I includes/
 
 all: $(NAME)
 
-$(NAME): $(OBJS)
+$(NAME): $(OBJS) $(wildcard includes/*.hpp)
 	$(CXX) $(CXXFLAGS) $(OBJS) $(INCLUDES) -o $(NAME)
 
 obj/%.o: %.cpp

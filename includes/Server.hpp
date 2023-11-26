@@ -16,8 +16,8 @@
 #include <vector>
 #include <map>
 #include "Route.hpp"
-// #include "utils.hpp"
-// #include "webserv.hpp"
+
+void    trimTrailingSlashes(std::string & s);
 
 class Server
 {
@@ -71,7 +71,9 @@ public:
     {
         for (iterator it = routes.begin(); it != routes.end(); ++it) {
             // if (it->getPath() == path || isPathMatched(it->getPath(), path)) {
-            if (it->getPath() == path) {
+            std::string tmp = path;
+            trimTrailingSlashes(tmp);
+            if (it->getPath() == tmp) {
                 return it;
             }
         }

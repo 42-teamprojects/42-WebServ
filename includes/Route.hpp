@@ -24,6 +24,7 @@ public:
         FILE,
         DIRECTORY,
         CGI,
+        MAPPED,
         OTHER
     };
     
@@ -56,6 +57,14 @@ public:
     void                                        setCgiPath(const std::string& cgiPath);
     void                                        setCgiExt(const std::vector<std::string>& cgiExt);
 
+    std::string getFullPath() const {
+        return fullPath;
+    }
+
+    void setFullPath(std::string const &path) {
+        fullPath = path;
+    }
+
     RouteType getRouteType() const {
         return routeType;
     }
@@ -80,6 +89,7 @@ private:
     std::string                             cgiPath;
 
     RouteType                               routeType;
+    std::string                             fullPath;
 
 };
 

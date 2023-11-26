@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 15:46:37 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/25 16:06:41 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/26 23:53:47 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ private:
     std::map<std::string, std::string> headers;
     std::string body;
 
+    bool isListing;
 public:
     Response(std::string const &buffer);
     ~Response();

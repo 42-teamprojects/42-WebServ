@@ -6,13 +6,14 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/25 16:53:44 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/27 00:15:38 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Response.hpp"
 
 Response::Response(std::string const & buffer) {
+    isListing = false;
     request = new Request(buffer);
     code = OK;
     handleResponse();
@@ -81,11 +82,13 @@ std::string Response::getRequestedResource(std::string const & uri) {
 Route Response::findBestMatch(Route & route, std::string const & resource) {
     if (isDirectory(route.getRoot() + resource)) { // Check if resource is a directory
         if (resource.back() != '/') {
-            //  Fix multiple redirections problem here
-            headers["Location"] = resource + "/";
+            headers["Location"] = route.getPath() + resource + "/";
             throw ServerException(MovedPermanently);
         }
-        return Route(route.getRoot(), resource, Route::DIRECTORY);
+        Route newRoute(route.getRoot(), route.getPath() + resource, Route::MAPPED);
+        newRoute.setFullPath(route.getRoot() + resource);
+        newRoute.setAllowListing(route.getAllowListing());
+        return newRoute;
     }
     else if (isFile(route.getRoot() + resource)) { // Check if resource is a file
         return Route(route.getRoot(), resource, Route::FILE);
@@ -109,13 +112,15 @@ Route Response::findBestMatch(Server & server, std::string const & resource) {
 
 Route Response::getRoute(Server & server) {
     std::string resource = getRequestedResource(request->getUri());
-    
+
     std::vector<Route>::iterator it = server.find(resource);
     if (it == server.end()) { // Get matched route for request
         std::vector<Route> routes = server.getRoutes();
         for (std::vector<Route>::iterator it = routes.begin(); it != routes.end(); it++) {
-            if (isPathMatched(it->getPath(), resource)) {
-                std::string newResource = "/" + getMatchedPath(it->getPath(), resource);
+            std::pair<std::string, bool>   matchedPath = getMatchedPath(it->getPath(), resource);
+            if (matchedPath.second) {
+                std::string newResource = "/" + matchedPath.first;
+                removeConsecutiveChars(newResource, '/');
                 Console::debug("Matched path: " + newResource);
                 return findBestMatch(*it, newResource); 
             }
@@ -136,6 +141,8 @@ Route Response::getRoute(Server & server) {
 std::string Response::tryFiles(Server const & server, Route const & route, std::string & root) {
     if (route.getRouteType() == Route::DIRECTORY)
         root += route.getPath();
+    if (route.getRouteType() == Route::MAPPED)
+        root = route.getFullPath();
 
     std::vector<std::string> indexes;
     if (route.getRouteType() == Route::FILE)
@@ -154,7 +161,9 @@ std::string Response::tryFiles(Server const & server, Route const & route, std::
         }
         file.close();
     }
-    if (route.getRouteType() == Route::DIRECTORY || (route.getRouteType() == Route::OTHER && (route.getAllowListing() || server.getAllowListing())))
+    if (route.getRouteType() == Route::DIRECTORY || \
+        ((route.getRouteType() == Route::OTHER || route.getRouteType() == Route::MAPPED || route.getRouteType() == Route::CGI) \
+        && (route.getAllowListing() || server.getAllowListing())))
         throw ServerException(Forbidden);
     throw ServerException(NotFound);
 }
@@ -176,11 +185,20 @@ std::string Response::getFilePath(Server const & server, Route const & route) {
             if (route.getRouteType() == Route::DIRECTORY && server.getAllowListing()) {
                 files = getFilesInDirectory(server.getRoot(), route.getPath(), 0);
             }
-            else if (route.getRouteType() == Route::OTHER && (route.getAllowListing() || server.getAllowListing()))
+            else if (route.getRouteType() == Route::MAPPED && (route.getAllowListing() || server.getAllowListing())) {
+                files = getFilesInDirectory(route.getFullPath(), route.getPath(), 1);
+            }
+            else if ((route.getRouteType() == Route::OTHER || route.getRouteType() == Route::CGI) \
+                && (route.getAllowListing() || server.getAllowListing()))
+            {
                 files = getFilesInDirectory(route.getRoot(), route.getPath(), 1);
-            else
+            }
+            else {
                 throw ServerException(Forbidden);
-            return generateHtmlListing(files);
+            }
+            isListing = true;
+            body = generateHtmlListing(files);
+            return "";
         }
         throw ServerException(e.getCode());
     }
@@ -188,6 +206,8 @@ std::string Response::getFilePath(Server const & server, Route const & route) {
 
 void Response::handleGet(Server const & server, Route const & route) {
     std::string filePath = getFilePath(server, route);
+    if (isListing)
+        return;
     removeConsecutiveChars(filePath, '/');
     if (route.getRouteType() == Route::CGI) {
         Console::info("Serving CGI file: " + filePath);
@@ -201,7 +221,7 @@ void Response::handleGet(Server const & server, Route const & route) {
 
 /* 
 TODO:
-    - handle listing in alias locations
+    + handle listing in alias locations
     - body max size
     - handle cgi
     - refinements

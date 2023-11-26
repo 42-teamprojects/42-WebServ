@@ -6,10 +6,13 @@
     error_pages = 404:static/error_pages/404.html 500:static/error_pages/500.html
     root = static
     allow_listing = true
+    <route path="/test">
+        root = src
+    </route>
     <route path="/kapouet">
         root = static/error_pages
     </route>
-    <route path="/cgi-bin">
+    <route path="/cgi">
         root = static/cgi-bin
         methods = GET, POST
         cgi_extension = .py 
