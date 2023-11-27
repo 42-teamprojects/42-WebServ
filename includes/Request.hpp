@@ -3,48 +3,58 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 19:59:15 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/19 14:33:14 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/25 14:54:41 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "webserv.hpp"
+#include "utils.hpp"
 
 class Request
 {
 private:
-  std::string method;
-  std::string uri;
-  std::string version;
-  std::string host;
-  int port;
-  std::map<std::string, std::string> headers;
-  std::string body;
+    std::string method;
+    std::string uri;
+    std::string version;
+    std::string host;
+    int port;
+    std::map<std::string, std::string> headers;
+    std::string body;
+    
+    bool    isChunked;
+    int     contentLength;
 
-  bool isChunked;
+    HttpStatusCode  statusCode;
 
 public:
-  Request(std::string request);
-  ~Request();
+    Request(std::string request);
+    ~Request();
+    
+    void    parse(std::string request);
+    void    parseStatusLine(std::string& line);
+    void    parseHeaders(std::string& line);
+    void    parseHost();
+    void    saveEncoding();
+    int     uriCharCheck(std::string& uri);
+    int     uriLenCheck(std::string& uri);
+    int     versionCheck(std::string& version);
+    int     methodCheck(std::string& method);
+    void    statusLineCheck();
+    int     encodingCheck();
+    void    checkError();
 
-  HttpStatusCode  parse(std::string request);
-  int   parseStatusLine(std::string& line);
-  int   uriCharCheck(std::string& uri);
-  int   uriLenCheck(std::string& uri);
-  void  parseHeaders(std::string& line);
-  void  parseHost();
-  void  checkIfChunked();
-  void  print() const;
-
-  std::string getMethod() const;
-  std::string getUri() const;
-  std::string getVersion() const;
-  std::map<std::string, std::string> getHeaders() const;
-  std::string getHost() const;
-  int getPort() const;
-  std::string getBody() const;
+    std::string getHost() const;
+    int getPort() const;
+    void print() const;
+       
+    std::string getMethod() const;
+    std::string getUri() const;
+    std::string getVersion() const;
+    std::map<std::string, std::string> getHeaders() const;
+    std::string getBody() const;
 };

@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:07:44 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/19 14:33:25 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/25 15:03:38 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
-Request::Request(std::string request) : isChunked(false)
+Request::Request(std::string request) : isChunked(false), contentLength(-1), statusCode(OK)
 {
     parse(request);
 }
@@ -50,11 +50,77 @@ int Request::uriCharCheck(std::string& uri)
 int Request::uriLenCheck(std::string& uri)
 {
     if (uri.length() > 2048)
+    {
+        this->statusCode = RequestURITooLong;
+        return 1;
+    }
+    return 0;
+}
+
+int Request::versionCheck(std::string& version)
+{
+    if (version != "HTTP/1.1")
         return 1;
     return 0;
 }
 
-int Request::parseStatusLine(std::string& line)
+int Request::methodCheck(std::string& method)
+{
+    if (std::find(std::begin(methods), std::end(methods), method) == std::end(methods))
+        return 1;
+    return 0;
+}
+
+void Request::statusLineCheck()
+{
+    if (uriLenCheck(this->uri))
+    {
+        return ;
+    }
+    if (uriCharCheck(this->uri) ||
+        versionCheck(this->version) ||
+          methodCheck(this->method))
+    {
+        this->statusCode = BadRequest;
+        return ;
+    }
+}
+
+void Request::saveEncoding()
+{
+    std::map<std::string, std::string>::iterator it = headers.find("Transfer-Encoding");
+    if (it != headers.end())
+    {
+        if (it->second == "chunked")
+            this->isChunked = true;
+        else
+        {
+            this->statusCode = NotImplemented;
+            return ;
+        }
+    }
+    std::map<std::string, std::string>::iterator it2 = headers.find("Content-Length");
+    if (it2 != headers.end())
+        this->contentLength = std::atoi(it2->second.c_str());
+}
+
+int Request::encodingCheck()
+{
+    saveEncoding();
+    if (this->isChunked == 0 && this->contentLength == -1 && this->method == "POST")
+    {
+        this->statusCode = BadRequest;
+        return 1;
+    }
+    return 0;
+}
+
+void Request::checkError()
+{
+    
+}
+
+void Request::parseStatusLine(std::string& line)
 {
     std::string method;
     std::string uri;
@@ -63,15 +129,15 @@ int Request::parseStatusLine(std::string& line)
     ss >> method;
     ss >> uri;
     ss >> version;
-    if (std::find(std::begin(methods), std::end(methods), method) == std::end(methods)\
-    || version != "HTTP/1.1" || uriCharCheck(uri))
-        return 1;
-    else {
-        this->method = method;
-        this->uri = uri;
-        this->version = version;
+    
+    if (methodCheck(method) || uriCharCheck(uri) || versionCheck(version))
+    {
+        this->statusCode = BadRequest;
+        return ;
     }
-    return 0;
+    this->method = method;
+    this->uri = uri;
+    this->version = version;
 }
 
 void Request::parseHeaders(std::string& line)
@@ -86,24 +152,24 @@ void Request::parseHeaders(std::string& line)
     headers[key] = value;
 }
 
-HttpStatusCode Request::parse(std::string request)
+void Request::parse(std::string request)
 {
     std::string line;
     std::stringstream req(request);
     std::getline(req, line);
-    if (parseStatusLine(line))
-        return BadRequest;
-    if (uriLenCheck(uri))
-        return RequestURITooLong;
-    while (std::getline(req, line))
-    {
-        if (line == "\r")
-            break;
+    //pars status line
+    parseStatusLine(line);
+    statusLineCheck();
+    //pars headers
+    while (std::getline(req, line) && line != "\r" && statusCode == OK)
         parseHeaders(line);
-    }
+    if (statusCode != OK)
+        return ;
+    encodingCheck();
+    //pars host
     parseHost();
+    //pars body
     std::getline(req, body, '\0');
-    return OK;
 }
 
 void    Request::parseHost()
@@ -173,14 +239,5 @@ void Request::print() const
         std::cout << "  " << it->first << " : " << it->second << '\n';
     }
     std::cout << "Body : " << getBody() << std::endl;
+    std::cout << "Status : " << statusCode << std::endl;
 }
-
-// void Request::checkIfChunked()
-// {
-//     std::map<std::string, std::string>::iterator it = headers.find("Transfer-Encoding");
-//     if (it != headers.end())
-//     {
-//         if (it->second == "chunked")
-//             this->isCunked = true;
-//     }
-// }
