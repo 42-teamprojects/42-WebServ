@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 12:22:45 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/27 16:40:45 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/27 21:34:15 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,12 @@ std::string Response::getStatusMessage(HttpStatusCode code) {
         case Unauthorized: return "Unauthorized";
         case Forbidden: return "Forbidden";
         case NotFound: return "Not Found";
+        case Conflict: return "Conflict";
         case MethodNotAllowed: return "Method Not Allowed";
         case RequestURITooLong: return "Request-URI Too Long";
         case RequestEntityTooLarge: return "Request Entity Too Large";
         case NotImplemented: return "Not Implemented";
+        case NoContent: return "No Content";
         default: return "OK";
     }
 }
@@ -71,8 +73,13 @@ std::string Response::getRequestedResource(std::string const & uri) {
 Route Response::findBestMatch(Route & route, std::string const & resource) {
     if (isDirectory(route.getRoot() + resource)) { // Check if resource is a directory
         if (resource.back() != '/') {
-            headers["Location"] = route.getPath() + resource + "/";
-            throw ServerException(MovedPermanently);
+            if (request->getMethod() == "DELETE") {
+                throw ServerException(Conflict);
+            }
+            else {
+                headers["Location"] = route.getPath() + resource + "/";
+                throw ServerException(MovedPermanently);
+            }
         }
         Route newRoute(route.getRoot() + resource, route.getPath() + resource, Route::DIRECTORY);
         newRoute.setAllowListing(route.getAllowListing());
@@ -89,9 +96,14 @@ Route Response::findBestMatch(Route & route, std::string const & resource) {
 
 Route Response::findBestMatch(Server & server, std::string const & resource) {
     if (isDirectory(server.getRoot() + resource)) { // Check if resource is a directory
-        if (resource.back() != '/') {
-            headers["Location"] = resource + "/";
-            throw ServerException(MovedPermanently);
+        if (resource.back() != '/') { // Check if resource ends with a slash (if not, redirect to resource/
+            if (request->getMethod() == "DELETE") {
+                throw ServerException(Conflict);
+            }
+            else {
+                headers["Location"] = resource + "/";
+                throw ServerException(MovedPermanently);
+            }
         }
         Route newRoute(server.getRoot() + resource, resource, Route::DIRECTORY);
         newRoute.setAllowListing(server.getAllowListing());

@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/27 18:01:46 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/27 21:42:57 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ std::string Response::getFilePath(Server const & server, Route const & route) {
         return root + "/" + index;
     } catch (ServerException & e) {
         // check if listing is allowed
-        if (e.getCode() == Forbidden && (route.getAllowListing() || server.getAllowListing())) {
+        if (e.getCode() == Forbidden && (route.getAllowListing() || server.getAllowListing()) && request->getMethod() == "GET") {
             std::vector<std::string> files = getFilesInDirectory(route.getRoot(), route.getPath());
             return (isListing = true, body = generateHtmlListing(files), "");
         }
@@ -90,12 +90,17 @@ void Response::handleGet(Server const & server, Route const & route) {
     readFile(filePath, OK);
 }
 
+void Response::handleDelete(Server const & server, Route const & route) {
+    std::string filePath = getFilePath(server, route);
+    removeConsecutiveChars(filePath, '/');
+    if (!route.getCgiPath().empty()) {
+        return; 
+    }
+}
+
 /* 
 TODO:
-    + handle listing in alias locations
     - body max size
-    + handle cgi
-    + refinements
  */
 void Response::handleResponse() {
     Server server = getServer();
@@ -108,7 +113,7 @@ void Response::handleResponse() {
             std::cout << "POST" << std::endl;
         }
         else if (request->getMethod() == "DELETE") {
-            std::cout << "DELETE" << std::endl;
+            handleDelete(server, route);
         }
         else {
             throw ServerException(NotImplemented);

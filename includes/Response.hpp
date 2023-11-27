@@ -42,6 +42,7 @@ public:
     void handleResponse();
 
     void handleGet(Server const &, Route const &);
+    void handleDelete(Server const &, Route const &);
 
     std::string getRequestedResource(std::string const &);
 
