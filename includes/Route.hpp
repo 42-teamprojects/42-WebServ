@@ -23,14 +23,13 @@ public:
     enum RouteType {
         FILE,
         DIRECTORY,
-        CGI,
-        MAPPED,
         OTHER
     };
     
     Route();
     Route(std::string const & path);
     Route(std::string const & root, std::string const & path, RouteType routeType);
+    
     ~Route();
 
     // Getters
@@ -57,14 +56,6 @@ public:
     void                                        setCgiPath(const std::string& cgiPath);
     void                                        setCgiExt(const std::vector<std::string>& cgiExt);
 
-    std::string getFullPath() const {
-        return fullPath;
-    }
-
-    void setFullPath(std::string const &path) {
-        fullPath = path;
-    }
-
     RouteType getRouteType() const {
         return routeType;
     }
@@ -89,8 +80,6 @@ private:
     std::string                             cgiPath;
 
     RouteType                               routeType;
-    std::string                             fullPath;
-
 };
 
 

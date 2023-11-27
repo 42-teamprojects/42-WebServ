@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 15:46:37 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/26 23:53:47 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/27 12:18:57 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ public:
 
     std::string getResponse();
 
-    void serveStaticFile(std::string const &, HttpStatusCode);
+    void readFile(std::string const &, HttpStatusCode);
 
     Server getServer();
 
@@ -51,4 +51,8 @@ public:
     Route findBestMatch(Server & server, std::string const & resource);
     Route findBestMatch(Route & route, std::string const & resource);
 
+    void checkRedirection(Route const & route);
+    void checkMethods(Route const & route);
+    Route deepSearch(Server & server, std::string const & resource);
+    
 };

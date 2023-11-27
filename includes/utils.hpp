@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 11:27:18 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/26 20:35:08 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/27 11:40:36 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void printMap(const Container& c)
     std::cout << std::endl;
 }
 
-std::vector<std::string>    getFilesInDirectory(std::string const &, std::string const &, bool);
+std::vector<std::string>    getFilesInDirectory(std::string const &, std::string const &);
 std::string                 generateHtmlListing(const std::vector<std::string>&);
 void                        removeConsecutiveChars(std::string &, char);
 void                        trim(std::string &);

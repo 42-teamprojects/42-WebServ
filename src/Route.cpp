@@ -13,9 +13,9 @@
 #include "Route.hpp"
 #include "webserv.hpp"
 
-Route::Route() : path(""), root(""), index(), redirect(), methods(), uploadDir(""), errorPages(), allowListing(0), cgiExt(), cgiPath(""), routeType(OTHER), fullPath("") {};
-Route::Route(std::string const &path) : path(path), root(""), index(), redirect(), methods(), uploadDir(""), errorPages(), allowListing(0), cgiExt(), cgiPath(""), routeType(OTHER), fullPath("") {};
-Route::Route(std::string const &root, std::string const &path, RouteType routeType) : path(path), root(root), index(), redirect(), methods(), uploadDir(""), errorPages(), allowListing(0), cgiExt(), cgiPath(""), routeType(routeType), fullPath(""){};
+Route::Route() : path(""), root(""), index(), redirect(), methods(), uploadDir(""), errorPages(), allowListing(0), cgiExt(), cgiPath(""), routeType(OTHER) {};
+Route::Route(std::string const &path) : path(path), root(""), index(), redirect(), methods(), uploadDir(""), errorPages(), allowListing(0), cgiExt(), cgiPath(""), routeType(OTHER) {};
+Route::Route(std::string const &root, std::string const &path, RouteType routeType) : path(path), root(root), index(), redirect(), methods(), uploadDir(""), errorPages(), allowListing(0), cgiExt(), cgiPath(""), routeType(routeType){};
 Route::~Route(){};
 
 // Getters
@@ -124,9 +124,7 @@ void Route::print() const
         std::cout << "error_pages: ";
         printMap(errorPages);
     }
-    std::cout << "RouteType: " << (routeType == 0 ? "FILE" : (routeType == 1 ? "DIRECTORY" : (routeType == 2 ? "CGI" : (routeType == 3 ? "MAPPED_DIR" : "OTHER")))) << std::endl;
-    if (!fullPath.empty())
-        std::cout << "fullPath: " << fullPath << std::endl;
+    std::cout << "RouteType: " << (routeType == 0 ? "FILE" : (routeType == 1 ? "DIRECTORY" : "OTHER")) << std::endl;
     if (!cgiPath.empty())
         std::cout << "cgiPath: " << cgiPath << std::endl;
     if (!cgiExt.empty())
@@ -194,7 +192,6 @@ void Route::fill(std::string const &line, int &lineNb)
     }
     else if (option == "cgi_path" && cgiPath.empty())
     {
-        setRouteType(CGI);
         setCgiPath(value);
     }
     else if ((option == "cgi_ext" || option == "cgi_extension") && cgiExt.empty())

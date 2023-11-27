@@ -6,15 +6,15 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 21:19:31 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/26 20:56:22 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/27 12:35:10 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-std::vector<std::string> getFilesInDirectory(std::string const & rootPath, std::string const & reqPath, bool isRoute) {
+std::vector<std::string> getFilesInDirectory(std::string const & rootPath, std::string const & reqPath) {
     std::vector<std::string> files;
-    std::string              directoryPath = rootPath + "/" + (!isRoute ? reqPath : "");
+    std::string              directoryPath = rootPath + "/";
 
     DIR* dir = opendir(directoryPath.c_str());
     if (dir == NULL) {
@@ -44,10 +44,11 @@ std::string generateHtmlListing(const std::vector<std::string>& files) {
 
     std::string html;
 
-    html += "<!DOCTYPE html>\n<html>\n<head>\n<title>File Listing</title>\n</head>\n<body>\n";
+    html += "<!DOCTYPE html>\n<html>\n<head>\n<title>Directory Listing</title>\n</head>\n<body>\n";
+    html += "<h1 style='padding-left:20px'>Directory Listing</h1>\n";
     html += "<ul>\n";
     for (size_t i = 0; i < files.size(); ++i) {
-        html += "  <li><a href='" + files[i] + "'>" + files[i] + "</a></li>\n";
+        html += "  <li style='font-size:20px'><a href='" + files[i] + "'>" + files[i] + "</a></li>\n";
     }
     html += "</ul>\n";
     html += "</body>\n</html>\n";
