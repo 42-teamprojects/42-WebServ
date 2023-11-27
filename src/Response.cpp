@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/27 17:47:48 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/27 18:01:46 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,10 @@ Route Response::getRoute(Server & server) {
     std::vector<Route>::iterator it = server.find(resource);
     if (it == server.end()) {
         return deepSearch(server, resource);
+    }
+    if (resource.back() != '/') {
+        headers["Location"] = request->getUri() + "/";
+        throw ServerException(MovedPermanently);
     }
     checkRedirection(*it);
     checkMethods(*it);
