@@ -6,7 +6,7 @@
 /*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 15:46:37 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/25 14:50:59 by msodor           ###   ########.fr       */
+/*   Updated: 2023/11/27 12:18:57 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ private:
     std::map<std::string, std::string> headers;
     std::string body;
 
+    bool isListing;
 public:
     Response(std::string const &buffer);
     ~Response();
@@ -32,7 +33,7 @@ public:
 
     std::string getResponse();
 
-    void serveStaticFile(std::string const &, HttpStatusCode);
+    void readFile(std::string const &, HttpStatusCode);
 
     Server getServer();
 
@@ -48,5 +49,10 @@ public:
 
     std::string tryFiles(Server const &, Route const &, std::string &);
     Route findBestMatch(Server & server, std::string const & resource);
+    Route findBestMatch(Route & route, std::string const & resource);
 
+    void checkRedirection(Route const & route);
+    void checkMethods(Route const & route);
+    Route deepSearch(Server & server, std::string const & resource);
+    
 };

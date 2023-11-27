@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 21:19:31 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/23 22:00:54 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/27 12:35:10 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 std::vector<std::string> getFilesInDirectory(std::string const & rootPath, std::string const & reqPath) {
     std::vector<std::string> files;
-    std::string              directoryPath = rootPath + "/" + reqPath;
+    std::string              directoryPath = rootPath + "/";
 
     DIR* dir = opendir(directoryPath.c_str());
     if (dir == NULL) {
@@ -41,25 +41,19 @@ std::vector<std::string> getFilesInDirectory(std::string const & rootPath, std::
 }
 
 std::string generateHtmlListing(const std::vector<std::string>& files) {
-    std::string htmlFilePath = "/tmp/.listing.html";
 
-    std::ofstream htmlFile(htmlFilePath);
+    std::string html;
 
-    if (!htmlFile.is_open()) {
-        Console::error("Opening HTML file for writing listings");
-        return NULL;
-    }
-    
-    htmlFile << "<!DOCTYPE html>\n<html>\n<head>\n<title>File Listing</title>\n</head>\n<body>\n";
-    htmlFile << "<ul>\n";
+    html += "<!DOCTYPE html>\n<html>\n<head>\n<title>Directory Listing</title>\n</head>\n<body>\n";
+    html += "<h1 style='padding-left:20px'>Directory Listing</h1>\n";
+    html += "<ul>\n";
     for (size_t i = 0; i < files.size(); ++i) {
-        htmlFile << "  <li><a href='" << files[i] << "'>" << files[i] << "</a></li>\n";
+        html += "  <li style='font-size:20px'><a href='" + files[i] + "'>" + files[i] + "</a></li>\n";
     }
-    htmlFile << "</ul>\n";
-    htmlFile << "</body>\n</html>\n";
-    htmlFile.close();
+    html += "</ul>\n";
+    html += "</body>\n</html>\n";
 
-    return htmlFilePath;
+    return html;
 }
 
 bool    mapErrorPages(std::map<int, std::string> & errorPages, std::string const & value)
@@ -146,34 +140,23 @@ std::vector<std::string> ft_split(const std::string &s, const std::string &delim
     return splited;
 }
 
-bool isPathMatched(std::string serverRootPath, std::string path) {
-// Remove trailing slashes from server root path and path
-    while (!serverRootPath.empty() && serverRootPath.back() == '/')
-        serverRootPath.pop_back();
-    while (!path.empty() && path.back() == '/')
-        path.pop_back();
-
-    // Check if the server root path is a prefix of the path
-    if (path.find(serverRootPath) == 0) {
-        // Check if the next character after the server root path is a slash or the end of the string
-        if (path.length() == serverRootPath.length() || path[serverRootPath.length()] == '/')
-            return true; // Return true if the path matches the server root path
-    }
-    return false; // Return false if the path doesn't match the server root path
+void trimTrailingSlashes(std::string & s)
+{
+    while (!s.empty() && s.back() == '/')
+        s.pop_back();
 }
 
-std::string getMatchedPath(std::string serverRootPath, std::string path) {
-    // Remove trailing slashes from server root path and path
-    while (!serverRootPath.empty() && serverRootPath.back() == '/')
-        serverRootPath.pop_back();
-    while (!path.empty() && path.back() == '/')
-        path.pop_back();
-
-    // Check if the server root path is a prefix of the path
+std::pair<std::string, bool>    getMatchedPath(std::string serverRootPath, std::string path) {
+    std::pair<std::string, bool> value;
+    value.second = false;
+    trimTrailingSlashes(serverRootPath);       
     if (path.find(serverRootPath) == 0) {
-        // Check if the next character after the server root path is a slash or the end of the string
-        if (path.length() == serverRootPath.length() || path[serverRootPath.length()] == '/')
-            return path.substr(serverRootPath.length() + 1); // Return the new path excluding the root path
+        if (path.length() == serverRootPath.length() || path[serverRootPath.length()] == '/') {
+            value.first = path.substr(serverRootPath.length());
+            value.second = true;
+        } 
     }
-    return path; // Return the original path if it doesn't match the server root path
+    else
+        value.first = path;
+    return value;
 }

@@ -23,13 +23,13 @@ public:
     enum RouteType {
         FILE,
         DIRECTORY,
-        CGI,
         OTHER
     };
     
     Route();
     Route(std::string const & path);
     Route(std::string const & root, std::string const & path, RouteType routeType);
+    
     ~Route();
 
     // Getters
@@ -80,7 +80,6 @@ private:
     std::string                             cgiPath;
 
     RouteType                               routeType;
-
 };
 
 

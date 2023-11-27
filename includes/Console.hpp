@@ -45,6 +45,11 @@ public:
         std::cout << logMessage << std::endl;
     }
 
+
+    static void ping() {
+        std::cout << "PING" << std::endl;
+    }
+
 private:
     Console() {}
     ~Console() {}
