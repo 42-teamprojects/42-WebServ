@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/18 17:18:58 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/23 22:44:20 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/27 17:45:42 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 
 Cgi::Cgi()
 {
-	this->path = "/usr/bin/php";
-	this->filename = "test.php";
-	executCgi();
 }
 
 Cgi::Cgi(std::string path, std::string filename)
@@ -82,7 +79,7 @@ void Cgi::executCgi()
 		dup2(fd[1], 1);
 		char *argv[] = {const_cast<char *>(this->path.c_str()), const_cast<char *>(filename.c_str()), NULL};
 		execve(this->path.c_str(), argv, NULL);
-		std::cerr << "error: execve" << std::endl;
+		Console::error("execve failed");
 		close(fd[1]);
 		exit(1);
 	}
@@ -100,9 +97,9 @@ void Cgi::executCgi()
 		}
 		this->responseBody = body;
 		close(fd[0]);
+		return;
 	}
 	else
-	{
-		std::cout << "fork error" << std::endl;
-	}
+		Console::error("fork failed");
+	throw ServerException(ServerError);
 }

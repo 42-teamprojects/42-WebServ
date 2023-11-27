@@ -15,8 +15,8 @@
     <route path="/cgi">
         root = static/cgi-bin
         methods = GET, POST
-        cgi_extension = .py 
-        cgi_path = /Library/Frameworks/Python.framework/Versions/3.11/bin/python3
+        cgi_extension = .php
+        cgi_path = /usr/local/bin/php
     </route>
     <route path="/method">
         methods = POST

@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 12:22:45 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/27 13:06:51 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/27 16:40:45 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,9 +84,6 @@ Route Response::findBestMatch(Route & route, std::string const & resource) {
         newRoute.setRouteType(Route::FILE);
         return newRoute;
     }
-    // else if (isFile(route.getRoot() + resource)) { // Check if resource is a file
-    //     return Route(route.getRoot(), resource, Route::FILE);
-    // }
     throw ServerException(NotFound);
 }
 

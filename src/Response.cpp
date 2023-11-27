@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/27 13:08:53 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/27 17:47:48 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ void Response::handleGet(Server const & server, Route const & route) {
     removeConsecutiveChars(filePath, '/');
     if (!route.getCgiPath().empty()) {
         Console::info("Serving CGI file: " + filePath);
-        Cgi cgi("/usr/bin/php", filePath);
+        Cgi cgi(route.getCgiPath(), filePath);
         body = cgi.getResponseBody();
         return; 
     }
@@ -90,7 +90,7 @@ void Response::handleGet(Server const & server, Route const & route) {
 TODO:
     + handle listing in alias locations
     - body max size
-    - handle cgi
+    + handle cgi
     + refinements
  */
 void Response::handleResponse() {
