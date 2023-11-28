@@ -6,7 +6,7 @@
 /*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:07:44 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/28 21:30:41 by msodor           ###   ########.fr       */
+/*   Updated: 2023/11/28 21:35:26 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,8 +198,6 @@ void Request::parse(std::string request)
     if (this->isChunked)
         unchunkBody(body);
     else if (this->contentLength > 0)
-        this->body = body.substr(0, this->contentLength);
-    else
         this->body = body;
 }
 
