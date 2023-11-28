@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/27 18:01:46 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/28 18:14:43 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,21 @@ void Response::handleGet(Server const & server, Route const & route) {
     Console::info("Serving file: " + filePath);
     readFile(filePath, OK);
 }
+
+// void Response::handlePost(Server const & server, Route const & route) {
+//     std::string filePath = getFilePath(server, route);
+//     if (isListing)
+//         return;
+//     removeConsecutiveChars(filePath, '/');
+//     if (!route.getCgiPath().empty()) {
+//         Console::info("Serving CGI file: " + filePath);
+//         Cgi cgi(route.getCgiPath(), filePath);
+//         body = cgi.getResponseBody();
+//         return; 
+//     }
+//     Console::info("Serving file: " + filePath);
+//     readFile(filePath, OK);
+// }
 
 /* 
 TODO:
