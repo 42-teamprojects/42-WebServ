@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/23 16:45:45 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/28 14:58:14 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,13 +115,13 @@ int WebServer::find_socket(int socket)
 void WebServer::handle_receive(int i)
 {
 	int bytesReceived;
-	char buf[1024];
-	bzero(buf, 1024);
+	char buf[99999];
+	bzero(buf, 99999);
 
 	while ((bytesReceived = recv(i, buf, sizeof(buf), 0)) > 0)
 	{
 		buffer.append(buf);
-		if (bytesReceived < 1023)
+		if (bytesReceived < 99999)
 			break ;
 	}
 	if (bytesReceived <= 0)
@@ -135,9 +135,6 @@ void WebServer::handle_receive(int i)
 		Response res(buffer);
 		buffer.clear();
 	    std::string response = res.getResponse();
-		// Cgi test;
-		// test.executCgi();
-		// response = test.getResponseBody();
         int bytesSent = send(i, response.c_str(), response.size(), 0);
         if (bytesSent < 0)
         {
