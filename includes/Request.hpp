@@ -6,7 +6,7 @@
 /*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 19:59:15 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/25 14:54:41 by msodor           ###   ########.fr       */
+/*   Updated: 2023/11/28 21:22:05 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,8 @@ public:
     int     methodCheck(std::string& method);
     void    statusLineCheck();
     int     encodingCheck();
-    void    checkError();
+
+    void    unchunkBody(std::string& body);
 
     std::string getHost() const;
     int getPort() const;

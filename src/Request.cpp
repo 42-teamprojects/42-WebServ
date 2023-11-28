@@ -6,7 +6,7 @@
 /*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:07:44 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/28 18:17:45 by msodor           ###   ########.fr       */
+/*   Updated: 2023/11/28 21:30:41 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,9 +116,32 @@ int Request::encodingCheck()
     return 0;
 }
 
-void Request::checkError()
+void Request::unchunkBody(std::string& chunkedBody)
 {
-    
+    std::string body;
+    std::istringstream input(chunkedBody);
+
+    char c;
+    while (input.get(c)) {
+        // Read the chunk size
+        std::string chunk_size_hex;
+        while (c != '\r') {
+            chunk_size_hex += c;
+            input.get(c);
+        }
+        input.get(c); // '\n'
+        int chunk_size = std::stoi(chunk_size_hex, 0, 16);
+        if (chunk_size == 0) {
+            break;
+        }
+        // Read the chunk
+        std::string chunk(chunk_size, '\0');
+        input.read(&chunk[0], chunk_size);
+        input.get(c); // '\r'
+        input.get(c); // '\n'
+        body += chunk;
+    }
+    this->body = body;
 }
 
 void Request::parseStatusLine(std::string& line)
@@ -170,7 +193,14 @@ void Request::parse(std::string request)
     //pars host
     parseHost();
     //pars body
+    std::string body;
     std::getline(req, body, '\0');
+    if (this->isChunked)
+        unchunkBody(body);
+    else if (this->contentLength > 0)
+        this->body = body.substr(0, this->contentLength);
+    else
+        this->body = body;
 }
 
 void    Request::parseHost()
