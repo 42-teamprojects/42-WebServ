@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 12:22:45 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/27 16:40:45 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/28 14:50:52 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ Route Response::findBestMatch(Server & server, std::string const & resource) {
 
 void Response::checkRedirection(Route const & route) {
     if (!route.getRedirect().empty()) {
-        headers["Location"] = route.getRedirect();
+        headers["Location"] = "/" + route.getRedirect();
         throw ServerException(MovedPermanently);
     }
 }

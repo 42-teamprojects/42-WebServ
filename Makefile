@@ -30,8 +30,8 @@ fclean: clean
 
 re: fclean all
 
-run: all
-	./$(NAME)
+run:
+	python3 watcher.py $(NAME)
 
 re-run: fclean run
 

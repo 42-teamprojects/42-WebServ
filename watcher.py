@@ -7,11 +7,14 @@ import time
 
 EXE = "webserv"
 
+import sys
+
 class MyHandler(FileSystemEventHandler):
-    def __init__(self, process):
+    def __init__(self, process, exe):
         self.process = process
         self.last_modified = 0
         self.exclude_extensions = ['.o', '']  # Add any other file extensions to exclude
+        self.exe = exe
 
     def on_modified(self, event):
         if event.is_directory:
@@ -27,17 +30,17 @@ class MyHandler(FileSystemEventHandler):
             self.process.wait()  # Wait for the process to finish
             compile_result = subprocess.run(['make'])  # Recompile
             if compile_result.returncode == 0:
-                self.process = subprocess.Popen(['./' + EXE])  # Start the new process
+                self.process = subprocess.Popen(['./' + self.exe])  # Start the new process
 
-def start_watcher():
+def start_watcher(exe):
     initial_compile = subprocess.run(['make'])
     if initial_compile.returncode != 0:
         print("Initial compilation failed. Exiting.")
         return
 
-    process = subprocess.Popen(['./' + EXE])
+    process = subprocess.Popen(['./' + exe])
 
-    event_handler = MyHandler(process)
+    event_handler = MyHandler(process, exe)
     observer = Observer()
     observer.schedule(event_handler, path='.', recursive=True)
     observer.start()
@@ -51,4 +54,8 @@ def start_watcher():
     observer.join()
 
 if __name__ == "__main__":
-    start_watcher()
+    if len(sys.argv) != 2:
+        print("Usage: python watcher.py <executable>")
+        sys.exit(1)
+    exe = sys.argv[1]
+    start_watcher(exe)
