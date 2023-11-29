@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 13:35:49 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/23 21:38:02 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/29 23:30:40 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include <cstring>
+#include <string>
 #include <cstdlib>
 #include <cstdio>
 #include <unistd.h>
