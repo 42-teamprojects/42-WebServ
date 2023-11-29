@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 12:22:45 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/29 12:09:14 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/29 15:42:29 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,17 @@ std::string Response::getResponse() {
     return ss.str();
 }
 
+#include <fstream>
+
 void Response::readFile(std::string const &filePath, HttpStatusCode code) {
     std::ifstream file(filePath);
-    if (file.is_open()) {
+    if (file.is_open())
+    {
         std::stringstream buffer;
-        buffer << file.rdbuf();
+        std::string line;
+        while (std::getline(file, line)) {
+            buffer << line << std::endl;
+        }
         body = buffer.str();
         file.close();
     } else {
