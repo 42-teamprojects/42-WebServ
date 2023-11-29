@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 12:22:45 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/28 16:42:32 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/29 12:09:14 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ std::string Response::getStatusMessage(HttpStatusCode code) {
         case RequestEntityTooLarge: return "Request Entity Too Large";
         case NotImplemented: return "Not Implemented";
         case NoContent: return "No Content";
+        case ServerError: return "Internal Server Error";
         default: return "OK";
     }
 }
@@ -32,6 +33,8 @@ std::string Response::getResponse() {
     std::stringstream ss;
     ss << "HTTP/1.1 " << toString(code) << " " << getStatusMessage(code) << "\r\n";
     ss << "Connection: keep-alive\r\n";
+    ss << "Server: webserv\r\n";
+    ss << "Date: " << getDateGMT() << "\r\n";
     for (std::map<std::string, std::string>::iterator it = headers.begin(); it != headers.end(); it++) {
         ss << it->first << ": " << it->second << "\r\n";
     }
@@ -51,6 +54,7 @@ void Response::readFile(std::string const &filePath, HttpStatusCode code) {
         code = code == OK ? NotFound : code;
         body = "<html><h1 align='center'>" + toString(code) + " " + getStatusMessage(code) + "</h1></html>";
     }
+    headers["Content-Length"] = toString(body.size());
 }
 
 Server Response::getServer() {

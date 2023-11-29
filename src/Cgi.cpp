@@ -6,11 +6,12 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/18 17:18:58 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/27 17:45:42 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/29 11:34:05 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cgi.hpp"
+#include "enums.hpp"
 
 Cgi::Cgi()
 {
@@ -73,20 +74,25 @@ void Cgi::executCgi()
 	int fd[2];
 	pipe(fd);
 	pid_t pid = fork();
+	int status;
 	if (pid == 0)
 	{
 		close(fd[0]);
 		dup2(fd[1], 1);
 		char *argv[] = {const_cast<char *>(this->path.c_str()), const_cast<char *>(filename.c_str()), NULL};
 		execve(this->path.c_str(), argv, NULL);
-		Console::error("execve failed");
 		close(fd[1]);
 		exit(1);
 	}
 	else if (pid > 0)
 	{
+		waitpid(pid, &status, 0);
+		if (WEXITSTATUS(status) != 0)
+		{
+			Console::error("execve failed");
+			throw ServerException(ServerError);
+		}
 		close(fd[1]);
-		waitpid(pid, NULL, 0);
 		char buffer[1024];
 		std::string body;
 		int ret;

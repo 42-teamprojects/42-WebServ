@@ -542,7 +542,6 @@ application/x-ustar|.ustar|application/x-trash
 .heif, .heic|image/heic
 .ief|image/ief
 .jpe, .jpeg, .jpg, .pjpg, .jfif, .jfif-tbnl, .jif|image/jpeg
-.jpe, .jpeg, .jpg, .pjpg, .jfi, .jfif, .jfif-tbnl, .jif|image/pjpeg
 .png|image/png
 .btif|image/prs.btif
 .svg, .svgz|image/svg+xml
@@ -605,7 +604,7 @@ application/x-ustar|.ustar|application/x-trash
 .ics, .ifb|text/calendar
 .css|text/css
 .csv|application/csv
-.htm, .html|text/html
+.htm, .html, .php|text/html
 .js|text/javascript
 .md, .markdown, .mdown, .markdn|text/markdown
 .mathml, .mml|application/mathml+xml|text/mathml

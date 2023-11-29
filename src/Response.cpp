@@ -6,13 +6,15 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/27 21:42:57 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/29 12:02:26 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Response.hpp"
+#include "utils.hpp"
 
 Response::Response(std::string const & buffer) {
+    mimes = Mimes();
     isListing = false;
     request = new Request(buffer);
     code = OK;
@@ -80,6 +82,7 @@ void Response::handleGet(Server const & server, Route const & route) {
     if (isListing)
         return;
     removeConsecutiveChars(filePath, '/');
+    headers["Content-Type"] = mimes[getFileExt(filePath)];
     if (!route.getCgiPath().empty()) {
         Console::info("Serving CGI file: " + filePath);
         Cgi cgi(route.getCgiPath(), filePath);

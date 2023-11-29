@@ -13,6 +13,8 @@
 #pragma once
 
 #include "webserv.hpp"
+#include "enums.hpp"
+#include "Mimes.hpp"
 
 class Request;
 
@@ -21,9 +23,9 @@ class Response
 private:
     Request *request;
     HttpStatusCode code;
+    Mimes mimes;
     std::map<std::string, std::string> headers;
     std::string body;
-
     bool isListing;
 public:
     Response(std::string const &buffer);
