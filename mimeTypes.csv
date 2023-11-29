@@ -494,10 +494,7 @@ application/x-ustar|.ustar|application/x-trash
 .xspf|application/xspf+xml
 .mxml, .xhvml, .xvm, .xvml|application/xv+xml
 .yaml, .yml|text/yaml|application/yaml
-text/x-yaml
-application/x-yaml
 .zip|application/x-zip-compressed|application/zip
-application/zip-compressed
 .3gp|video/3gpp|audio/3gpp
 .3g2|video/3gpp2|audio/3gpp2
 .aac, .mp4, .m4a|audio/x-aac|audio/aac
@@ -507,9 +504,7 @@ application/zip-compressed
 .flac|audio/x-flac|audio/flac
 .kar, .mid, .midi, .rmi|audio/midi
 .mp4a|audio/mp4
-.m2a, .m3a, .mp2, .mp2a, .mp3, .mpga|audio/mp3|audio/mpeg
-audio/mpeg3
-audio/x-mpeg-3
+.m2a, .m3a, .mp2, .mp2a, .mp3, .mpga|audio/mp3
 .oga, .ogg, .spx|audio/ogg
 .opus|audio/opus
 .eol|audio/vnd.digital-winds
@@ -520,10 +515,7 @@ audio/x-mpeg-3
 .ecelp4800|audio/vnd.nuera.ecelp4800
 .ecelp7470|audio/vnd.nuera.ecelp7470
 .ecelp9600|audio/vnd.nuera.ecelp9600
-.wav|audio/x-wav|audio/wav
-audio/vnd.wave
-audio/wave
-audio/x-pn-wav
+.wav|audio/x-wav
 .weba|audio/webm
 .aif, .aifc, .aiff|audio/x-aiff
 .mka|audio/x-matroska
@@ -541,8 +533,7 @@ audio/x-pn-wav
 .otf|application/x-font-otf|font/otf
 .woff|font/woff
 .woff2|font/woff2
-.gcode|text/x.gcode|gcode
-text/x-gcode
+.gcode|text/x.gcode
 .avif, .avifs|image/avif
 .bmp|image/bmp
 .cgm|image/cgm
@@ -552,8 +543,7 @@ text/x-gcode
 .ief|image/ief
 .jpe, .jpeg, .jpg, .pjpg, .jfif, .jfif-tbnl, .jif|image/jpeg
 .jpe, .jpeg, .jpg, .pjpg, .jfi, .jfif, .jfif-tbnl, .jif|image/pjpeg
-.png|image/x-png|image/png
-image/vnd.mozilla.apng
+.png|image/png
 .btif|image/prs.btif
 .svg, .svgz|image/svg+xml
 .tif, .tiff|image/tiff
@@ -614,11 +604,7 @@ image/vnd.mozilla.apng
 .vrml, .wrl|model/vrml
 .ics, .ifb|text/calendar
 .css|text/css
-.csv|application/csv|text/csv
-text/x-csv
-application/x-csv
-text/x-comma-separated-values
-text/comma-separated-values
+.csv|application/csv
 .htm, .html|text/html
 .js|text/javascript
 .md, .markdown, .mdown, .markdn|text/markdown
