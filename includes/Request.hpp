@@ -6,7 +6,7 @@
 /*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 19:59:15 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/30 13:45:35 by msodor           ###   ########.fr       */
+/*   Updated: 2023/11/30 15:33:40 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ private:
     bool    isChunked;
     int     contentLength;
 
-    std::string encoding;
+    std::string contentType;
     std::string boundary;
 
     HttpStatusCode  statusCode;
@@ -51,7 +51,7 @@ public:
     int     encodingCheck();
 
     void    unchunkBody(std::string& body);
-    void    parseEncoding();
+    void    parseContentType();
     void    parseBoundary();
     
 
