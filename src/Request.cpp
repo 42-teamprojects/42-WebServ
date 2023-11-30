@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:07:44 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/30 16:16:04 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/30 16:20:26 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,38 +244,43 @@ void    Request::parseHost()
     }   
 }
 
-std::string Request::getMethod() const
-{
+std::string Request::getMethod() const {
     return method;
 }
 
-std::string Request::getUri() const
-{
+std::string Request::getUri() const {
     return uri;
 }
 
-std::string Request::getVersion() const
-{
+std::string Request::getVersion() const {
     return version;
 }
 
-std::map<std::string, std::string> Request::getHeaders() const
-{
+std::map<std::string, std::string> Request::getHeaders() const {
     return headers;
 }
 
-std::string Request::getHost() const
-{
+std::string Request::getHost() const {
     return host;
 }
 
-int Request::getPort() const
-{
+int Request::getPort() const {
     return port;
 }
-std::string Request::getBody() const
-{
+std::string Request::getBody() const {
     return body;
+}
+
+std::string Request::getContentType() const {
+    return contentType;
+}
+
+std::string Request::getBoundary() const {
+    return boundary;
+}
+
+int Request::getContentLength() const {
+    return contentLength;
 }
 
 void Request::print() const

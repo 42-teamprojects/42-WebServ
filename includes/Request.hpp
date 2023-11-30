@@ -6,7 +6,11 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 19:59:15 by msodor            #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2023/11/30 16:13:47 by yelaissa         ###   ########.fr       */
+=======
+/*   Updated: 2023/11/30 15:56:01 by msodor           ###   ########.fr       */
+>>>>>>> 8d7f6f3cb319c835a37aab738369e2922d5b44d5
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,5 +67,8 @@ public:
     std::string getUri() const;
     std::string getVersion() const;
     std::map<std::string, std::string> getHeaders() const;
+    std::string getContentType() const;
+    std::string getBoundary() const;
+    int getContentLength() const;
     std::string getBody() const;
 };
