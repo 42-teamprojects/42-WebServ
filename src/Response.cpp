@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/29 12:02:26 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/30 16:16:34 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,14 +91,6 @@ void Response::handleGet(Server const & server, Route const & route) {
     }
     Console::info("Serving file: " + filePath);
     readFile(filePath, OK);
-}
-
-void Response::handleDelete(Server const & server, Route const & route) {
-    std::string filePath = getFilePath(server, route);
-    removeConsecutiveChars(filePath, '/');
-    if (!route.getCgiPath().empty()) {
-        return; 
-    }
 }
 
 /* 

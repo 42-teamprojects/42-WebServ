@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:07:44 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/29 10:33:38 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/30 16:16:04 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,9 @@
 Request::Request(std::string request) : isChunked(false), contentLength(-1), statusCode(OK)
 {
     parse(request);
+    parseContentType();
+    parseBoundary();
+    print();
 }
 
 Request::~Request()
@@ -116,9 +119,55 @@ int Request::encodingCheck()
     return 0;
 }
 
-void Request::checkError()
+void Request::unchunkBody(std::string& chunkedBody)
 {
-    
+    std::string body;
+    std::istringstream input(chunkedBody);
+
+    char c;
+    while (input.get(c)) {
+        // Read the chunk size
+        std::string chunk_size_hex;
+        while (c != '\r') {
+            chunk_size_hex += c;
+            input.get(c);
+        }
+        input.get(c); // '\n'
+        int chunk_size = std::stoi(chunk_size_hex, 0, 16);
+        if (chunk_size == 0) {
+            break;
+        }
+        // Read the chunk
+        std::string chunk(chunk_size, '\0');
+        input.read(&chunk[0], chunk_size);
+        input.get(c); // '\r'
+        input.get(c); // '\n'
+        body += chunk;
+    }
+    this->body = body;
+}
+
+void Request::parseContentType()
+{
+    std::map<std::string, std::string>::iterator it = headers.find("Content-Type");
+    if (it != headers.end())
+    {
+        std::string value = it->second;
+        std::stringstream ss(value);
+        std::getline(ss, this->contentType, ';');
+    }
+}
+
+void Request::parseBoundary()
+{
+    std::map<std::string, std::string>::iterator it = headers.find("Content-Type");
+    if (it != headers.end() && this->contentType == "multipart/form-data")
+    {
+        std::string value = it->second;
+        std::stringstream ss(value);
+        std::getline(ss, this->boundary, '=');
+        std::getline(ss, this->boundary);
+    }
 }
 
 void Request::parseStatusLine(std::string& line)
@@ -170,7 +219,12 @@ void Request::parse(std::string request)
     //pars host
     parseHost();
     //pars body
+    std::string body;
     std::getline(req, body, '\0');
+    if (this->isChunked)
+        unchunkBody(body);
+    else if (this->contentLength > 0)
+        this->body = body;
 }
 
 void    Request::parseHost()
@@ -232,13 +286,13 @@ void Request::print() const
     std::cout << "Version : " << getVersion() << std::endl;
     std::cout << "Host : " << host << std::endl;
     std::cout << "Port : " << port << std::endl;
+    std::cout << "Encoding : " << contentType << std::endl;
+    std::cout << "Boundary : " << boundary << std::endl;
     std::map<std::string, std::string> headers = getHeaders();
     std::cout << "Headers : " << std::endl;
     std::map<std::string, std::string>::iterator it = headers.begin();
     for (; it != headers.end(); ++it)
-    {
         std::cout << "  " << it->first << " : " << it->second << '\n';
-    }
     std::cout << "Body : " << getBody() << std::endl;
     std::cout << "Status : " << statusCode << std::endl;
 }

@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 19:59:15 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/29 11:52:53 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/30 16:13:47 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,9 @@ private:
     bool    isChunked;
     int     contentLength;
 
+    std::string contentType;
+    std::string boundary;
+
     HttpStatusCode  statusCode;
 
 public:
@@ -46,7 +49,11 @@ public:
     int     methodCheck(std::string& method);
     void    statusLineCheck();
     int     encodingCheck();
-    void    checkError();
+
+    void    unchunkBody(std::string& body);
+    void    parseContentType();
+    void    parseBoundary();
+    
 
     std::string getHost() const;
     int getPort() const;
