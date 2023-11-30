@@ -6,7 +6,7 @@
 /*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/28 18:14:43 by msodor           ###   ########.fr       */
+/*   Updated: 2023/11/30 17:30:52 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ void Response::handleResponse() {
             handleGet(server, route);
         }
         else if (request->getMethod() == "POST") {
-            std::cout << "POST" << std::endl;
+            readBody();
         }
         else if (request->getMethod() == "DELETE") {
             std::cout << "DELETE" << std::endl;
@@ -136,5 +136,30 @@ void Response::handleResponse() {
         code = ServerError;
         readFile(server.getErrorPages()[code], code);
         Console::error(e.what());
+    }
+}
+
+void    Response::readBody()
+{
+    std::map<std::string, std::string> queryStrings;
+    std::string body = request->getBody();
+    if (request->getContentType() == "application/x-www-form-urlencoded")
+    {
+        std::vector<std::string> params = ft_split(body, "&");
+        for (std::vector<std::string>::iterator it = params.begin(); it != params.end(); it++)
+        {
+            std::vector<std::string> param = ft_split(*it, "=");
+            if (param.size() == 2)
+                headers[param[0]] = param[1];
+        }
+    }
+    if (request->getContentType() == "multipart/form-data")
+    {
+        std::string boundary = request->getBoundary();
+        std::vector<std::string> params = split(body, "--" + boundary);
+        for (std::vector<std::string>::iterator it = params.begin(); it != params.end() - 1; it++)
+        {
+            
+        }
     }
 }

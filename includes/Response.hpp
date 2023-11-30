@@ -55,4 +55,5 @@ public:
     void checkMethods(Route const & route);
     Route deepSearch(Server & server, std::string const & resource);
     
+    void readBody();
 };
