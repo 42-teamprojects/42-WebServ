@@ -44,7 +44,6 @@ public:
     void handleResponse();
 
     void handleGet(Server const &, Route const &);
-    void handleDelete(Server const &, Route const &);
 
     std::string getRequestedResource(std::string const &);
 
@@ -58,4 +57,5 @@ public:
     void checkMethods(Route const & route);
     Route deepSearch(Server & server, std::string const & resource);
     
+    void handleDelete(Server const &, Route const &);
 };

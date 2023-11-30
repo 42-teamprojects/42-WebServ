@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/18 17:18:58 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/30 16:02:11 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/30 16:30:04 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ static char **mapToArray(std::map<std::string, std::string> const & map)
 	return (array);
 }
 
-static std::map<std::string, std::string> getEnv(Request const & req)
+static std::map<std::string, std::string> getEnv(Request const & req, std::string const & filename)
 {
 	std::map<std::string, std::string> env;
 	env["SERVER_SOFTWARE"] = "webserv/1.0";
@@ -49,12 +49,12 @@ static std::map<std::string, std::string> getEnv(Request const & req)
 	env["SERVER_PROTOCOL"] = req.getVersion();
 	env["SERVER_PORT"] = toString(req.getPort());
 	env["REQUEST_METHOD"] = req.getMethod();
-	env["PATH_INFO"] = req.getUri();
-	env["PATH_TRANSLATED"] = req.getUri();
+	env["PATH_INFO"] = filename;
+	env["PATH_TRANSLATED"] = filename;
 	env["SCRIPT_NAME"] = req.getUri();
 	env["QUERY_STRING"] = getQuery(req.getUri());
 	env["REMOTE_HOST"] = req.getHost();
-	env["CONTENT_LENGTH"] = req.getContentLength();
+	env["CONTENT_LENGTH"] = req.getContentLength() < 0 ? "" : toString(req.getContentLength());
 	env["CONTENT_TYPE"] = req.getContentType();
 	env["HTTP_ACCEPT"] = req.getHeaders().find("Accept")->second;
 	env["HTTP_USER_AGENT"] = req.getHeaders().find("User-Agent")->second;
@@ -65,7 +65,7 @@ Cgi::Cgi(std::string const & path, std::string const & filename, Request const &
 {
 	this->path = path;
 	this->filename = filename;
-	this->env = getEnv(req);
+	this->env = getEnv(req, filename);
 	this->envp = mapToArray(this->env);
 	executCgi();
 }
