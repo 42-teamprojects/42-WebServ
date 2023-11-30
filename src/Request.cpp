@@ -6,7 +6,7 @@
 /*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:07:44 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/29 12:55:27 by msodor           ###   ########.fr       */
+/*   Updated: 2023/11/30 13:59:33 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 Request::Request(std::string request) : isChunked(false), contentLength(-1), statusCode(OK)
 {
     parse(request);
+    parseEncoding();
+    parseBoundary();
     print();
 }
 
@@ -144,6 +146,29 @@ void Request::unchunkBody(std::string& chunkedBody)
     this->body = body;
 }
 
+void Request::parseEncoding()
+{
+    std::map<std::string, std::string>::iterator it = headers.find("Content-Type");
+    if (it != headers.end())
+    {
+        std::string value = it->second;
+        std::stringstream ss(value);
+        std::getline(ss, this->encoding, ';');
+    }
+}
+
+void Request::parseBoundary()
+{
+    std::map<std::string, std::string>::iterator it = headers.find("Content-Type");
+    if (it != headers.end())
+    {
+        std::string value = it->second;
+        std::stringstream ss(value);
+        std::getline(ss, this->boundary, '=');
+        std::getline(ss, this->boundary);
+    }
+}
+
 void Request::parseStatusLine(std::string& line)
 {
     std::string method;
@@ -260,13 +285,13 @@ void Request::print() const
     std::cout << "Version : " << getVersion() << std::endl;
     std::cout << "Host : " << host << std::endl;
     std::cout << "Port : " << port << std::endl;
+    std::cout << "Encoding : " << encoding << std::endl;
+    std::cout << "Boundary : " << boundary << std::endl;
     std::map<std::string, std::string> headers = getHeaders();
     std::cout << "Headers : " << std::endl;
     std::map<std::string, std::string>::iterator it = headers.begin();
     for (; it != headers.end(); ++it)
-    {
         std::cout << "  " << it->first << " : " << it->second << '\n';
-    }
     std::cout << "Body : " << getBody() << std::endl;
     std::cout << "Status : " << statusCode << std::endl;
 }
