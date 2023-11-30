@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 11:44:08 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/29 12:42:04 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/30 13:15:58 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,4 +38,10 @@ bool hasAccess(std::string const &path)
     if (stat(path.c_str(), &st) == 0)
         return (true);
     return (false);
+}
+
+std::string getRemoteAddress()
+{
+    std::string remoteAddress = getenv("REMOTE_ADDR");
+    return (remoteAddress);
 }

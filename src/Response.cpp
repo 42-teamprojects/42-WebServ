@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/30 16:16:34 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/30 16:17:49 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void Response::handleGet(Server const & server, Route const & route) {
     headers["Content-Type"] = mimes[getFileExt(filePath)];
     if (!route.getCgiPath().empty()) {
         Console::info("Serving CGI file: " + filePath);
-        Cgi cgi(route.getCgiPath(), filePath);
+        Cgi cgi(route.getCgiPath(), filePath, *request);
         body = cgi.getResponseBody();
         return; 
     }
