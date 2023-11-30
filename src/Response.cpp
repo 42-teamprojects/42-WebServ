@@ -6,7 +6,7 @@
 /*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/30 17:30:52 by msodor           ###   ########.fr       */
+/*   Updated: 2023/11/30 17:51:43 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,6 +159,13 @@ void    Response::readBody()
         std::vector<std::string> params = split(body, "--" + boundary);
         for (std::vector<std::string>::iterator it = params.begin(); it != params.end() - 1; it++)
         {
+            std::stringstream ss(*it);
+            std::string line;
+            std::getline(ss, line);
+            if (line.find("filename") != std::string::npos)
+            {
+                
+            }
             
         }
     }
