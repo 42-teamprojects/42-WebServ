@@ -6,7 +6,7 @@
 /*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 19:59:15 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/30 15:33:40 by msodor           ###   ########.fr       */
+/*   Updated: 2023/11/30 15:56:01 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,5 +63,8 @@ public:
     std::string getUri() const;
     std::string getVersion() const;
     std::map<std::string, std::string> getHeaders() const;
+    std::string getContentType() const;
+    std::string getBoundary() const;
+    int getContentLength() const;
     std::string getBody() const;
 };
