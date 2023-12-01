@@ -56,4 +56,8 @@ public:
     Route deepSearch(Server & server, std::string const & resource);
     
     void readBody();
+    void processUrlEncodedBody(const std::string& body);
+    void processFileUpload(std::istringstream& ss, const std::string& line);
+    void processMultipartFormDataBody(const std::string& body);
+    void processFormField(std::istringstream& ss, const std::string& line, std::map<std::string, std::string>& queryStrings);
 };

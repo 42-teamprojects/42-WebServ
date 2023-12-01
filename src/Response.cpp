@@ -6,7 +6,7 @@
 /*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/12/01 17:42:29 by msodor           ###   ########.fr       */
+/*   Updated: 2023/12/01 22:00:52 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,46 +139,70 @@ void Response::handleResponse() {
     }
 }
 
-void    Response::readBody()
-{
+void Response::readBody() {
+    const std::string& contentType = request->getContentType();
+    const std::string& body = request->getBody();
+
+    if (contentType == "application/x-www-form-urlencoded") {
+        processUrlEncodedBody(body);
+    } else if (contentType == "multipart/form-data") {
+        processMultipartFormDataBody(body);
+    }
+}
+
+void Response::processUrlEncodedBody(const std::string& body) {
     std::map<std::string, std::string> queryStrings;
-    std::string body = request->getBody();
-    if (request->getContentType() == "application/x-www-form-urlencoded")
-    {
-        std::vector<std::string> params = ft_split(body, "&");
-        for (std::vector<std::string>::iterator it = params.begin(); it != params.end(); it++)
-        {
-            std::vector<std::string> param = ft_split(*it, "=");
-            if (param.size() == 2)
-                queryStrings[param[0]] = param[1];
+    std::vector<std::string> params = ft_split(body, "&");
+
+    for (std::vector<std::string>::const_iterator it = params.begin(); it != params.end(); ++it) {
+        std::vector<std::string> param = ft_split(*it, "=");
+        if (param.size() == 2) {
+            queryStrings[param[0]] = param[1];
         }
     }
-    if (request->getContentType() == "multipart/form-data")
-    {
-        std::string boundary = request->getBoundary();
-        std::vector<std::string> params = split(body, "--" + boundary);
-        for (std::vector<std::string>::iterator it = params.begin(); it != params.end(); it++)
-        {
-            std::stringstream ss(*it);
-            std::string line;
-            std::getline(ss, line);
-            if (line.find("filename") != std::string::npos)
-            {
-                std::string filename = line.substr(line.find("filename") + 10, line.find("\"", line.find("filename") + 10) - line.find("filename") - 10);
-                std::fstream file(filename);
-                std::getline(ss, line);
-                std::getline(ss, line);
-                std::getline(ss, line, '\0');
-                file << line;
-            }
-            else
-            {
-                std::string name = line.substr(line.find("name") + 6);
-                std::getline(ss, line);
-                std::getline(ss, line, '\0');
-                queryStrings[name] = line;
-            }
+}
+
+void Response::processMultipartFormDataBody(const std::string& body) {
+    std::map<std::string, std::string> queryStrings;
+    std::string boundary = request->getBoundary();
+    std::vector<std::string> params = split(body, "--" + boundary);
+
+    for (std::vector<std::string>::const_iterator it = params.begin(); it != params.end() - 1; ++it) {
+        std::istringstream ss(*it);
+        std::string line;
+
+        std::getline(ss, line);
+
+        if (line.find("filename") != std::string::npos) {
+            processFileUpload(ss, line);
+        } else if (line.find("name") != std::string::npos){
+            processFormField(ss, line, queryStrings);
         }
     }
-    
+}
+
+void Response::processFileUpload(std::istringstream& ss, const std::string& line) {
+    int len = line.find("\"", line.find("filename") + 10) - line.find("filename") - 10;
+    std::string filename = "static/uploads/theUploads/" + line.substr(line.find("filename") + 10, len);
+
+    std::ofstream file(filename.c_str());
+
+    std::string content;
+    std::getline(ss, content);
+    std::getline(ss, content);
+    std::getline(ss, content, '\0');
+    file << content;
+}
+
+void Response::processFormField(std::istringstream& ss, const std::string& line, std::map<std::string, std::string>& queryStrings) {
+    int len = line.find("\"", line.find("name") + 6) - line.find("name") - 6;
+    std::string name = line.substr(line.find("name") + 6, len);
+
+    std::string content;
+    std::getline(ss, content);
+    std::getline(ss, content);
+    std::getline(ss, content, '\0');
+    queryStrings[name] = content;
+    std::cout << "name: " << name << std::endl;
+    std::cout << "content: " << content << std::endl;
 }

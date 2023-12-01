@@ -6,7 +6,7 @@
 /*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:07:44 by msodor            #+#    #+#             */
-/*   Updated: 2023/12/01 17:29:20 by msodor           ###   ########.fr       */
+/*   Updated: 2023/12/01 21:15:12 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ Request::Request(std::string request) : isChunked(false), contentLength(-1), sta
     parse(request);
     parseContentType();
     parseBoundary();
-    // print();
+    print();
 }
 
 Request::~Request()
@@ -298,5 +298,5 @@ void Request::print() const
     // for (; it != headers.end(); ++it)
     //     std::cout << "  " << it->first << " : " << it->second << '\n';
     std::cout << "Body : " << getBody() << std::endl;
-    std::cout << "Status : " << statusCode << std::endl;
+    // std::cout << "Status : " << statusCode << std::endl;
 }
