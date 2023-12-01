@@ -4,7 +4,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     $filename = "test";
     
     // Specify the directory where your files are stored
-    $directory = '/Users/yelaissa/42-WebServ/static/uploads/';
+    $directory = '/Users/yelaissa/42-WebServ/www/uploads/';
 
     // Construct the full path to the file
     $filepath = $directory . $filename;
