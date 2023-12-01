@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/18 17:18:58 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/30 16:30:04 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/01 10:57:09 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,7 @@ void Cgi::executCgi()
 		if (WEXITSTATUS(status) != 0)
 		{
 			Console::error("execve failed");
-			throw ServerException(ServerError);
+			throw ServerException(BadGateway);
 		}
 		close(fd[1]);
 		char buffer[1024];

@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:07:44 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/30 16:20:26 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/01 11:33:31 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ Request::Request(std::string request) : isChunked(false), contentLength(-1), sta
     parse(request);
     parseContentType();
     parseBoundary();
-    print();
 }
 
 Request::~Request()

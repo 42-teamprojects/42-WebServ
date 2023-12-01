@@ -14,7 +14,7 @@
     </route>
     <route path="/cgi">
         root = static/cgi-bin
-        methods = GET, POST
+        methods = GET, POST, DELETE
         cgi_extension = .php .py .cpp
         cgi_path = /usr/bin/php
     </route>

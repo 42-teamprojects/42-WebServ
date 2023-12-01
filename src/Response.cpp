@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/30 16:24:22 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/01 11:46:31 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,8 +97,12 @@ void Response::handleDelete(Server const & server, Route const & route) {
     std::string filePath = getFilePath(server, route);
     removeConsecutiveChars(filePath, '/');
     if (!route.getCgiPath().empty()) {
+        Console::info("Running CGI: " + filePath);
+        Cgi cgi(route.getCgiPath(), filePath, *request);
+        body = cgi.getResponseBody();
         return; 
     }
+    
 }
 
 /* 

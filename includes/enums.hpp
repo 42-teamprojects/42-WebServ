@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 10:32:19 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/29 10:32:30 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/01 10:56:54 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,5 +25,6 @@ typedef enum e_HttpStatusCode {
     RequestEntityTooLarge = 413,
     NotImplemented = 501,
     ServerError = 500,
-    NoContent = 204
+    NoContent = 204,
+    BadGateway = 502,
 } HttpStatusCode;
