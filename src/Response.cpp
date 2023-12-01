@@ -6,7 +6,7 @@
 /*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/12/01 22:00:52 by msodor           ###   ########.fr       */
+/*   Updated: 2023/12/01 22:04:56 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,13 +167,14 @@ void Response::processMultipartFormDataBody(const std::string& body) {
     std::string boundary = request->getBoundary();
     std::vector<std::string> params = split(body, "--" + boundary);
 
-    for (std::vector<std::string>::const_iterator it = params.begin(); it != params.end() - 1; ++it) {
+    for (std::vector<std::string>::const_iterator it = params.begin(); it != params.end(); ++it) {
         std::istringstream ss(*it);
         std::string line;
 
         std::getline(ss, line);
 
         if (line.find("filename") != std::string::npos) {
+            std::cout << "file found" << std::endl;
             processFileUpload(ss, line);
         } else if (line.find("name") != std::string::npos){
             processFormField(ss, line, queryStrings);
@@ -184,7 +185,7 @@ void Response::processMultipartFormDataBody(const std::string& body) {
 void Response::processFileUpload(std::istringstream& ss, const std::string& line) {
     int len = line.find("\"", line.find("filename") + 10) - line.find("filename") - 10;
     std::string filename = "static/uploads/theUploads/" + line.substr(line.find("filename") + 10, len);
-
+    std::cout << "filename: " << filename << std::endl;
     std::ofstream file(filename.c_str());
 
     std::string content;
