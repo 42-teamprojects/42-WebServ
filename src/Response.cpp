@@ -6,7 +6,7 @@
 /*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/30 17:51:43 by msodor           ###   ########.fr       */
+/*   Updated: 2023/12/01 17:42:29 by msodor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,23 +150,35 @@ void    Response::readBody()
         {
             std::vector<std::string> param = ft_split(*it, "=");
             if (param.size() == 2)
-                headers[param[0]] = param[1];
+                queryStrings[param[0]] = param[1];
         }
     }
     if (request->getContentType() == "multipart/form-data")
     {
         std::string boundary = request->getBoundary();
         std::vector<std::string> params = split(body, "--" + boundary);
-        for (std::vector<std::string>::iterator it = params.begin(); it != params.end() - 1; it++)
+        for (std::vector<std::string>::iterator it = params.begin(); it != params.end(); it++)
         {
             std::stringstream ss(*it);
             std::string line;
             std::getline(ss, line);
             if (line.find("filename") != std::string::npos)
             {
-                
+                std::string filename = line.substr(line.find("filename") + 10, line.find("\"", line.find("filename") + 10) - line.find("filename") - 10);
+                std::fstream file(filename);
+                std::getline(ss, line);
+                std::getline(ss, line);
+                std::getline(ss, line, '\0');
+                file << line;
             }
-            
+            else
+            {
+                std::string name = line.substr(line.find("name") + 6);
+                std::getline(ss, line);
+                std::getline(ss, line, '\0');
+                queryStrings[name] = line;
+            }
         }
     }
+    
 }
