@@ -3,20 +3,20 @@
     port = 80
     server_names = localhost
     client_max_body_size = 100000
-    error_pages = 404:static/error_pages/404.html 500:static/error_pages/500.html
-    root = static
+    error_pages = 404:www/error_pages/404.html 500:www/error_pages/500.html
+    root = www
     allow_listing = true
     <route path="/test">
         root = src
     </route>
     <route path="/kapouet">
-        root = static/error_pages
+        root = www/error_pages
     </route>
     <route path="/cgi">
-        root = static/cgi-bin
-        methods = GET, POST
+        root = www/cgi-bin
+        methods = GET, POST, DELETE
         cgi_extension = .php .py .cpp
-        cgi_path = /usr/bin/php, /usr/bin/python, /usr/bin/g++
+        cgi_path = /usr/bin/php
     </route>
     <route path="/method">
         methods = POST
@@ -31,8 +31,8 @@
     port = 80
     server_names = localhost 192.168.1.103 yelaissa.42.fr
     client_max_body_size = 100
-    error_pages = 404:static/error_pages/404.html
-    root = static/QuizApp
+    error_pages = 404:www/error_pages/404.html
+    root = www/QuizApp
     index = index.html
 </server>
 
@@ -41,8 +41,8 @@
     port = 3000
     server_names = localhost
     client_max_body_size = 100000
-    error_pages = 404:static/error_pages/404.html
-    root = static
+    error_pages = 404:www/error_pages/404.html
+    root = www
     allow_listing = true
     <route path="/index">
         methods = GET, POST

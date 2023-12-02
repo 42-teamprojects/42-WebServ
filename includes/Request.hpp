@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: msodor <msodor@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 19:59:15 by msodor            #+#    #+#             */
-/*   Updated: 2023/11/25 14:54:41 by msodor           ###   ########.fr       */
+/*   Updated: 2023/11/30 16:21:19 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "webserv.hpp"
-#include "utils.hpp"
+#include "enums.hpp"
 
 class Request
 {
@@ -28,6 +28,9 @@ private:
     
     bool    isChunked;
     int     contentLength;
+
+    std::string contentType;
+    std::string boundary;
 
     HttpStatusCode  statusCode;
 
@@ -46,7 +49,11 @@ public:
     int     methodCheck(std::string& method);
     void    statusLineCheck();
     int     encodingCheck();
-    void    checkError();
+
+    void    unchunkBody(std::string& body);
+    void    parseContentType();
+    void    parseBoundary();
+    
 
     std::string getHost() const;
     int getPort() const;
@@ -56,5 +63,8 @@ public:
     std::string getUri() const;
     std::string getVersion() const;
     std::map<std::string, std::string> getHeaders() const;
+    std::string getContentType() const;
+    std::string getBoundary() const;
+    int getContentLength() const;
     std::string getBody() const;
 };

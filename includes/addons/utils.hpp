@@ -6,26 +6,13 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 11:27:18 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/27 11:40:36 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/30 16:16:59 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "webserv.hpp"
-typedef enum e_HttpStatusCode {
-    OK = 200,
-    MovedPermanently = 301,
-    BadRequest = 400,
-    Unauthorized = 401,
-    Forbidden = 403,
-    NotFound = 404,
-    MethodNotAllowed = 405,
-    RequestURITooLong = 414,
-    RequestEntityTooLarge = 413,
-    NotImplemented = 501,
-    ServerError = 500
-} HttpStatusCode;
 
 template <typename T>
 std::string toString(T value)

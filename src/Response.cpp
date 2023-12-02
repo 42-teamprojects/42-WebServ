@@ -6,13 +6,15 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/27 18:01:46 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/01 11:46:31 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Response.hpp"
+#include "utils.hpp"
 
 Response::Response(std::string const & buffer) {
+    mimes = Mimes();
     isListing = false;
     request = new Request(buffer);
     code = OK;
@@ -67,7 +69,7 @@ std::string Response::getFilePath(Server const & server, Route const & route) {
         return root + "/" + index;
     } catch (ServerException & e) {
         // check if listing is allowed
-        if (e.getCode() == Forbidden && (route.getAllowListing() || server.getAllowListing())) {
+        if (e.getCode() == Forbidden && (route.getAllowListing() || server.getAllowListing()) && request->getMethod() == "GET") {
             std::vector<std::string> files = getFilesInDirectory(route.getRoot(), route.getPath());
             return (isListing = true, body = generateHtmlListing(files), "");
         }
@@ -80,9 +82,10 @@ void Response::handleGet(Server const & server, Route const & route) {
     if (isListing)
         return;
     removeConsecutiveChars(filePath, '/');
+    headers["Content-Type"] = mimes[getFileExt(filePath)];
     if (!route.getCgiPath().empty()) {
         Console::info("Serving CGI file: " + filePath);
-        Cgi cgi(route.getCgiPath(), filePath);
+        Cgi cgi(route.getCgiPath(), filePath, *request);
         body = cgi.getResponseBody();
         return; 
     }
@@ -90,12 +93,21 @@ void Response::handleGet(Server const & server, Route const & route) {
     readFile(filePath, OK);
 }
 
+void Response::handleDelete(Server const & server, Route const & route) {
+    std::string filePath = getFilePath(server, route);
+    removeConsecutiveChars(filePath, '/');
+    if (!route.getCgiPath().empty()) {
+        Console::info("Running CGI: " + filePath);
+        Cgi cgi(route.getCgiPath(), filePath, *request);
+        body = cgi.getResponseBody();
+        return; 
+    }
+    
+}
+
 /* 
 TODO:
-    + handle listing in alias locations
     - body max size
-    + handle cgi
-    + refinements
  */
 void Response::handleResponse() {
     Server server = getServer();
@@ -108,7 +120,7 @@ void Response::handleResponse() {
             std::cout << "POST" << std::endl;
         }
         else if (request->getMethod() == "DELETE") {
-            std::cout << "DELETE" << std::endl;
+            handleDelete(server, route);
         }
         else {
             throw ServerException(NotImplemented);

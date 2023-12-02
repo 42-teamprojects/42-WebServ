@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/28 14:58:14 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/01 13:25:12 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ void WebServer::handle_receive(int i)
 
 	while ((bytesReceived = recv(i, buf, sizeof(buf), 0)) > 0)
 	{
-		buffer.append(buf);
+		buffer.append(buf, bytesReceived);
 		if (bytesReceived < 99999)
 			break ;
 	}
@@ -135,14 +135,18 @@ void WebServer::handle_receive(int i)
 		Response res(buffer);
 		buffer.clear();
 	    std::string response = res.getResponse();
-        int bytesSent = send(i, response.c_str(), response.size(), 0);
-        if (bytesSent < 0)
-        {
-			Console::error("Send() failed");
-            close(i);
-			Console::warning("Client " + toString(i) + " disconnected");
-            return ; 
-        }
+        int bytesSent = 0;
+        int totalBytesSent = 0;
+        int responseSize = response.size();
+		while (1) {
+			bytesSent = send(i, response.c_str() + totalBytesSent, responseSize - totalBytesSent, 0);
+			if (bytesSent == 0)
+			{
+				break ;
+			}
+			totalBytesSent += bytesSent;
+		}
+		close(i);
     }
 }
 

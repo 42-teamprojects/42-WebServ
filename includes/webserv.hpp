@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 13:35:49 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/23 21:38:02 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/11/30 16:14:01 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include <cstring>
+#include <string>
 #include <cstdlib>
 #include <cstdio>
 #include <unistd.h>
@@ -29,6 +30,7 @@
 
 #include "utils.hpp"
 #include "Console.hpp"
+#include "helpers.hpp"
 
 #include "Server.hpp"
 #include "Route.hpp"
@@ -36,7 +38,8 @@
 #include "Request.hpp"
 #include "Response.hpp"
 #include "WebServer.hpp"
-#include "ServerException.hpp"
 #include "Cgi.hpp"
+#include "Mimes.hpp"
+#include "ServerException.hpp"
 
 # define DEFAULT_ROOT "/var/www/html"
