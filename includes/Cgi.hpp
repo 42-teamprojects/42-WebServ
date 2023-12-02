@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/18 17:18:52 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/21 15:39:04 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/11/30 15:44:39 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,11 @@ class Cgi
 		std::string path;
 		std::string filename;
 		std::string responseBody;
+		std::map<std::string, std::string> env;
+		char **envp;
 	public :
 		Cgi();
-		Cgi(std::string path, std::string filename);
+		Cgi(std::string const & path, std::string const & filename, Request const & req);
 		Cgi(Cgi const& other);
 		Cgi& operator=(Cgi const& other);
 		~Cgi();

@@ -1,6 +1,6 @@
 NAME = webserv
 
-SRCS = main.cpp $(wildcard src/*.cpp)
+SRCS = main.cpp $(wildcard src/*.cpp) $(wildcard src/addons/*.cpp)
 
 OBJS = $(SRCS:.cpp=.o)
 
@@ -10,11 +10,11 @@ CXX = c++
 
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -fsanitize=address
 
-INCLUDES = -I includes/
+INCLUDES = -I includes/ -I includes/addons/
 
 all: $(NAME)
 
-$(NAME): $(OBJS) $(wildcard includes/*.hpp)
+$(NAME): $(OBJS) $(wildcard includes/*.hpp) $(wildcard includes/addons/*.hpp)
 	$(CXX) $(CXXFLAGS) $(OBJS) $(INCLUDES) -o $(NAME)
 
 obj/%.o: %.cpp
