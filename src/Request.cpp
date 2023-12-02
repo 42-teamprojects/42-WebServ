@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:07:44 by msodor            #+#    #+#             */
-/*   Updated: 2023/12/01 11:33:31 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/02 14:22:46 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -287,7 +287,6 @@ void Request::print() const
     std::cout << "---------------------" << std::endl;
     std::cout << "Method : " << getMethod() << std::endl;
     std::cout << "Uri : " << getUri() << std::endl;
-    std::cout << "Version : " << getVersion() << std::endl;
     std::cout << "Host : " << host << std::endl;
     std::cout << "Port : " << port << std::endl;
     std::cout << "Encoding : " << contentType << std::endl;

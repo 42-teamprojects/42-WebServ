@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/12/01 11:46:31 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/02 14:21:26 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,6 @@ void Response::handleDelete(Server const & server, Route const & route) {
         body = cgi.getResponseBody();
         return; 
     }
-    
 }
 
 /* 
@@ -117,7 +116,7 @@ void Response::handleResponse() {
             handleGet(server, route);
         }
         else if (request->getMethod() == "POST") {
-            std::cout << "POST" << std::endl;
+            readBody();
         }
         else if (request->getMethod() == "DELETE") {
             handleDelete(server, route);
@@ -134,4 +133,73 @@ void Response::handleResponse() {
         readFile(server.getErrorPages()[code], code);
         Console::error(e.what());
     }
+}
+
+void Response::readBody() {
+    const std::string& contentType = request->getContentType();
+    const std::string& body = request->getBody();
+
+    if (contentType == "application/x-www-form-urlencoded") {
+        processUrlEncodedBody(body);
+    } else if (contentType == "multipart/form-data") {
+        processMultipartFormDataBody(body);
+    }
+}
+
+void Response::processUrlEncodedBody(const std::string& body) {
+    std::map<std::string, std::string> queryStrings;
+    std::vector<std::string> params = ft_split(body, "&");
+
+    for (std::vector<std::string>::const_iterator it = params.begin(); it != params.end(); ++it) {
+        std::vector<std::string> param = ft_split(*it, "=");
+        if (param.size() == 2) {
+            queryStrings[param[0]] = param[1];
+        }
+    }
+}
+
+void Response::processMultipartFormDataBody(const std::string& body) {
+    std::map<std::string, std::string> queryStrings;
+    std::string boundary = request->getBoundary();
+    std::vector<std::string> params = split(body, "--" + boundary);
+
+    for (std::vector<std::string>::const_iterator it = params.begin(); it != params.end(); ++it) {
+        std::istringstream ss(*it);
+        std::string line;
+
+        std::getline(ss, line);
+
+        if (line.find("filename") != std::string::npos) {
+            std::cout << "file found" << std::endl;
+            processFileUpload(ss, line);
+        } else if (line.find("name") != std::string::npos){
+            processFormField(ss, line, queryStrings);
+        }
+    }
+}
+
+void Response::processFileUpload(std::istringstream& ss, const std::string& line) {
+    int len = line.find("\"", line.find("filename") + 10) - line.find("filename") - 10;
+    std::string filename = "www/uploads/theUploads/" + line.substr(line.find("filename") + 10, len);
+    std::cout << "filename: " << filename << std::endl;
+    std::ofstream file(filename.c_str());
+
+    std::string content;
+    std::getline(ss, content);
+    std::getline(ss, content);
+    std::getline(ss, content, '\0');
+    file << content;
+}
+
+void Response::processFormField(std::istringstream& ss, const std::string& line, std::map<std::string, std::string>& queryStrings) {
+    int len = line.find("\"", line.find("name") + 6) - line.find("name") - 6;
+    std::string name = line.substr(line.find("name") + 6, len);
+
+    std::string content;
+    std::getline(ss, content);
+    std::getline(ss, content);
+    std::getline(ss, content, '\0');
+    queryStrings[name] = content;
+    std::cout << "name: " << name << std::endl;
+    std::cout << "content: " << content << std::endl;
 }
