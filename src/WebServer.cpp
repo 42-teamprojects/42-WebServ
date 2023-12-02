@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/01 13:25:12 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/02 12:38:34 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,15 +138,18 @@ void WebServer::handle_receive(int i)
         int bytesSent = 0;
         int totalBytesSent = 0;
         int responseSize = response.size();
-		while (1) {
+		while (1)
+		{
 			bytesSent = send(i, response.c_str() + totalBytesSent, responseSize - totalBytesSent, 0);
-			if (bytesSent == 0)
+			if (bytesSent < 0)
 			{
-				break ;
+				Console::error("Send() failed");
+				continue ;
 			}
+			if (bytesSent == 0)
+				return; 
 			totalBytesSent += bytesSent;
 		}
-		close(i);
     }
 }
 
