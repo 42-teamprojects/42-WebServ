@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseUtils.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 12:22:45 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/29 15:42:29 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/02 18:18:56 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,12 +51,13 @@ void Response::readFile(std::string const &filePath, HttpStatusCode code) {
     {
         std::stringstream buffer;
         std::string line;
-        while (std::getline(file, line)) {
+        while (std::getline(file, line))
             buffer << line << std::endl;
-        }
         body = buffer.str();
         file.close();
-    } else {
+    }
+    else
+    {
         code = code == OK ? NotFound : code;
         body = "<html><h1 align='center'>" + toString(code) + " " + getStatusMessage(code) + "</h1></html>";
     }
