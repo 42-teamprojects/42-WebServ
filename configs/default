@@ -24,6 +24,10 @@
     <route path="/redirect">
         redirect = index.html
     </route>
+    <route path="/uploads">
+        methods = POST
+        upload_dir = www/uploads/uploads
+    </route>
 </server>
 
 <server>

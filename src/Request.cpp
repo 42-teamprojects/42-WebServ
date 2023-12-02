@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:07:44 by msodor            #+#    #+#             */
-/*   Updated: 2023/12/02 14:27:04 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/02 14:40:46 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ Request::Request(std::string request) : isChunked(false), contentLength(-1), sta
     parse(request);
     parseContentType();
     parseBoundary();
+    print();
 }
 
 Request::~Request()
@@ -284,18 +285,18 @@ int Request::getContentLength() const {
 
 void Request::print() const
 {
-    std::cout << "---------------------" << std::endl;
-    std::cout << "Method : " << getMethod() << std::endl;
-    std::cout << "Uri : " << getUri() << std::endl;
-    std::cout << "Host : " << host << std::endl;
-    std::cout << "Port : " << port << std::endl;
-    std::cout << "Encoding : " << contentType << std::endl;
-    std::cout << "Boundary : " << boundary << std::endl;
-    std::map<std::string, std::string> headers = getHeaders();
-    std::cout << "Headers : " << std::endl;
-    std::map<std::string, std::string>::iterator it = headers.begin();
-    for (; it != headers.end(); ++it)
-        std::cout << "  " << it->first << " : " << it->second << '\n';
+    // std::cout << "---------------------" << std::endl;
+    // std::cout << "Method : " << getMethod() << std::endl;
+    // std::cout << "Uri : " << getUri() << std::endl;
+    // std::cout << "Host : " << host << std::endl;
+    // std::cout << "Port : " << port << std::endl;
+    // std::cout << "Encoding : " << contentType << std::endl;
+    // std::cout << "Boundary : " << boundary << std::endl;
+    // std::map<std::string, std::string> headers = getHeaders();
+    // std::cout << "Headers : " << std::endl;
+    // std::map<std::string, std::string>::iterator it = headers.begin();
+    // for (; it != headers.end(); ++it)
+    //     std::cout << "  " << it->first << " : " << it->second << '\n';
     std::cout << "Body : " << getBody() << std::endl;
-    std::cout << "Status : " << statusCode << std::endl;
+    // std::cout << "Status : " << statusCode << std::endl;
 }

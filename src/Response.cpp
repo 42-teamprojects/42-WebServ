@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/12/02 14:26:35 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/02 16:00:45 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ void Response::handleResponse() {
 void Response::readBody() {
     const std::string& contentType = request->getContentType();
     const std::string& body = request->getBody();
-
+    
     if (contentType == "application/x-www-form-urlencoded") {
         processUrlEncodedBody(body);
     } else if (contentType == "multipart/form-data") {
@@ -180,15 +180,16 @@ void Response::processMultipartFormDataBody(const std::string& body) {
 
 void Response::processFileUpload(std::istringstream& ss, const std::string& line) {
     int len = line.find("\"", line.find("filename") + 10) - line.find("filename") - 10;
-    std::string filename = "www/uploads/theUploads/" + line.substr(line.find("filename") + 10, len);
+    std::string filename = "www/uploads/uploads/" + line.substr(line.find("filename") + 10, len);
     std::cout << "filename: " << filename << std::endl;
     std::ofstream file(filename.c_str());
 
     std::string content;
     std::getline(ss, content);
     std::getline(ss, content);
-    std::getline(ss, content, '\0');
-    file << content;
+    while (std::getline(ss, content)){
+        file << content << "\n";
+    }
 }
 
 void Response::processFormField(std::istringstream& ss, const std::string& line, std::map<std::string, std::string>& queryStrings) {
