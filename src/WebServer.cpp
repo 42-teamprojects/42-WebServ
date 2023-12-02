@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/02 14:30:48 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/02 15:58:31 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,20 +134,25 @@ void WebServer::handle_receive(int i)
     {
 		Response res(buffer);
 		buffer.clear();
-	    std::string response = res.getResponse();
-        int bytesSent = 0;
-        int totalBytesSent = 0;
-        int responseSize = response.size();
-		while (1) {
+		std::string response = res.getResponse();
+		int bytesSent = 0;
+		int totalBytesSent = 0;
+		int responseSize = response.size();
+		while (totalBytesSent < responseSize)
+		{
 			bytesSent = send(i, response.c_str() + totalBytesSent, responseSize - totalBytesSent, 0);
-			if (bytesSent == -1)
+			if (bytesSent < 0)
 			{
 				Console::error("Send() failed");
-				continue;
+				send(i, response.c_str() + totalBytesSent, responseSize - totalBytesSent, 0);
+				break ;
 			}
 			if (bytesSent == 0)
 				break ;
 			totalBytesSent += bytesSent;
+			response.substr(totalBytesSent);
+			if (bytesSent == 0)
+				break ;
 		}
     }
 }
