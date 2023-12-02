@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 11:27:18 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/30 16:16:59 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/02 14:26:22 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,5 +54,5 @@ bool                        isDirectory(std::string);
 bool                        isFile(std::string);
 std::pair<std::string, bool>                   getMatchedPath(std::string serverRootPath, std::string path);
 void                        trimTrailingSlashes(std::string & s);
-
+std::vector<std::string>    split(const std::string& s, const std::string& delimiter);
 

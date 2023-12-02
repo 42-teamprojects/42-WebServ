@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 21:19:31 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/11/30 16:15:06 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/02 14:26:42 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,4 +159,29 @@ std::pair<std::string, bool>    getMatchedPath(std::string serverRootPath, std::
     else
         value.first = path;
     return value;
+}
+
+std::vector<std::string> split(const std::string& s, const std::string& delimiter)
+{
+    std::vector<std::string> splitted;
+    size_t start = 0, end = 0;
+
+    while ((end = s.find(delimiter, start)) != std::string::npos)
+    {
+        std::string token = s.substr(start, end - start);
+        trim(token);
+
+        if (!token.empty())
+            splitted.push_back(token);
+
+        start = end + delimiter.length();
+    }
+
+    std::string lastToken = s.substr(start);
+    trim(lastToken);
+
+    if (!lastToken.empty())
+        splitted.push_back(lastToken);
+
+    return splitted;
 }
