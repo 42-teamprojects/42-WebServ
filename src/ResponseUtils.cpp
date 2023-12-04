@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseUtils.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 12:22:45 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/12/02 18:18:56 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/04 14:20:17 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 std::string Response::getStatusMessage(HttpStatusCode code) {
     switch (code) {
+        case OK: return "OK";
         case BadRequest: return "Bad Request";
         case Unauthorized: return "Unauthorized";
         case Forbidden: return "Forbidden";
@@ -25,7 +26,8 @@ std::string Response::getStatusMessage(HttpStatusCode code) {
         case NotImplemented: return "Not Implemented";
         case NoContent: return "No Content";
         case ServerError: return "Internal Server Error";
-        default: return "OK";
+        case BadGateway: return "Bad Gateway";
+        default: return "Unknown";
     }
 }
 
@@ -163,7 +165,7 @@ std::string Response::tryFiles(Server const & server, Route const & route, std::
         }
         file.close();
     }
-    if (route.getRouteType() != Route::FILE && (route.getAllowListing() || server.getAllowListing()))
+    if (route.getRouteType() != Route::FILE)
         throw ServerException(Forbidden);
     throw ServerException(NotFound);
 }

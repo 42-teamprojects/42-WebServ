@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/18 17:18:58 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/01 10:57:09 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/04 14:12:36 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ static std::map<std::string, std::string> getEnv(Request const & req, std::strin
 	env["SCRIPT_NAME"] = req.getUri();
 	env["QUERY_STRING"] = getQuery(req.getUri());
 	env["REMOTE_HOST"] = req.getHost();
-	env["CONTENT_LENGTH"] = req.getContentLength() < 0 ? "" : toString(req.getContentLength());
+	env["CONTENT_LENGTH"] = toString(getQuery(req.getUri()).size()); // req.getContentLength() < 0 ? "" : toString(req.getContentLength());
 	env["CONTENT_TYPE"] = req.getContentType();
 	env["HTTP_ACCEPT"] = req.getHeaders().find("Accept")->second;
 	env["HTTP_USER_AGENT"] = req.getHeaders().find("User-Agent")->second;
