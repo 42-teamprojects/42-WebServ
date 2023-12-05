@@ -6,14 +6,14 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 22:16:34 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/12/05 10:15:56 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/05 12:05:35 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include "webserv.hpp"
 
-Server::Server() : port(-1), host(""), serverNames(), clientMaxBodySize(-1), root(DEFAULT_ROOT), index(), errorPages(), allowListing(false), routes() {};
+Server::Server() : port(-1), host(""), serverNames(), clientMaxBodySize(0), root(DEFAULT_ROOT), index(), errorPages(), allowListing(false), routes() {};
 Server::~Server() {};
 
 // Getters
