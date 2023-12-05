@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/02 18:06:36 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/05 19:57:00 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,8 +121,8 @@ void WebServer::handle_receive(int i)
 	while ((bytesReceived = recv(i, buf, sizeof(buf), 0)) > 0)
 	{
 		buffer.append(buf, bytesReceived);
-		if (bytesReceived < 99999)
-			break ;
+		// if (bytesReceived < 99999)
+		break ;
 	}
 	if (bytesReceived <= 0)
 	{
@@ -144,6 +144,7 @@ void WebServer::handle_receive(int i)
 			if (bytesSent < 0)
 			{
 				Console::error("Send() failed");
+				response.substr(totalBytesSent);
 				send(i, response.c_str() + totalBytesSent, responseSize - totalBytesSent, 0);
 				break ;
 			}
