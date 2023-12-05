@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/12/02 16:00:45 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/05 10:19:06 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ Route Response::getRoute(Server & server) {
     }
     checkRedirection(*it);
     checkMethods(*it);
+    if (server.getClientMaxBodySize() != -1 && request->getContentLength() > server.getClientMaxBodySize())
+        throw ServerException(RequestEntityTooLarge);
     return *it;
 }
 
