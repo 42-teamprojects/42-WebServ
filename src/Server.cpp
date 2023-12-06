@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yusufisawi <yusufisawi@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 22:16:34 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/12/05 12:05:35 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/06 18:38:47 by yusufisawi       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,6 +129,5 @@ void Server::fill(std::string const &line, int &lineNb)
             throw ServerException("Invalid server line", lineNb);
     }
     else
-        Console::warning("Invalid server option: " + line);
-        // throw ServerException("Invalid server option", lineNb);
+        throw ServerException("Invalid server option", lineNb);
 }

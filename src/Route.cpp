@@ -179,6 +179,5 @@ void Route::fill(std::string const &line, int &lineNb)
             throw ServerException("Invalid server line", lineNb);
     }
     else
-        Console::warning("Invalid route option: " + line);
-    // throw ServerException("Invalid server option", lineNb);
+        throw ServerException("Invalid server option", lineNb);
 }
