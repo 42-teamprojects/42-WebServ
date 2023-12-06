@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yusufisawi <yusufisawi@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/12/05 12:06:01 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/06 18:57:38 by yusufisawi       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ Response::Response(std::string const & buffer) {
     mimes = Mimes();
     isListing = false;
     request = new Request(buffer);
-    code = OK;
+    code = request->getStatusCode();
     handleResponse();
 }
 
@@ -55,7 +55,8 @@ Route Response::getRoute(Server & server) {
     }
     checkRedirection(*it);
     checkMethods(*it);
-    if (server.getClientMaxBodySize() != 0 && (size_t)request->getContentLength() > server.getClientMaxBodySize())
+    if (server.getClientMaxBodySize() != 0 && request->getMethod() != "GET" && \
+        (size_t)request->getContentLength() > server.getClientMaxBodySize())
         throw ServerException(RequestEntityTooLarge);
     return *it;
 }
@@ -85,40 +86,52 @@ void Response::handleGet(Server const & server, Route const & route) {
         return;
     removeConsecutiveChars(filePath, '/');
     headers["Content-Type"] = mimes[getFileExt(filePath)];
-    if (!route.getCgiPath().empty()) {
+    if (!route.getCgi().empty()) {
         Console::info("Serving CGI file: " + filePath);
-        Cgi cgi(route.getCgiPath(), filePath, *request);
+        Cgi cgi(route, filePath, *request);
         body = cgi.getResponseBody();
         return; 
     }
     Console::info("Serving file: " + filePath);
-    readFile(filePath, OK);
+    readContent(filePath, OK);
 }
 
 void Response::handleDelete(Server const & server, Route const & route) {
     std::string filePath = getFilePath(server, route);
     removeConsecutiveChars(filePath, '/');
-    if (!route.getCgiPath().empty()) {
+    if (!route.getCgi().empty()) {
         Console::info("Running CGI: " + filePath);
-        Cgi cgi(route.getCgiPath(), filePath, *request);
+        Cgi cgi(route, filePath, *request);
         body = cgi.getResponseBody();
         return; 
     }
 }
 
-/* 
-TODO:
-    - body max size
- */
+void Response::handlePost(Server const & server, Route const & route) {
+    // std::string filePath = getFilePath(server, route);
+    // removeConsecutiveChars(filePath, '/');
+    // if (!route.getCgi().empty()) {
+    //     Console::info("Running CGI: " + filePath);
+    //     Cgi cgi(route, filePath, *request);
+    //     body = cgi.getResponseBody();
+    //     return; 
+    // }
+    (void) server;
+    (void) route;
+    readBody();
+}
+
 void Response::handleResponse() {
     Server server = getServer();
     try {
+        if (code != OK)
+            throw ServerException(code);
         Route route = getRoute(server);
         if (request->getMethod() == "GET") {
             handleGet(server, route);
         }
         else if (request->getMethod() == "POST") {
-            readBody();
+            handlePost(server, route);
         }
         else if (request->getMethod() == "DELETE") {
             handleDelete(server, route);
@@ -128,11 +141,11 @@ void Response::handleResponse() {
         }
     } catch (ServerException & e) {
         code = e.getCode();
-        readFile(server.getErrorPages()[code], code);
+        readContent(server.getErrorPages()[code], code);
         Console::warning(request->getUri() + " : " + getStatusMessage(code));
     } catch (std::exception & e) {
         code = ServerError;
-        readFile(server.getErrorPages()[code], code);
+        readContent(server.getErrorPages()[code], code);
         Console::error(e.what());
     }
 }

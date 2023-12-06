@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 21:19:31 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/12/02 14:26:42 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/06 18:09:26 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,20 @@ bool    mapErrorPages(std::map<int, std::string> & errorPages, std::string const
         errorPages[code] = page[1];
     }
     if (pages.empty())
+        return false;
+    return true;
+}
+
+bool mapCgi(std::map<std::string, std::string> & cgi, std::string const & value)
+{
+    std::vector<std::string>    cgiVals = ft_split(value, ", ");
+    for (std::vector<std::string>::iterator it = cgiVals.begin(); it != cgiVals.end(); ++it) {
+        std::vector<std::string>    page = ft_split(*it, ":");
+        if (page.size() != 2)
+            return false;
+        cgi[page[0]] = page[1];
+    }
+    if (cgiVals.empty())
         return false;
     return true;
 }

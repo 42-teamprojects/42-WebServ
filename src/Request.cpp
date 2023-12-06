@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yusufisawi <yusufisawi@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:07:44 by msodor            #+#    #+#             */
-/*   Updated: 2023/12/04 09:03:24 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/06 18:41:05 by yusufisawi       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,10 @@ void Request::statusLineCheck()
         this->statusCode = BadRequest;
         return ;
     }
+}
+
+HttpStatusCode Request::getStatusCode() const {
+    return statusCode;
 }
 
 void Request::saveEncoding()

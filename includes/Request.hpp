@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yusufisawi <yusufisawi@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 19:59:15 by msodor            #+#    #+#             */
-/*   Updated: 2023/12/02 14:25:57 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/06 18:40:25 by yusufisawi       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,4 +67,5 @@ public:
     std::string getBoundary() const;
     int getContentLength() const;
     std::string getBody() const;
+    HttpStatusCode getStatusCode() const;
 };

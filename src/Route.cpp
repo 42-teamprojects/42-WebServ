@@ -13,9 +13,9 @@
 #include "Route.hpp"
 #include "webserv.hpp"
 
-Route::Route() : path(""), root(""), index(), redirect(), methods(), uploadDir(""), errorPages(), allowListing(0), cgiExt(), cgiPath(""), routeType(OTHER) {};
-Route::Route(std::string const &path) : path(path), root(""), index(), redirect(), methods(), uploadDir(""), errorPages(), allowListing(0), cgiExt(), cgiPath(""), routeType(OTHER) {};
-Route::Route(std::string const &root, std::string const &path, RouteType routeType) : path(path), root(root), index(), redirect(), methods(), uploadDir(""), errorPages(), allowListing(0), cgiExt(), cgiPath(""), routeType(routeType){};
+Route::Route() : path(""), root(""), index(), redirect(), methods(), uploadDir(""), errorPages(), allowListing(0), cgi(), routeType(OTHER) {};
+Route::Route(std::string const &path) : path(path), root(""), index(), redirect(), methods(), uploadDir(""), errorPages(), allowListing(0), cgi(), routeType(OTHER) {};
+Route::Route(std::string const &root, std::string const &path, RouteType routeType) : path(path), root(root), index(), redirect(), methods(), uploadDir(""), errorPages(), allowListing(0), cgi(), routeType(routeType){};
 Route::~Route(){};
 
 // Getters
@@ -48,14 +48,8 @@ bool Route::getAllowListing() const
     return allowListing;
 }
 std::map<int, std::string> Route::getErrorPages() const { return errorPages; }
-std::string Route::getCgiPath() const
-{
-    return cgiPath;
-}
-std::vector<std::string> Route::getCgiExt() const
-{
-    return cgiExt;
-}
+std::map<std::string, std::string> Route::getCgi() const { return cgi; }
+
 
 // Setters
 void Route::setPath(const std::string &path)
@@ -87,14 +81,6 @@ void Route::setAllowListing(const bool &allowListing)
     this->allowListing = allowListing;
 }
 void    Route::setErrorPages(const std::map<int, std::string> & errorPages) { this->errorPages = errorPages; }
-void Route::setCgiPath(const std::string &cgiPath)
-{
-    this->cgiPath = cgiPath;
-}
-void Route::setCgiExt(const std::vector<std::string> &cgiExt)
-{
-    this->cgiExt = cgiExt;
-}
 
 // Methods
 void Route::print() const
@@ -124,14 +110,11 @@ void Route::print() const
         std::cout << "error_pages: ";
         printMap(errorPages);
     }
-    std::cout << "RouteType: " << (routeType == 0 ? "FILE" : (routeType == 1 ? "DIRECTORY" : "OTHER")) << std::endl;
-    if (!cgiPath.empty())
-        std::cout << "cgiPath: " << cgiPath << std::endl;
-    if (!cgiExt.empty())
-    {
-        std::cout << "cgiExt: ";
-        printContainer(cgiExt);
+    if (!cgi.empty()) {
+        std::cout << "cgi: ";
+        printMap(cgi);
     }
+    std::cout << "RouteType: " << (routeType == 0 ? "FILE" : (routeType == 1 ? "DIRECTORY" : "OTHER")) << std::endl;
 }
 
 void Route::fill(std::string const &line, int &lineNb)
@@ -190,18 +173,11 @@ void Route::fill(std::string const &line, int &lineNb)
         if (!mapErrorPages(errorPages, value))
             throw ServerException("Invalid server line", lineNb);
     }
-    else if (option == "cgi_path" && cgiPath.empty())
+    else if (option == "cgi" && cgi.empty())
     {
-        setCgiPath(value);
-    }
-    else if ((option == "cgi_ext" || option == "cgi_extension") && cgiExt.empty())
-    {
-        std::vector<std::string> cgiExt = ft_split(value, ", ");
-        if (cgiExt.empty())
-            throw ServerException("Invalid route line", lineNb);
-        setCgiExt(cgiExt);
+        if (!mapCgi(cgi, value))
+            throw ServerException("Invalid server line", lineNb);
     }
     else
-        Console::warning("Invalid route option: " + line);
-    // throw ServerException("Invalid server option", lineNb);
+        throw ServerException("Invalid server option", lineNb);
 }

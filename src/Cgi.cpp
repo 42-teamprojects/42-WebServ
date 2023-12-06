@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/18 17:18:58 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/04 14:12:36 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/06 18:16:26 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,16 +54,16 @@ static std::map<std::string, std::string> getEnv(Request const & req, std::strin
 	env["SCRIPT_NAME"] = req.getUri();
 	env["QUERY_STRING"] = getQuery(req.getUri());
 	env["REMOTE_HOST"] = req.getHost();
-	env["CONTENT_LENGTH"] = toString(getQuery(req.getUri()).size()); // req.getContentLength() < 0 ? "" : toString(req.getContentLength());
+	env["CONTENT_LENGTH"] = req.getContentLength() < 0 ? "" : toString(req.getContentLength());
 	env["CONTENT_TYPE"] = req.getContentType();
 	env["HTTP_ACCEPT"] = req.getHeaders().find("Accept")->second;
 	env["HTTP_USER_AGENT"] = req.getHeaders().find("User-Agent")->second;
 	return (env);
 }
 
-Cgi::Cgi(std::string const & path, std::string const & filename, Request const & req)
+Cgi::Cgi(Route const & cgiRoute, std::string const & filename, Request const & req)
 {
-	this->path = path;
+	this->cgiRoute = cgiRoute;
 	this->filename = filename;
 	this->env = getEnv(req, filename);
 	this->envp = mapToArray(this->env);
@@ -86,30 +86,10 @@ Cgi& Cgi::operator=(Cgi const& other)
 {
 	if (this != &other)
 	{
-		this->path = other.path;
+		this->cgiRoute = other.cgiRoute;
 		this->filename = other.filename;
 	}
 	return (*this);
-}
-
-void Cgi::setPath(std::string path)
-{
-	this->path = path;
-}
-
-void Cgi::setFilename(std::string filename)
-{
-	this->filename = filename;
-}
-
-std::string Cgi::getPath()
-{
-	return (this->path);
-}
-
-std::string Cgi::getFilename()
-{
-	return (this->filename);
 }
 
 std::string Cgi::getResponseBody()
@@ -124,12 +104,13 @@ void Cgi::executCgi()
 	pipe(fd);
 	pid_t pid = fork();
 	int status;
+	std::string binPath = cgiRoute.getCgi()[getFileExt(filename)];
 	if (pid == 0)
 	{
 		close(fd[0]);
 		dup2(fd[1], 1);
-		char *argv[] = {const_cast<char *>(this->path.c_str()), const_cast<char *>(filename.c_str()), NULL};
-		execve(this->path.c_str(), argv, envp);
+		char *argv[] = {const_cast<char *>(binPath.c_str()), const_cast<char *>(filename.c_str()), NULL};
+		execve(binPath.c_str(), argv, envp);
 		close(fd[1]);
 		exit(1);
 	}

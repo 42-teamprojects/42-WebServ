@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseUtils.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yusufisawi <yusufisawi@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 12:22:45 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/12/04 14:20:17 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/06 18:47:49 by yusufisawi       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ std::string Response::getResponse() {
 
 #include <fstream>
 
-void Response::readFile(std::string const &filePath, HttpStatusCode code) {
+void Response::readContent(std::string const &filePath, HttpStatusCode code) {
     std::ifstream file(filePath);
     if (file.is_open())
     {

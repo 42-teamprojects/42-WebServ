@@ -35,7 +35,7 @@ public:
 
     std::string getResponse();
 
-    void readFile(std::string const &, HttpStatusCode);
+    void readContent(std::string const &, HttpStatusCode);
 
     Server getServer();
 
@@ -58,6 +58,7 @@ public:
     Route deepSearch(Server & server, std::string const & resource);
     
     void handleDelete(Server const &, Route const &);
+    void handlePost(Server const &, Route const &);
     void readBody();
     void processUrlEncodedBody(const std::string& body);
     void processFileUpload(std::istringstream& ss, const std::string& line);
