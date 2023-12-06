@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/05 19:57:00 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/06 18:57:46 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,22 +140,32 @@ void WebServer::handle_receive(int i)
 		int responseSize = response.size();
 		while (totalBytesSent < responseSize)
 		{
-			bytesSent = send(i, response.c_str() + totalBytesSent, responseSize - totalBytesSent, 0);
-			if (bytesSent < 0)
+			if (totalBytesSent == 0)
 			{
-				Console::error("Send() failed");
-				response.substr(totalBytesSent);
-				send(i, response.c_str() + totalBytesSent, responseSize - totalBytesSent, 0);
-				break ;
+				bytesSent = send(i, response.c_str(), responseSize, 0);
+				if (bytesSent == -1)
+				{
+					Console::error("Send() failed");
+					
+					// close(i);
+				}
+				totalBytesSent += bytesSent;
+				// response.erase(0, bytesSent);
+			}		
+			else
+			{
+				bytesSent = send(i, response.c_str() + totalBytesSent, responseSize - totalBytesSent, 0);
+				if (bytesSent == -1)
+				{
+					Console::error("Send() failed");
+					
+					// close(i);
+				}
+				totalBytesSent += bytesSent;
+				response.erase(0, bytesSent);
 			}
-			if (bytesSent == 0)
-				break ;
-			totalBytesSent += bytesSent;
-			response.substr(totalBytesSent);
-			if (bytesSent == 0)
-				break ;
 		}
-		close(i);
+		// close(i);
     }
 }
 
