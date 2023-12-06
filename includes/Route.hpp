@@ -41,8 +41,7 @@ public:
     std::string                                 getUploadDir() const;
     bool                                        getAllowListing() const;
     std::map<int, std::string>                  getErrorPages() const;
-    std::string                                 getCgiPath() const;
-    std::vector<std::string>                    getCgiExt() const;
+    std::map<std::string, std::string>          getCgi() const;
 
     // Setters
     void                                        setPath(const std::string& path);
@@ -53,8 +52,6 @@ public:
     void                                        setUploadDir(const std::string& uploadDir);
     void                                        setAllowListing(const bool& allowListing);
     void                                        setErrorPages(const std::map<int, std::string>&);
-    void                                        setCgiPath(const std::string& cgiPath);
-    void                                        setCgiExt(const std::vector<std::string>& cgiExt);
 
     RouteType getRouteType() const {
         return routeType;
@@ -76,8 +73,7 @@ private:
     std::string                             uploadDir;
     std::map<int, std::string>              errorPages;
     bool                                    allowListing;
-    std::vector<std::string>                cgiExt;
-    std::string                             cgiPath;
+    std::map<std::string, std::string>      cgi;
 
     RouteType                               routeType;
 };

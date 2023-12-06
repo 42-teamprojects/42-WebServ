@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 11:27:18 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/12/02 14:26:22 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/06 18:08:09 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,4 +55,5 @@ bool                        isFile(std::string);
 std::pair<std::string, bool>                   getMatchedPath(std::string serverRootPath, std::string path);
 void                        trimTrailingSlashes(std::string & s);
 std::vector<std::string>    split(const std::string& s, const std::string& delimiter);
+bool                        mapCgi(std::map<std::string, std::string> & cgi, std::string const & value);
 

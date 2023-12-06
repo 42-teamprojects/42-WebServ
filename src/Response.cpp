@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/12/05 12:06:01 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/06 18:11:12 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,8 @@ Route Response::getRoute(Server & server) {
     }
     checkRedirection(*it);
     checkMethods(*it);
-    if (server.getClientMaxBodySize() != 0 && (size_t)request->getContentLength() > server.getClientMaxBodySize())
+    if (server.getClientMaxBodySize() != 0 && request->getMethod() != "GET" && \
+        (size_t)request->getContentLength() > server.getClientMaxBodySize())
         throw ServerException(RequestEntityTooLarge);
     return *it;
 }
@@ -85,9 +86,9 @@ void Response::handleGet(Server const & server, Route const & route) {
         return;
     removeConsecutiveChars(filePath, '/');
     headers["Content-Type"] = mimes[getFileExt(filePath)];
-    if (!route.getCgiPath().empty()) {
+    if (!route.getCgi().empty()) {
         Console::info("Serving CGI file: " + filePath);
-        Cgi cgi(route.getCgiPath(), filePath, *request);
+        Cgi cgi(route, filePath, *request);
         body = cgi.getResponseBody();
         return; 
     }
@@ -98,9 +99,9 @@ void Response::handleGet(Server const & server, Route const & route) {
 void Response::handleDelete(Server const & server, Route const & route) {
     std::string filePath = getFilePath(server, route);
     removeConsecutiveChars(filePath, '/');
-    if (!route.getCgiPath().empty()) {
+    if (!route.getCgi().empty()) {
         Console::info("Running CGI: " + filePath);
-        Cgi cgi(route.getCgiPath(), filePath, *request);
+        Cgi cgi(route, filePath, *request);
         body = cgi.getResponseBody();
         return; 
     }
