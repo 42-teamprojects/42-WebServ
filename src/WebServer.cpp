@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/06 18:57:46 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/06 19:26:15 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,6 +142,7 @@ void WebServer::handle_receive(int i)
 		{
 			if (totalBytesSent == 0)
 			{
+				// bytesSent = send(i, response.c_str(), responseSize, 0);
 				bytesSent = send(i, response.c_str(), responseSize, 0);
 				if (bytesSent == -1)
 				{
