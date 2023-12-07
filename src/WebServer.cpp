@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/07 14:53:00 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/07 15:49:13 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,19 +112,30 @@ int WebServer::find_socket(int socket)
 	return (-1);
 }
 
+bool number_of(std::string str, std::string c)
+{
+	(void)c;
+	// std::cout << str << std::endl;
+	// exit(0);
+	if (str.rfind("--\r\n") != std::string::npos)
+		return (true);
+	return (false);
+}
+
 void WebServer::handle_receive(int i)
 {
 	int bytesReceived;
 	char buf[99999];
 	bzero(buf, 99999);
 
-	while ((bytesReceived = recv(i, buf, sizeof(buf), 0)) > 0)
+	while ((bytesReceived = recv(i, buf, 99999, 0)) > 0)
 	{
-		buffer.append(buf, bytesReceived);
-		// if (bytesReceived < 99999)
-		break ;
+		buf[bytesReceived] = '\0';
+		buffer += buf;
+		if (number_of(buffer, "\r\n"))
+			break;
 	}
-	if (bytesReceived < 0)
+	if (bytesReceived ==0)
 	{
 		close(i);
 		Console::warning("Client " + toString(i) + " disconnected");
