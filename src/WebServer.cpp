@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/06 19:26:15 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/07 14:30:59 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ void WebServer::handle_receive(int i)
 		// if (bytesReceived < 99999)
 		break ;
 	}
-	if (bytesReceived <= 0)
+	if (bytesReceived < 0)
 	{
 		close(i);
 		Console::warning("Client " + toString(i) + " disconnected");
