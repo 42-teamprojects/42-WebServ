@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/07 14:30:59 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/07 14:53:00 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,16 +142,11 @@ void WebServer::handle_receive(int i)
 		{
 			if (totalBytesSent == 0)
 			{
-				// bytesSent = send(i, response.c_str(), responseSize, 0);
 				bytesSent = send(i, response.c_str(), responseSize, 0);
 				if (bytesSent == -1)
 				{
 					Console::error("Send() failed");
-					
-					// close(i);
 				}
-				totalBytesSent += bytesSent;
-				// response.erase(0, bytesSent);
 			}		
 			else
 			{
@@ -159,12 +154,10 @@ void WebServer::handle_receive(int i)
 				if (bytesSent == -1)
 				{
 					Console::error("Send() failed");
-					
-					// close(i);
 				}
-				totalBytesSent += bytesSent;
-				response.erase(0, bytesSent);
 			}
+			totalBytesSent += bytesSent;
+			response.erase(0, bytesSent);
 		}
 		// close(i);
     }
