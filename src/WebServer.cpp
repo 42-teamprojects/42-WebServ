@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/10 20:58:32 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/10 21:05:51 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,7 @@ void WebServer::handle_receive(int i, std::vector<Client> &clients)
 	std::string tmp =  client.getBuffer();
 	tmp.append(buf, bytesReceived);
 	client.setBuffer(tmp);
-	if(number_of(client.getBuffer(), "\r\n\r\n"))
+	if(bytesReceived > 0)
     {
 		// std::cout << "buffer: " << client.getBuffer() << std::endl;
 		Response res(client.getBuffer());
