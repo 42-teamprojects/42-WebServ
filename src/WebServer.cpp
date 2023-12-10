@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/10 14:22:25 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/10 15:25:31 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ int WebServer::find_socket(int socket)
 
 void WebServer::handle_receive(int i)
 {
-	ClientClass client(i);
+	Client client(i);
     std::string buffer(4096, '\0');
     int bytesReceived = recv(i, &buffer[0], 4096, 0);
     if (bytesReceived == -1)
