@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/10 17:10:44 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/10 20:58:32 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ void WebServer::handle_select(int port, int idx)
 	}
 }
 
-void WebServer::handle_accept(int i, std::vector<ClientClass> &clients)
+void WebServer::handle_accept(int i, std::vector<Client> &clients)
 {
 	socklen_t addrSize = sizeof(srvs[i].addr);
     clientSocket = accept(srvs[i].socket, (struct sockaddr *)&srvs[i].addr, &addrSize);
@@ -100,7 +100,7 @@ void WebServer::handle_accept(int i, std::vector<ClientClass> &clients)
         close(clientSocket);
         return; 
     }
-	ClientClass client(clientSocket);
+	Client client(clientSocket);
 	clients.push_back(client);
 	FD_SET(clientSocket, &master);
 }
@@ -125,7 +125,7 @@ bool number_of(std::string str, std::string c)
 	return (false);
 }
 
-ClientClass& find_client(int socket, std::vector<ClientClass> &clients)
+Client& find_client(int socket, std::vector<Client> &clients)
 {
 	for (size_t i = 0; i < clients.size(); i++)
 	{
@@ -136,9 +136,9 @@ ClientClass& find_client(int socket, std::vector<ClientClass> &clients)
 	throw std::exception();
 }
 
-void WebServer::handle_receive(int i, std::vector<ClientClass> &clients)
+void WebServer::handle_receive(int i, std::vector<Client> &clients)
 {
-	ClientClass& client = find_client(i, clients);
+	Client& client = find_client(i, clients);
 	int bytesReceived = 0;
 	char buf[1024];
 	if ((bytesReceived = recv(i, buf, 1024, 0)) <= 0)
@@ -178,7 +178,7 @@ void WebServer::handle_receive(int i, std::vector<ClientClass> &clients)
 void WebServer::run()
 {
 	fd_set read_fds;
-    std::vector<ClientClass> clients;
+    std::vector<Client> clients;
 	
 	while (true)
 	{
