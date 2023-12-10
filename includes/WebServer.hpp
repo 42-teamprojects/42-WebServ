@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:15 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/11/27 17:55:45 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/10 16:12:21 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ public:
     WebServer(std::vector<Server> &);
     ~WebServer();
     void handle_select(int port, int idx);
-    void handle_accept(int i);
-    void handle_receive(int i);
+    void handle_accept(int i, std::vector<ClientClass> &clients);
+    void handle_receive(int i, std::vector<ClientClass> &clients);
     int  find_socket(int socket);
     void run();
 };

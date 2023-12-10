@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/10 13:25:18 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/10 14:06:53 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/10 16:32:32 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ ClientClass &ClientClass::operator=(ClientClass const& src)
 {
 	if (this != &src)
 	{
+		this->socket = src.socket;
+		this->buffer = src.buffer;
 	}
 	return (*this);
 }
