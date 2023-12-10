@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ClientClass.hpp                                    :+:      :+:    :+:   */
+/*   Client.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,26 +10,26 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CLIENTCLASS_HPP
-# define CLIENTCLASS_HPP
+#ifndef Client_HPP
+# define Client_HPP
 
 # include "webserv.hpp"
 # include "utils.hpp"
 # include "WebServer.hpp"
 
 
-class ClientClass
+class Client
 {
 private:
 	int socket;
 	std::string buffer;
 public:
-	ClientClass();
-	~ClientClass();
-	ClientClass(ClientClass const& src);
-	ClientClass &operator=(ClientClass const& src);
+	Client();
+	~Client();
+	Client(Client const& src);
+	Client &operator=(Client const& src);
 
-	ClientClass(int socket);
+	Client(int socket);
 	
 	int getSocket() const;
 	std::string getBuffer();

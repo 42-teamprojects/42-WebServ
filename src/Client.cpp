@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ClientClass.cpp                                    :+:      :+:    :+:   */
+/*   Client.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -14,20 +14,20 @@
 #include "WebServer.hpp"
 #include "webserv.hpp"
 
-ClientClass::ClientClass()
+Client::Client()
 {
 }
 
-ClientClass::~ClientClass()
+Client::~Client()
 {
 }
 
-ClientClass::ClientClass(ClientClass const& src)
+Client::Client(Client const& src)
 {
 	*this = src;
 }
 
-ClientClass &ClientClass::operator=(ClientClass const& src)
+Client &Client::operator=(Client const& src)
 {
 	if (this != &src)
 	{
@@ -37,26 +37,26 @@ ClientClass &ClientClass::operator=(ClientClass const& src)
 	return (*this);
 }
 
-ClientClass::ClientClass(int socket) : socket(socket)
+Client::Client(int socket) : socket(socket)
 {
 }
 
-int ClientClass::getSocket() const
+int Client::getSocket() const
 {
 	return (socket);
 }
 
-std::string ClientClass::getBuffer()
+std::string Client::getBuffer()
 {
 	return (buffer);
 }
 
-void ClientClass::setBuffer(std::string buffer)
+void Client::setBuffer(std::string buffer)
 {
 	this->buffer = buffer;
 }
 
-void ClientClass::setSocket(int socket)
+void Client::setSocket(int socket)
 {
 	this->socket = socket;
 }
