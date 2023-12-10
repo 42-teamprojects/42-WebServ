@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/07 15:49:13 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/10 14:22:25 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,35 +112,34 @@ int WebServer::find_socket(int socket)
 	return (-1);
 }
 
-bool number_of(std::string str, std::string c)
-{
-	(void)c;
-	// std::cout << str << std::endl;
-	// exit(0);
-	if (str.rfind("--\r\n") != std::string::npos)
-		return (true);
-	return (false);
-}
+// bool number_of(std::string str, std::string c)
+// {
+// 	(void)c;
+// 	// std::cout << str << std::endl;
+// 	// exit(0);
+// 	if (str.rfind("--\r\n") != std::string::npos)
+// 		return (true);
+// 	return (false);
+// }
 
 void WebServer::handle_receive(int i)
 {
-	int bytesReceived;
-	char buf[99999];
-	bzero(buf, 99999);
-
-	while ((bytesReceived = recv(i, buf, 99999, 0)) > 0)
+	ClientClass client(i);
+    std::string buffer(4096, '\0');
+    int bytesReceived = recv(i, &buffer[0], 4096, 0);
+    if (bytesReceived == -1)
 	{
-		buf[bytesReceived] = '\0';
-		buffer += buf;
-		if (number_of(buffer, "\r\n"))
-			break;
-	}
-	if (bytesReceived ==0)
+        Console::error("Recv() failed");
+        close(i);
+        return;
+    }
+    buffer.resize(bytesReceived);
+    client.setBuffer(buffer);
+	if (bytesReceived == 0)
 	{
-		close(i);
-		Console::warning("Client " + toString(i) + " disconnected");
-		return ; 
-	}
+        close(i);
+        return;
+    }
     else
     {
 		Response res(buffer);
@@ -151,21 +150,10 @@ void WebServer::handle_receive(int i)
 		int responseSize = response.size();
 		while (totalBytesSent < responseSize)
 		{
-			if (totalBytesSent == 0)
+			bytesSent = send(i, response.c_str() + totalBytesSent, responseSize - totalBytesSent, 0);
+			if (bytesSent == -1)
 			{
-				bytesSent = send(i, response.c_str(), responseSize, 0);
-				if (bytesSent == -1)
-				{
-					Console::error("Send() failed");
-				}
-			}		
-			else
-			{
-				bytesSent = send(i, response.c_str() + totalBytesSent, responseSize - totalBytesSent, 0);
-				if (bytesSent == -1)
-				{
-					Console::error("Send() failed");
-				}
+				Console::error("Send() failed");
 			}
 			totalBytesSent += bytesSent;
 			response.erase(0, bytesSent);

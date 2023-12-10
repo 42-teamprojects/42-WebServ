@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
+/*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 13:35:49 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/12/02 14:26:06 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/10 14:06:31 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,5 +41,6 @@
 #include "Cgi.hpp"
 #include "Mimes.hpp"
 #include "ServerException.hpp"
+#include "ClientClass.hpp"
 
 # define DEFAULT_ROOT "/var/www/html"
