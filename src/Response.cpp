@@ -193,9 +193,9 @@ void Response::processMultipartFormDataBody(const std::string& body) {
     }
 }
 
-void Response::processFileUpload(std::istringstream& ss, const std::string& line) {
+void Response::processFileUpload(std::istringstream& ss, const std::string& line, Route const & route) {
     int len = line.find("\"", line.find("filename") + 10) - line.find("filename") - 10;
-    std::string filename = "www/uploads/uploads/" + line.substr(line.find("filename") + 10, len);
+    std::string filename = route.getUploadDir() + line.substr(line.find("filename") + 10, len);
     std::cout << "filename: " << filename << std::endl;
     std::ofstream file(filename.c_str());
 
