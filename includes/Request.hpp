@@ -25,6 +25,7 @@ private:
     int port;
     std::map<std::string, std::string> headers;
     std::string body;
+    std::string rawBody;
     
     bool    isChunked;
     int     contentLength;
@@ -67,5 +68,6 @@ public:
     std::string getBoundary() const;
     int getContentLength() const;
     std::string getBody() const;
+    std::string getRawBody() const;
     HttpStatusCode getStatusCode() const;
 };

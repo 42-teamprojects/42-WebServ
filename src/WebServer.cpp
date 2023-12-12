@@ -129,7 +129,6 @@ Client& find_client(int socket, std::vector<Client> &clients)
 {
 	for (size_t i = 0; i < clients.size(); i++)
 	{
-		std::cout << clients[i].getSocket() << std::endl;
 		if (clients[i].getSocket() == socket)
 			return (clients[i]);
 	}
@@ -147,7 +146,7 @@ void WebServer::handle_receive(int i, std::vector<Client> &clients)
 		FD_CLR(i, &master);
 		return ;
 	}
-	std::string tmp =  client.getBuffer();
+	std::string tmp;
 	tmp.append(buf, bytesReceived);
 	client.setBuffer(tmp);
 	if(bytesReceived > 0)
@@ -196,7 +195,6 @@ void WebServer::run()
 				if (var != -1)
 				{
 					handle_accept(var, clients);
-					std::cout << clients[0].getSocket() << std::endl;
 					FD_SET(clientSocket, &master);
 				}
 				else
