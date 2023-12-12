@@ -13,7 +13,8 @@
 #include "Response.hpp"
 #include "utils.hpp"
 
-Response::Response(std::string const & buffer) {
+Response::Response(std::string const & buffer)
+{
     mimes = Mimes();
     isListing = false;
     request = new Request(buffer);
@@ -25,7 +26,8 @@ Response::~Response() {
     delete request;
 }
 
-Route Response::deepSearch(Server & server, std::string const & resource) {
+Route Response::deepSearch(Server & server, std::string const & resource)
+{
     std::vector<Route> routes = server.getRoutes();
     for (std::vector<Route>::iterator it = routes.begin(); it != routes.end(); it++) {
         std::pair<std::string, bool>   matchedPath = getMatchedPath(it->getPath(), resource);
@@ -41,7 +43,8 @@ Route Response::deepSearch(Server & server, std::string const & resource) {
     return findBestMatch(server, resource); 
 }
 
-Route Response::getRoute(Server & server) {
+Route Response::getRoute(Server & server)
+{
     std::string resource = getRequestedResource(request->getUri());
     
     // Get matched route for request
@@ -61,7 +64,8 @@ Route Response::getRoute(Server & server) {
     return *it;
 }
 
-std::string Response::getFilePath(Server const & server, Route const & route) {
+std::string Response::getFilePath(Server const & server, Route const & route)
+{
     if (route.getRouteType() == Route::FILE)
         return route.getRoot() + "/" + route.getPath();
     
@@ -80,7 +84,8 @@ std::string Response::getFilePath(Server const & server, Route const & route) {
     }
 }
 
-void Response::handleGet(Server const & server, Route const & route) {
+void Response::handleGet(Server const & server, Route const & route)
+{
     std::string filePath = getFilePath(server, route);
     if (isListing)
         return;
@@ -96,7 +101,8 @@ void Response::handleGet(Server const & server, Route const & route) {
     readContent(filePath, OK);
 }
 
-void Response::handleDelete(Server const & server, Route const & route) {
+void Response::handleDelete(Server const & server, Route const & route)
+{
     std::string filePath = getFilePath(server, route);
     removeConsecutiveChars(filePath, '/');
     if (!route.getCgi().empty()) {
@@ -107,7 +113,8 @@ void Response::handleDelete(Server const & server, Route const & route) {
     }
 }
 
-void Response::handlePost(Server const & server, Route const & route) {
+void Response::handlePost(Server const & server, Route const & route)
+{
     // std::string filePath = getFilePath(server, route);
     // removeConsecutiveChars(filePath, '/');
     // if (!route.getCgi().empty()) {
