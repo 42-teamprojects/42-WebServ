@@ -224,7 +224,8 @@ void Request::parse(std::string request)
     parseHost();
     //pars body
     std::string body;
-    std::getline(req, body, '\0');
+    while (std::getline(req, line))
+        body += line + '\n';
     if (this->isChunked)
         unchunkBody(body);
     else if (this->contentLength > 0) {
