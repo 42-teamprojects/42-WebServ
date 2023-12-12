@@ -116,7 +116,7 @@ void Response::handlePost(Server const & server, Route const & route) {
         body = cgi.getResponseBody();
         return; 
     }
-    readBody();
+    readBody(route);
 }
 
 void Response::handleResponse() {
@@ -148,14 +148,14 @@ void Response::handleResponse() {
     }
 }
 
-void Response::readBody() {
+void Response::readBody(Route const & route) {
     const std::string& contentType = request->getContentType();
     const std::string& body = request->getBody();
     
     if (contentType == "application/x-www-form-urlencoded") {
         processUrlEncodedBody(body);
     } else if (contentType == "multipart/form-data") {
-        processMultipartFormDataBody(body);
+        processMultipartFormDataBody(body, route);
     }
 }
 
@@ -171,7 +171,7 @@ void Response::processUrlEncodedBody(const std::string& body) {
     }
 }
 
-void Response::processMultipartFormDataBody(const std::string& body) {
+void Response::processMultipartFormDataBody(const std::string& body, Route const & route){
     std::map<std::string, std::string> queryStrings;
     std::string boundary = request->getBoundary();
     std::vector<std::string> params = split(body, "--" + boundary);
@@ -184,16 +184,16 @@ void Response::processMultipartFormDataBody(const std::string& body) {
 
         if (line.find("filename") != std::string::npos) {
             std::cout << "file found" << std::endl;
-            processFileUpload(ss, line);
+            processFileUpload(ss, line, route);
         } else if (line.find("name") != std::string::npos){
             processFormField(ss, line, queryStrings);
         }
     }
 }
 
-void Response::processFileUpload(std::istringstream& ss, const std::string& line) {
+void Response::processFileUpload(std::istringstream& ss, const std::string& line, Route const & route) {
     int len = line.find("\"", line.find("filename") + 10) - line.find("filename") - 10;
-    std::string filename = "www/uploads/uploads/" + line.substr(line.find("filename") + 10, len);
+    std::string filename = route.getUploadDir() + line.substr(line.find("filename") + 10, len);
     std::cout << "filename: " << filename << std::endl;
     std::ofstream file(filename.c_str());
 
