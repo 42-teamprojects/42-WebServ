@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/07 15:49:13 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/10 21:05:51 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ void WebServer::handle_select(int port, int idx)
 	}
 }
 
-void WebServer::handle_accept(int i)
+void WebServer::handle_accept(int i, std::vector<Client> &clients)
 {
 	socklen_t addrSize = sizeof(srvs[i].addr);
     clientSocket = accept(srvs[i].socket, (struct sockaddr *)&srvs[i].addr, &addrSize);
@@ -100,6 +100,9 @@ void WebServer::handle_accept(int i)
         close(clientSocket);
         return; 
     }
+	Client client(clientSocket);
+	clients.push_back(client);
+	FD_SET(clientSocket, &master);
 }
 
 int WebServer::find_socket(int socket)
@@ -122,61 +125,60 @@ bool number_of(std::string str, std::string c)
 	return (false);
 }
 
-void WebServer::handle_receive(int i)
+Client& find_client(int socket, std::vector<Client> &clients)
 {
-	int bytesReceived;
-	char buf[99999];
-	bzero(buf, 99999);
-
-	while ((bytesReceived = recv(i, buf, 99999, 0)) > 0)
+	for (size_t i = 0; i < clients.size(); i++)
 	{
-		buf[bytesReceived] = '\0';
-		buffer += buf;
-		if (number_of(buffer, "\r\n"))
-			break;
+		std::cout << clients[i].getSocket() << std::endl;
+		if (clients[i].getSocket() == socket)
+			return (clients[i]);
 	}
-	if (bytesReceived ==0)
+	throw std::exception();
+}
+
+void WebServer::handle_receive(int i, std::vector<Client> &clients)
+{
+	Client& client = find_client(i, clients);
+	int bytesReceived = 0;
+	char buf[1024];
+	if ((bytesReceived = recv(i, buf, 1024, 0)) <= 0)
 	{
 		close(i);
-		Console::warning("Client " + toString(i) + " disconnected");
-		return ; 
+		FD_CLR(i, &master);
+		return ;
 	}
-    else
+	std::string tmp =  client.getBuffer();
+	tmp.append(buf, bytesReceived);
+	client.setBuffer(tmp);
+	if(bytesReceived > 0)
     {
-		Response res(buffer);
-		buffer.clear();
+		// std::cout << "buffer: " << client.getBuffer() << std::endl;
+		Response res(client.getBuffer());
+		client.getBuffer().clear();
 		std::string response = res.getResponse();
 		int bytesSent = 0;
 		int totalBytesSent = 0;
 		int responseSize = response.size();
 		while (totalBytesSent < responseSize)
 		{
-			if (totalBytesSent == 0)
+			bytesSent = send(i, response.c_str() + totalBytesSent, responseSize - totalBytesSent, 0);
+			if (bytesSent == -1)
 			{
-				bytesSent = send(i, response.c_str(), responseSize, 0);
-				if (bytesSent == -1)
-				{
-					Console::error("Send() failed");
-				}
-			}		
-			else
-			{
-				bytesSent = send(i, response.c_str() + totalBytesSent, responseSize - totalBytesSent, 0);
-				if (bytesSent == -1)
-				{
-					Console::error("Send() failed");
-				}
+				Console::error("Send() failed");
 			}
 			totalBytesSent += bytesSent;
 			response.erase(0, bytesSent);
 		}
-		// close(i);
+		close(i);
+		FD_CLR(i, &master);
+		clients.erase(clients.begin());
     }
 }
 
 void WebServer::run()
 {
 	fd_set read_fds;
+    std::vector<Client> clients;
 	
 	while (true)
 	{
@@ -193,12 +195,13 @@ void WebServer::run()
 				int var = find_socket(i);
 				if (var != -1)
 				{
-					handle_accept(var);
+					handle_accept(var, clients);
+					std::cout << clients[0].getSocket() << std::endl;
 					FD_SET(clientSocket, &master);
 				}
 				else
 				{
-					handle_receive(i);
+					handle_receive(i, clients);
 					FD_CLR(i, &master);
 					close(i);
 				}
