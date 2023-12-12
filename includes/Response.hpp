@@ -59,9 +59,9 @@ public:
     
     void handleDelete(Server const &, Route const &);
     void handlePost(Server const &, Route const &);
-    void readBody();
+    void readBody(Route const & route);
     void processUrlEncodedBody(const std::string& body);
-    void processFileUpload(std::istringstream& ss, const std::string& line);
-    void processMultipartFormDataBody(const std::string& body);
+    void processFileUpload(std::istringstream& ss, const std::string& line, Route const & route);
+    void processMultipartFormDataBody(const std::string& body, Route const & route);
     void processFormField(std::istringstream& ss, const std::string& line, std::map<std::string, std::string>& queryStrings);
 };
