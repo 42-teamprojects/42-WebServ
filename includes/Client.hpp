@@ -23,6 +23,7 @@ class Client
 private:
 	int socket;
 	std::string buffer;
+	int total_read;
 public:
 	Client();
 	~Client();
@@ -32,6 +33,8 @@ public:
 	Client(int socket);
 	
 	int getSocket() const;
+	void add_to_total_read(int read);
+	int getTotalRead();
 	std::string getBuffer();
 	void setBuffer(std::string buffer);
 	void setSocket(int socket);
