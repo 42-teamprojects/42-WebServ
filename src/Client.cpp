@@ -16,6 +16,7 @@
 
 Client::Client()
 {
+	this->total_read = 0;
 }
 
 Client::~Client()
@@ -33,12 +34,16 @@ Client &Client::operator=(Client const& src)
 	{
 		this->socket = src.socket;
 		this->buffer = src.buffer;
+		this->total_read = src.total_read;
 	}
 	return (*this);
 }
 
-Client::Client(int socket) : socket(socket)
+Client::Client(int socket)
 {
+	this->socket = socket;
+	this->buffer = "";
+	this->total_read = 0;
 }
 
 int Client::getSocket() const
@@ -60,3 +65,15 @@ void Client::setSocket(int socket)
 {
 	this->socket = socket;
 }
+
+void Client::add_to_total_read(int read)
+{
+	total_read += read;
+}
+
+int Client::getTotalRead()
+{
+	return (total_read);
+}
+
+

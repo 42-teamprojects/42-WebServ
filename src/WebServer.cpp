@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/10 21:05:51 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/13 10:05:36 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,63 +115,108 @@ int WebServer::find_socket(int socket)
 	return (-1);
 }
 
-bool number_of(std::string str, std::string c)
-{
-	(void)c;
-	// std::cout << str << std::endl;
-	// exit(0);
-	if (str.rfind("--\r\n") != std::string::npos)
-		return (true);
-	return (false);
-}
 
 Client& find_client(int socket, std::vector<Client> &clients)
 {
 	for (size_t i = 0; i < clients.size(); i++)
 	{
+		// std::cout << clients[i].getSocket() << std::endl;
 		if (clients[i].getSocket() == socket)
 			return (clients[i]);
 	}
 	throw std::exception();
 }
 
+bool number_of(Client client, std::string c)
+{
+	if (client.getBuffer().find(c) == std::string::npos)
+		return (false);
+	std::string buffer = client.getBuffer();
+	size_t pos = buffer.find("Content-Length:");
+	if (pos != std::string::npos)
+	{
+		std::string tmp = buffer.substr(pos + 16);
+        size_t end = tmp.find_first_not_of("0123456789");
+        std::string length = tmp.substr(0, end);
+		int content_length = atoi(length.c_str());
+		size_t pos2 = client.getBuffer().find("\r\n\r\n",pos);	
+		if(pos2 != std::string::npos)
+		{
+			if((client.getTotalRead() - pos2 - 4) == static_cast<size_t>(content_length))
+				return (true);
+		}
+	}
+	return (false);
+}
+
 void WebServer::handle_receive(int i, std::vector<Client> &clients)
 {
 	Client& client = find_client(i, clients);
-	int bytesReceived = 0;
-	char buf[1024];
-	if ((bytesReceived = recv(i, buf, 1024, 0)) <= 0)
+	char buf[1025];
+	int bytesReceived = recv(i, buf, 1024, 0);
+	if (bytesReceived <= 0)
 	{
 		close(i);
 		FD_CLR(i, &master);
-		return ;
+		return;
 	}
-	std::string tmp;
+	buf[bytesReceived] = '\0';
+	client.add_to_total_read(bytesReceived);
+	std::string tmp = client.getBuffer();
 	tmp.append(buf, bytesReceived);
 	client.setBuffer(tmp);
-	if(bytesReceived > 0)
-    {
-		// std::cout << "buffer: " << client.getBuffer() << std::endl;
+	if (number_of(client, "Content-Length:"))
+	{
+		std::cout << "-=-= hnnnaa =-=-" << std::endl;
+		std::cout << "buffer: " << client.getBuffer() << std::endl;
 		Response res(client.getBuffer());
 		client.getBuffer().clear();
 		std::string response = res.getResponse();
+
 		int bytesSent = 0;
 		int totalBytesSent = 0;
 		int responseSize = response.size();
+
 		while (totalBytesSent < responseSize)
 		{
 			bytesSent = send(i, response.c_str() + totalBytesSent, responseSize - totalBytesSent, 0);
-			if (bytesSent == -1)
-			{
+			if (bytesSent == -1) {
 				Console::error("Send() failed");
+				close(i);
+				FD_CLR(i, &master);
+				return;
 			}
 			totalBytesSent += bytesSent;
 			response.erase(0, bytesSent);
 		}
 		close(i);
 		FD_CLR(i, &master);
-		clients.erase(clients.begin());
-    }
+	}
+	// else
+	// {
+	// 	Response res(client.getBuffer());
+	// 	client.getBuffer().clear();
+	// 	std::string response = res.getResponse();
+
+	// 	int bytesSent = 0;
+	// 	int totalBytesSent = 0;
+	// 	int responseSize = response.size();
+
+	// 	while (totalBytesSent < responseSize)
+	// 	{
+	// 		bytesSent = send(i, response.c_str() + totalBytesSent, responseSize - totalBytesSent, 0);
+	// 		if (bytesSent == -1) {
+	// 			Console::error("Send() failed");
+	// 			close(i);
+	// 			FD_CLR(i, &master);
+	// 			// return;
+	// 		}
+	// 		totalBytesSent += bytesSent;
+	// 		response.erase(0, bytesSent);
+	// 	}
+	// 	close(i);
+	// 	FD_CLR(i, &master);
+	// }
 }
 
 void WebServer::run()
@@ -200,8 +245,8 @@ void WebServer::run()
 				else
 				{
 					handle_receive(i, clients);
-					FD_CLR(i, &master);
-					close(i);
+					// FD_CLR(i, &master);
+					// close(i);
 				}
 			}
 		}
