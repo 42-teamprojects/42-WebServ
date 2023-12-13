@@ -113,18 +113,15 @@ void Response::handleDelete(Server const & server, Route const & route)
     }
 }
 
-void Response::handlePost(Server const & server, Route const & route)
-{
-    // std::string filePath = getFilePath(server, route);
-    // removeConsecutiveChars(filePath, '/');
-    // if (!route.getCgi().empty()) {
-    //     Console::info("Running CGI: " + filePath);
-    //     Cgi cgi(route, filePath, *request);
-    //     body = cgi.getResponseBody();
-    //     return; 
-    // }
-    (void) server;
-    (void) route;
+void Response::handlePost(Server const & server, Route const & route) {
+    if (!route.getCgi().empty()) {
+        std::string filePath = getFilePath(server, route);
+        removeConsecutiveChars(filePath, '/');
+        Console::info("Running CGI: " + filePath);
+        Cgi cgi(route, filePath, *request);
+        body = cgi.getResponseBody();
+        return; 
+    }
     readBody(route);
 }
 

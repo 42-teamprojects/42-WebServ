@@ -67,7 +67,7 @@ Cgi::Cgi(Route const & cgiRoute, std::string const & filename, Request const & r
 	this->filename = filename;
 	this->env = getEnv(req, filename);
 	this->envp = mapToArray(this->env);
-	executCgi();
+	executCgi(req);
 }
 
 Cgi::Cgi(Cgi const& other)
@@ -97,7 +97,7 @@ std::string Cgi::getResponseBody()
 	return (this->responseBody);
 }
 
-void Cgi::executCgi()
+void Cgi::executCgi(Request const & req)
 {
 	std::string cgiPath;
 	int fd[2];
@@ -109,9 +109,15 @@ void Cgi::executCgi()
 	{
 		close(fd[0]);
 		dup2(fd[1], 1);
+		if (env["REQUEST_METHOD"] == "POST")
+		{
+			close(fd[1]);
+			dup2(fd[0], 0);
+			write(fd[0], req.getRawBody().c_str(), req.getRawBody().size());
+			close(fd[0]);
+		}
 		char *argv[] = {const_cast<char *>(binPath.c_str()), const_cast<char *>(filename.c_str()), NULL};
 		execve(binPath.c_str(), argv, envp);
-		close(fd[1]);
 		exit(1);
 	}
 	else if (pid > 0)

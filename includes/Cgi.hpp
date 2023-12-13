@@ -32,5 +32,5 @@ class Cgi
 		Cgi& operator=(Cgi const& other);
 		~Cgi();
 		std::string getResponseBody();
-		void executCgi();
+		void executCgi(Request const & req);
 };
