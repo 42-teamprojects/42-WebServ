@@ -224,11 +224,14 @@ void Request::parse(std::string request)
     parseHost();
     //pars body
     std::string body;
-    std::getline(req, body, '\0');
+    while (std::getline(req, line))
+        body += line + '\n';
     if (this->isChunked)
         unchunkBody(body);
-    else if (this->contentLength > 0)
+    else if (this->contentLength > 0) {
         this->body = body;
+        this->rawBody = body;
+    }
 }
 
 void    Request::parseHost()
@@ -285,6 +288,10 @@ std::string Request::getBoundary() const {
 
 int Request::getContentLength() const {
     return contentLength;
+}
+
+std::string Request::getRawBody() const {
+    return rawBody;
 }
 
 void Request::print() const
