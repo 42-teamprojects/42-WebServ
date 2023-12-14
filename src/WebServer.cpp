@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/12 21:50:52 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/14 17:39:31 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,24 +127,47 @@ Client& find_client(int socket, std::vector<Client> &clients)
 	throw std::exception();
 }
 
-bool number_of(Client client, std::string c)
+
+bool check_chunked(Client client)
 {
-	if (client.getBuffer().find(c) == std::string::npos)
-		return (false);
-	std::string buffer = client.getBuffer();
-	size_t pos = buffer.find("Content-Length:");
-	if (pos != std::string::npos)
+	if (client.getBuffer().find("Transfer-Encoding: chunked") != std::string::npos)
+		return (true);
+	return (false);
+}
+
+bool number_of(Client client)
+{
+	// if (client.getBuffer().find(c) == std::string::npos)
+	// 	return (false);
+	Request req(client.getBuffer());
+
+	if (req.getMethod() == "POST")
 	{
-		std::string tmp = buffer.substr(pos + 16);
-        size_t end = tmp.find_first_not_of("0123456789");
-        std::string length = tmp.substr(0, end);
-		int content_length = atoi(length.c_str());
-		size_t pos2 = client.getBuffer().find("\r\n\r\n",pos);	
-		if(pos2 != std::string::npos)
-		{
-			if((client.getTotalRead() - pos2 - 4) == static_cast<size_t>(content_length))
-				return (true);
-		}
+		std::string buffer = client.getBuffer();
+		size_t pos = buffer.find("Content-Length:");
+		if (pos != std::string::npos)
+			{
+				std::string tmp = buffer.substr(pos + 16);
+    		    size_t end = tmp.find_first_not_of("0123456789");
+    		    std::string length = tmp.substr(0, end);
+				int content_length = atoi(length.c_str());
+				size_t pos2 = client.getBuffer().find("\r\n\r\n",pos);	
+				if(pos2 != std::string::npos)
+				{
+					if((client.getTotalRead() - pos2 - 4) == static_cast<size_t>(content_length))
+						return (true);
+				}
+			}
+	}
+	else if (req.getMethod() == "GET")
+	{
+		if (client.getBuffer().find("\r\n\r\n") != std::string::npos)
+			return (true);
+	}
+	else if (check_chunked(client) == true)
+	{
+		if (client.getBuffer().find("0\r\n\r\n") != std::string::npos)
+			return (true);
 	}
 	return (false);
 }
@@ -165,10 +188,10 @@ void WebServer::handle_receive(int i, std::vector<Client> &clients)
 	std::string tmp = client.getBuffer();
 	tmp.append(buf, bytesReceived);
 	client.setBuffer(tmp);
-	if (number_of(client, "Content-Length:"))
+	if (number_of(client) == true)
 	{
 		std::cout << "-=-= hnnnaa =-=-" << std::endl;
-		std::cout << "buffer: " << client.getBuffer() << std::endl;
+		// std::cout << "buffer: " << client.getBuffer() << std::endl;
 		Response res(client.getBuffer());
 		client.getBuffer().clear();
 		std::string response = res.getResponse();

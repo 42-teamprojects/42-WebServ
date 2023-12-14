@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:15 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/11 22:51:51 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/14 16:48:51 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,10 @@
 #include "webserv.hpp"
 #include "Cgi.hpp"
 #include "Client.hpp"
+
+
+class Request;
+
 
 typedef struct s_server
 {

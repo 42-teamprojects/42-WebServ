@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yusufisawi <yusufisawi@student.42.fr>      +#+  +:+       +#+        */
+/*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/12/06 18:57:38 by yusufisawi       ###   ########.fr       */
+/*   Updated: 2023/12/14 14:44:17 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,9 +154,11 @@ void Response::readBody() {
     const std::string& contentType = request->getContentType();
     const std::string& body = request->getBody();
     
-    if (contentType == "application/x-www-form-urlencoded") {
+    if (contentType == "application/x-www-form-urlencoded")
+    {
         processUrlEncodedBody(body);
-    } else if (contentType == "multipart/form-data") {
+    } else if (contentType == "multipart/form-data")
+    {
         processMultipartFormDataBody(body);
     }
 }
