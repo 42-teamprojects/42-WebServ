@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/15 20:52:22 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/15 20:54:26 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,6 +123,7 @@ Client& find_client(int socket, std::vector<Client> &clients)
 {
 	for (size_t i = 0; i < clients.size(); i++)
 	{
+		// std::cout << clients[i].getSocket() << std::endl;
 		if (clients[i].getSocket() == socket)
 			return (clients[i]);
 	}
