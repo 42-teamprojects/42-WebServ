@@ -55,6 +55,14 @@ public:
 		return this->total_send;
 	}
 
+	void reset()
+	{
+		this->total_send = 0;
+		this->total_read = 0;
+		this->buffer = "";
+		this->response = "";
+	}
+
 
 };
 

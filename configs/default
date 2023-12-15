@@ -2,7 +2,7 @@
     host = 127.0.0.1
     port = 80
     server_names = localhost
-    client_max_body_size = 100000
+    client_max_body_size = 100000000
     error_pages = 404:www/error_pages/404.html 500:www/error_pages/500.html
     root = www
     allow_listing = true
@@ -15,7 +15,7 @@
     <route path="/cgi">
         root = www/cgi-bin
         methods = GET, POST, DELETE
-        cgi = .php:/usr/local/bin/php
+        cgi = .php:/usr/bin/php
     </route>
     <route path="/method">
         methods = POST
@@ -24,7 +24,8 @@
         redirect = index.html
     </route>
     <route path="/uploads">
-        methods = POST
+        methods = POST, GET
+        root = www/uploads
         upload_dir = www/uploads/uploads
     </route>
     <route path="/post">

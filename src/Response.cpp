@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/12/14 19:29:09 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/15 19:01:11 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,7 +194,7 @@ void Response::processMultipartFormDataBody(const std::string& body, Route const
 
 void Response::processFileUpload(std::istringstream& ss, const std::string& line, Route const & route) {
     int len = line.find("\"", line.find("filename") + 10) - line.find("filename") - 10;
-    std::string filename = route.getUploadDir() + line.substr(line.find("filename") + 10, len);
+    std::string filename = route.getUploadDir() + "/" + line.substr(line.find("filename") + 10, len);
     std::cout << "filename: " << filename << std::endl;
     std::ofstream file(filename.c_str());
 
