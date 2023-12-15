@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/12/14 14:44:17 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/14 19:29:09 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,14 +155,8 @@ void Response::readBody(Route const & route) {
     if (contentType == "application/x-www-form-urlencoded")
     {
         processUrlEncodedBody(body);
-<<<<<<< HEAD
-    } else if (contentType == "multipart/form-data")
-    {
-        processMultipartFormDataBody(body);
-=======
     } else if (contentType == "multipart/form-data") {
         processMultipartFormDataBody(body, route);
->>>>>>> 204c307cc3847ba0c01b0e78827582107face8da
     }
 }
 
