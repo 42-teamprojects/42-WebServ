@@ -30,8 +30,8 @@
     </route>
     <route path="/post">
         root = www/cgi-bin
-        methods = POST
-        index = post.php
+        methods = POST 
+        index = post.php 
         cgi = .php:/usr/local/bin/php
     </route>
 </server>
