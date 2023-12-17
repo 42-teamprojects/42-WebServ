@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/15 20:54:26 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/17 13:51:37 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,9 +138,9 @@ bool check_chunked(std::string header)
 
 bool number_of(Client client)
 {
-	Request req(client.getBuffer());
+	std::string method = client.getBuffer().substr(0, client.getBuffer().find(" "));
 
-	if (req.getMethod() == "POST")
+	if (method == "POST")
 	{
 		std::string buffer = client.getBuffer();
 		size_t pos = buffer.find("Content-Length:");
@@ -174,7 +174,7 @@ bool number_of(Client client)
 				}
 			}
 	}
-	else if (req.getMethod() == "GET")
+	else
 	{
 		if (client.getBuffer().find("\r\n\r\n") != std::string::npos)
 			return (true);
@@ -198,13 +198,13 @@ void WebServer::handle_receive(int i, std::vector<Client> &clients)
 	std::string tmp = client.getBuffer();
 	tmp.append(buf, bytesReceived);
 	client.setBuffer(tmp);
+	
 	if (number_of(client) == true)
 	{
 		FD_SET(client.getSocket(), &write_fds);
 		FD_CLR(client.getSocket(), &master);
 		Response res(client.getBuffer());
 		client.setResponse(res.getResponse());
-		// client.reset();
 	}
 }
 
