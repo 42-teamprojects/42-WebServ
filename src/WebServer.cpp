@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/20 14:47:47 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/20 17:49:11 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,7 +158,7 @@ bool number_of(Client client)
 		{
 			if(client.getstartCunter() != 0)
 			{
-				size_t lll = (client.getTotalRead() - client.getstartCunter() - 4);
+				size_t lll = (client.getTotalRead() - client.getstartCunter());
 				if( lll >= client.getcontent_length())
 				{
 					return (true);
