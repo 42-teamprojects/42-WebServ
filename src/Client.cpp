@@ -14,14 +14,6 @@
 #include "WebServer.hpp"
 #include "webserv.hpp"
 
-Client::Client()
-{
-	this->total_read = 0;
-	this->total_send = 0;
-	this->socket = -1;
-	this->buffer = "";
-	this->response = "";
-}
 
 Client::~Client()
 {
@@ -41,6 +33,11 @@ Client &Client::operator=(Client const& src)
 		this->total_read = src.total_read;
 		this->response = src.response;
 		this->total_send = src.total_send;
+		this->method = src.method;
+		this->chunked = src.chunked;
+		this->startCunter = src.startCunter;
+		this->content_length = src.content_length;
+
 	}
 	return (*this);
 }
@@ -52,6 +49,11 @@ Client::Client(int socket)
 	this->total_read = 0;
 	this->total_send = 0;
 	this->response = "";
+	this->method = "";
+	this->chunked = false;
+	this->startCunter = 0;
+	this->content_length = 0;
+	
 }
 
 int Client::getSocket() const
@@ -74,12 +76,12 @@ void Client::setSocket(int socket)
 	this->socket = socket;
 }
 
-void Client::add_to_total_read(int read)
+void Client::add_to_total_read(size_t read)
 {
 	total_read += read;
 }
 
-int Client::getTotalRead() const
+size_t Client::getTotalRead() const
 {
 	return (total_read);
 }
