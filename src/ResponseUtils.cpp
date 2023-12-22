@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseUtils.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yusufisawi <yusufisawi@student.42.fr>      +#+  +:+       +#+        */
+/*   By: yelaissa <yelaissa@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 12:22:45 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/12/06 18:47:49 by yusufisawi       ###   ########.fr       */
+/*   Updated: 2023/12/21 14:33:34 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ Route Response::findBestMatch(Server & server, std::string const & resource) {
 
 void Response::checkRedirection(Route const & route) {
     if (!route.getRedirect().empty()) {
-        headers["Location"] = "/" + route.getRedirect();
+        headers["Location"] = route.getRedirect();
         throw ServerException(MovedPermanently);
     }
 }

@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/18 17:18:58 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/06 18:16:26 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/22 15:54:03 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,13 @@ static std::map<std::string, std::string> getEnv(Request const & req, std::strin
 	std::map<std::string, std::string> env;
 	env["SERVER_SOFTWARE"] = "webserv/1.0";
 	env["GATEWAY_INTERFACE"] = "CGI/1.1";
+	env["REDIRECT_STATUS"] = "1";
 	env["SERVER_PROTOCOL"] = req.getVersion();
 	env["SERVER_PORT"] = toString(req.getPort());
 	env["REQUEST_METHOD"] = req.getMethod();
 	env["PATH_INFO"] = filename;
 	env["PATH_TRANSLATED"] = filename;
-	env["SCRIPT_NAME"] = req.getUri();
+	env["SCRIPT_NAME"] = filename;
 	env["QUERY_STRING"] = getQuery(req.getUri());
 	env["REMOTE_HOST"] = req.getHost();
 	env["CONTENT_LENGTH"] = req.getContentLength() < 0 ? "" : toString(req.getContentLength());
@@ -101,21 +102,23 @@ void Cgi::executCgi(Request const & req)
 {
 	std::string cgiPath;
 	int fd[2];
-	pipe(fd);
+
+	if (pipe(fd) == -1)
+	{
+		Console::error("pipe failed");
+		throw ServerException(ServerError);
+	}
+
 	pid_t pid = fork();
 	int status;
 	std::string binPath = cgiRoute.getCgi()[getFileExt(filename)];
 	if (pid == 0)
 	{
-		close(fd[0]);
 		dup2(fd[1], 1);
-		if (env["REQUEST_METHOD"] == "POST")
-		{
-			close(fd[1]);
-			dup2(fd[0], 0);
-			write(fd[0], req.getRawBody().c_str(), req.getRawBody().size());
-			close(fd[0]);
-		}
+		close(fd[1]);
+		dup2(fd[0], 0);
+		write(fd[0], req.getRawBody().c_str(), req.getRawBody().size());
+		close(fd[0]);
 		char *argv[] = {const_cast<char *>(binPath.c_str()), const_cast<char *>(filename.c_str()), NULL};
 		execve(binPath.c_str(), argv, envp);
 		exit(1);

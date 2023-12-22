@@ -15,7 +15,7 @@
     <route path="/cgi">
         root = www/cgi-bin
         methods = GET, POST, DELETE
-        cgi = .php:/usr/local/bin/php
+        cgi = .php:cgi-bin/php-cgi
     </route>
     <route path="/method">
         methods = POST
@@ -24,14 +24,14 @@
         redirect = index.html
     </route>
     <route path="/uploads">
-        methods = POST
+        methods = GET, POST
         upload_dir = www/uploads/uploads
     </route>
     <route path="/post">
         root = www/cgi-bin
         methods = POST
         index = post.php
-        cgi = .php:/usr/local/bin/php
+        cgi = .php:cgi-bin/php-cgi
     </route>
 </server>
 
@@ -55,7 +55,7 @@
     allow_listing = true
     <route path="/index">
         methods = GET, POST
-        cgi = .php:/usr/local/bin/php
+        cgi = .php:/usr/bin/php
     </route>
     <route path="/images">
         methods = GET
