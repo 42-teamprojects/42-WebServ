@@ -13,7 +13,7 @@
         root = www/error_pages
     </route>
     <route path="/cgi">
-        root = www/cgi-bin
+        root = www/cgi-scripts
         methods = GET, POST, DELETE
         cgi = .php:cgi-bin/php-cgi
     </route>
@@ -23,12 +23,12 @@
     <route path="/redirect">
         redirect = index.html
     </route>
-    <route path="/uploads">
-        methods = GET, POST
+    <route path="/upload">
+        methods = POST
         upload_dir = www/uploads/uploads
     </route>
     <route path="/post">
-        root = www/cgi-bin
+        root = www/cgi-scripts
         methods = POST
         index = post.php
         cgi = .php:cgi-bin/php-cgi

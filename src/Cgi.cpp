@@ -56,8 +56,7 @@ static std::map<std::string, std::string> getEnv(Request const & req, std::strin
 	env["QUERY_STRING"] = getQuery(req.getUri());
 	env["REMOTE_HOST"] = req.getHost();
 	env["CONTENT_LENGTH"] = toString(req.getRawBody().size());
-	std::cout << env["CONTENT_LENGTH"] << std::endl;
-	env["CONTENT_TYPE"] = req.getContentType();
+	env["CONTENT_TYPE"] = req.getHeaders()["Content-Type"];
 	return (env);
 }
 
@@ -131,13 +130,13 @@ void Cgi::executCgi(Request const & req)
 	}
 	else if (pid > 0)
 	{
+		write(fd[1], req.getRawBody().c_str(), req.getRawBody().size());
 		waitpid(pid, &status, 0);
 		if (WEXITSTATUS(status) != 0)
 		{
 			Console::error("execve failed");
 			throw ServerException(BadGateway);
 		}
-		write(fd[1], req.getRawBody().c_str(), req.getRawBody().size());
 		close(fd[1]);
 		char buffer[1024];
 		std::string body;
