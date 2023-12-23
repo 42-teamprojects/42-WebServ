@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/23 15:38:15 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/23 15:44:17 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,17 +263,18 @@ std::string WebServer::handle_receive(int i)
 void WebServer::send_response(t_client_resp &client, fd_set &master)
 {
 	int bytesSent = send(client.socket, client.response.c_str() + client.total_send, client.response.size() - client.total_send, 0);
-	if (bytesSent <= 0)
+	if (bytesSent < 0)
 	{
 		close(client.socket);
-		FD_CLR(client.socket, &master);
+		// FD_CLR(client.socket, &master);
 		return ;
 	}
 	client.total_send += bytesSent;
 	if (client.total_send >= client.response.size())
 	{
+		FD_SET(client.socket, &master);
 		FD_CLR(client.socket, &write_fds);
-		close(client.socket);
+		// close(client.socket);
 		// reset_client_resp(client);
 		return ;
 	}
