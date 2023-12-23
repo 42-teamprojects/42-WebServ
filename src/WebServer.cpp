@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/23 15:44:17 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/23 16:12:00 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -266,7 +266,6 @@ void WebServer::send_response(t_client_resp &client, fd_set &master)
 	if (bytesSent < 0)
 	{
 		close(client.socket);
-		// FD_CLR(client.socket, &master);
 		return ;
 	}
 	client.total_send += bytesSent;
@@ -274,8 +273,8 @@ void WebServer::send_response(t_client_resp &client, fd_set &master)
 	{
 		FD_SET(client.socket, &master);
 		FD_CLR(client.socket, &write_fds);
-		// close(client.socket);
-		// reset_client_resp(client);
+		reset_client_resp(client);
+		close(client.socket);
 		return ;
 	}
 }
