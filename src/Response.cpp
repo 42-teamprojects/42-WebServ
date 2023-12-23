@@ -89,7 +89,8 @@ void Response::handleGet(Server const & server, Route const & route) {
     if (!route.getCgi().empty()) {
         Console::info("Serving CGI file: " + filePath);
         Cgi cgi(route, filePath, *request);
-        body = cgi.getResponseBody();
+        std::string tmp = cgi.getResponseBody();
+        body = tmp.substr(tmp.find("\r\n\r\n") + 4);
         return; 
     }
     Console::info("Serving file: " + filePath);
@@ -113,7 +114,8 @@ void Response::handlePost(Server const & server, Route const & route) {
         removeConsecutiveChars(filePath, '/');
         Console::info("Running CGI: " + filePath);
         Cgi cgi(route, filePath, *request);
-        body = cgi.getResponseBody();
+        std::string tmp = cgi.getResponseBody();
+        body = tmp.substr(tmp.find("\r\n\r\n") + 4);
         return; 
     }
     readBody(route);

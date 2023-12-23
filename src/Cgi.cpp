@@ -46,19 +46,18 @@ static std::map<std::string, std::string> getEnv(Request const & req, std::strin
 	std::map<std::string, std::string> env;
 	env["SERVER_SOFTWARE"] = "webserv/1.0";
 	env["GATEWAY_INTERFACE"] = "CGI/1.1";
-	env["REDIRECT_STATUS"] = "1";
+	env["REDIRECT_STATUS"] = "200";
 	env["SERVER_PROTOCOL"] = req.getVersion();
 	env["SERVER_PORT"] = toString(req.getPort());
 	env["REQUEST_METHOD"] = req.getMethod();
 	env["PATH_INFO"] = filename;
 	env["PATH_TRANSLATED"] = filename;
-	env["SCRIPT_NAME"] = filename;
+	env["SCRIPT_NAME"] = filename.substr(filename.find_last_of("/") + 1);
 	env["QUERY_STRING"] = getQuery(req.getUri());
 	env["REMOTE_HOST"] = req.getHost();
-	env["CONTENT_LENGTH"] = req.getContentLength() < 0 ? "" : toString(req.getContentLength());
+	env["CONTENT_LENGTH"] = toString(req.getRawBody().size());
+	std::cout << env["CONTENT_LENGTH"] << std::endl;
 	env["CONTENT_TYPE"] = req.getContentType();
-	env["HTTP_ACCEPT"] = req.getHeaders().find("Accept")->second;
-	env["HTTP_USER_AGENT"] = req.getHeaders().find("User-Agent")->second;
 	return (env);
 }
 
@@ -108,16 +107,23 @@ void Cgi::executCgi(Request const & req)
 		Console::error("pipe failed");
 		throw ServerException(ServerError);
 	}
-
 	pid_t pid = fork();
+	if (pid == -1)
+	{
+		Console::error("Fork failed");
+		throw ServerException(ServerError);
+	}
+
 	int status;
 	std::string binPath = cgiRoute.getCgi()[getFileExt(filename)];
 	if (pid == 0)
 	{
-		dup2(fd[1], 1);
+		if (dup2(fd[0], 0) == -1 || dup2(fd[1], 1) == -1)
+		{
+			Console::error("Dup2 failed");
+			throw ServerException(ServerError);
+		}
 		close(fd[1]);
-		dup2(fd[0], 0);
-		write(fd[0], req.getRawBody().c_str(), req.getRawBody().size());
 		close(fd[0]);
 		char *argv[] = {const_cast<char *>(binPath.c_str()), const_cast<char *>(filename.c_str()), NULL};
 		execve(binPath.c_str(), argv, envp);
@@ -131,6 +137,7 @@ void Cgi::executCgi(Request const & req)
 			Console::error("execve failed");
 			throw ServerException(BadGateway);
 		}
+		write(fd[1], req.getRawBody().c_str(), req.getRawBody().size());
 		close(fd[1]);
 		char buffer[1024];
 		std::string body;
