@@ -6,20 +6,15 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/21 17:38:17 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/23 13:11:17 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServer.hpp"
 #include "webserv.hpp"
-// size_t byt=0;
-// size_t content_lenghtt=0;
-// std::string buuuufer = "";
-// size_t start = 0;
 WebServer::WebServer(std::vector<Server> &servers) : servers(servers)
 {
 	srvs.resize(servers.size() + 1);
-	// clients.resize(clients.size() + 1);
 	std::vector<Server>::iterator it = servers.begin();
 	FD_ZERO(&master); 
 	FD_ZERO(&read_fds);
@@ -46,8 +41,6 @@ WebServer::~WebServer()
 {
 	for (size_t i = 0; i < servers.size(); i++)
 		close(srvs[i].socket);
-	// for (size_t i = 0; i < clients.size(); i++)
-	// 	close(clients[i].socket);
 }
 
 void WebServer::handle_select(int port, int idx)
@@ -110,9 +103,6 @@ void WebServer::handle_accept(int i)
         close(clientSocket);
         return; 
     }
-	// Client client(clientSocket);
-	// clients.push_back(client);
-	// FD_SET(clientSocket, &master);
 }
 
 int WebServer::find_socket(int socket)
@@ -128,12 +118,22 @@ int WebServer::find_socket(int socket)
 
 t_client_resp find_client(int socket, std::vector<t_client_resp> clients)
 {
-	for (size_t i = 0; i < clients.size(); i++)
+	int indx_client = -1;
+	for (size_t i = 0; i < clients.size(); ++i)
 	{
 		if (clients[i].socket == socket)
-			return (clients[i]);
+			indx_client = i;
 	}
-	throw std::exception();
+	if (indx_client == -1)
+	{
+		t_client_resp newClientResp;
+		newClientResp.response = "";
+		newClientResp.total_send = 0;
+		newClientResp.socket = socket;
+		clients.push_back(newClientResp);
+		indx_client = clients.size() - 1;
+	}
+	return (clients[indx_client]);
 }
 
 t_client find_client(int socket, std::vector<t_client> clients)
@@ -150,43 +150,6 @@ bool check_chunked(std::string header)
 {
 	if (header.find("Transfer-Encoding: chunked") != std::string::npos)
 		return (true);
-	return (false);
-}
-
-bool number_of(t_client client)
-{	
-	if (client.method == "POST")
-	{
-		if(client.chunked == true)
-		{
-			size_t searchLength = std::min(static_cast<size_t>(10), static_cast<size_t>(client.total_read));
-			std::string substring = client.buffer.substr(client.total_read - searchLength, searchLength);
-			size_t foundPos = substring.rfind("\r\n0\r\n");
-			if (foundPos != std::string::npos)
-			{
-				std::cout << "i get all request in chunked" << std::endl;
-				return (true);
-			}
-		}
-		else
-		{
-			if(client.content_length != 0)
-			{
-				size_t lll = (client.total_read - client.startCunter);
-				if( lll >= client.content_length)
-				{
-					return (true);
-				}
-			}
-		}
-	}
-	else
-	{
-		if (client.buffer.find("\r\n\r\n") != std::string::npos)
-		{
-			return (true);
-		}
-	}
 	return (false);
 }
 
@@ -215,9 +178,7 @@ std::string WebServer::handle_receive(int i)
 	{
 		size_t start = 0;
 		t_client newClient;
-		t_client_resp newClientResp;
 		reset_client(newClient);
-		reset_client_resp(newClientResp);
 		size_t pos = tmp.find("Content-Length:");
 		newClient.socket = i;
 		size_t end = 0;
@@ -245,8 +206,6 @@ std::string WebServer::handle_receive(int i)
 			newClient.method = tmp.substr(0, pos4);
 		client_index = clients.size();
 		clients.push_back(newClient);
-		newClientResp.socket = i;
-		clients_resp.push_back(newClientResp);
 	}
 	if (bytesReceived <= 0)
 	{
@@ -254,23 +213,55 @@ std::string WebServer::handle_receive(int i)
 		FD_CLR(i, &master);
 		return "";
 	}
+	clients[client_index].total_read += tmp.length();
 	clients[client_index].buffer += tmp;
-	clients[client_index].total_read += bytesReceived;
-	if (number_of(clients[client_index]))
+
+	if(clients[client_index].method == "POST")
 	{
-		std::string Request = clients[client_index].buffer;
-		FD_CLR(clients[client_index].socket, &master);
-		FD_SET(clients[client_index].socket, &write_fds);
-		clients.erase(clients.begin() + client_index);
-		return Request;
+		if(clients[client_index].chunked)
+		{
+			size_t searchLength = std::min(static_cast<size_t>(10), static_cast<size_t>(clients[client_index].total_read));
+			std::string substring = clients[client_index].buffer.substr(clients[client_index].total_read - searchLength, searchLength);
+			size_t foundPos = substring.rfind("\r\n0\r\n");
+			if (foundPos != std::string::npos)
+			{
+				std::string Request = clients[client_index].buffer;
+				FD_CLR(clients[client_index].socket, &master);
+				FD_SET(clients[client_index].socket, &write_fds);
+				clients.erase(clients.begin() + client_index);
+				return Request;
+			}
+		}
+		else
+		{
+			if (clients[client_index].total_read - clients[client_index].startCunter >= clients[client_index].content_length)
+			{
+				std::string Request = clients[client_index].buffer;
+				FD_CLR(clients[client_index].socket, &master);
+				FD_SET(clients[client_index].socket, &write_fds);
+				clients.erase(clients.begin() + client_index);
+				return Request;
+
+			}
+		}
+	}
+	else
+	{
+		if (clients[client_index].buffer.find("\r\n\r\n") != std::string::npos)
+		{
+			std::string Request = clients[client_index].buffer;
+			FD_CLR(clients[client_index].socket, &master);
+			FD_SET(clients[client_index].socket, &write_fds);
+			clients.erase(clients.begin() + client_index);
+			return Request;
+		}
 	}
 	return "";
 	
 }
 
-void WebServer::send_response(t_client_resp &client)
+void WebServer::send_response(t_client_resp &client, fd_set &master)
 {
-	client.total_send = 0;
 	int bytesSent = send(client.socket, client.response.c_str() + client.total_send, client.response.size() - client.total_send, 0);
 	if (bytesSent <= 0)
 	{
@@ -279,6 +270,11 @@ void WebServer::send_response(t_client_resp &client)
 		return ;
 	}
 	client.total_send += bytesSent;
+	if (client.total_send == client.response.size())
+	{
+		close(client.socket);
+		FD_CLR(client.socket, &write_fds);
+	}
 }
 
 
@@ -286,8 +282,6 @@ void WebServer::reset_client(t_client &client)
 {
 	client.buffer = "";
 	client.total_read = 0;
-	client.response = "";
-	client.total_send = 0;
 	client.method = "";
 	client.chunked = false;
 	client.startCunter = 0;
@@ -306,9 +300,6 @@ void WebServer::reset_client_resp(t_client_resp &client)
 
 void WebServer::run()
 {
-	// struct timeval timeout;
-	// timeout.tv_sec = 5;
-	// timeout.tv_usec = 0;
 	std::string request = "";
 	while (true)
 	{
@@ -330,25 +321,14 @@ void WebServer::run()
 					FD_SET(clientSocket, &master);
 				}
 				else
-				{
 					request = handle_receive(i);
-				}
 			}
 			if (FD_ISSET(i, &tmpwrite_fds))
 			{
 				t_client_resp client = find_client(i, clients_resp);
-				if(!request.empty())
-				{
-					Response resp(request);
-					client.response = resp.getResponse();
-					send_response(client);
-				}
-				if (client.total_send == client.response.size())
-				{
-					close(client.socket);
-					FD_CLR(client.socket, &write_fds);
-					reset_client_resp(client);
-				}
+				Response resp(request);
+				client.response = resp.getResponse();
+				send_response(client, master);
 			}
 		}
 	}

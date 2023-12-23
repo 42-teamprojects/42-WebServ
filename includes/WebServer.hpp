@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:15 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/21 16:52:05 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/23 12:55:17 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ public:
     void handle_select(int port, int idx);
     void handle_accept(int i);
     std::string handle_receive(int i);
-    void send_response(t_client_resp &client);
+    void send_response(t_client_resp &client, fd_set &master);
     void reset_client(t_client &client);
     void reset_client_resp(t_client_resp &client);
     int  find_socket(int socket);
