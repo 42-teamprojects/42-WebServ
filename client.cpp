@@ -32,7 +32,7 @@ int send_request(int port) {
         return 1;
     }
 
-    char message[] = "Hello from client!";
+    char message[] = "GET / HTTP/1.1\r\n\r\n";
     send(sock, message, strlen(message), 0);
     printf("Request sent to port %d\n", port);
 
@@ -46,10 +46,11 @@ int send_request(int port) {
 
 int main() {
     for (int i = 0; i < 8000; ++i) {
-        if(send_request(3000) == 1)
-            continue;
-        if(send_request(8080) == 1)
-            continue;
+        send_request(80);
+        // if(send_request(80) == 1)
+            // continue;
+        // if(send_request(8080) == 1)
+            // continue;
     }
 
     return 0;

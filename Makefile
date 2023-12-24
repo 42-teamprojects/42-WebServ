@@ -37,7 +37,7 @@ OBJS := $(addprefix obj/, $(OBJS))
 
 CXX = c++
 
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -fsanitize=address
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -fsanitize=address -g3
 
 INCLUDES = -I includes/ -I includes/addons/
 

@@ -6,18 +6,20 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/10 21:05:51 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/24 17:26:47 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServer.hpp"
 #include "webserv.hpp"
-
 WebServer::WebServer(std::vector<Server> &servers) : servers(servers)
 {
 	srvs.resize(servers.size() + 1);
 	std::vector<Server>::iterator it = servers.begin();
 	FD_ZERO(&master); 
+	FD_ZERO(&read_fds);
+	FD_ZERO(&write_fds);
+	FD_ZERO(&tmpwrite_fds);
 	int i = 0;
 	std::string ports = "\033[1;32m";
 	std::vector<int> portsList;
@@ -32,6 +34,7 @@ WebServer::WebServer(std::vector<Server> &servers) : servers(servers)
 		handle_select(it->getPort(), i++);
 	}
 	Console::info("WebServ is listening on ports " + ports + "\033[0m");
+	
 }
 
 WebServer::~WebServer()
@@ -84,7 +87,7 @@ void WebServer::handle_select(int port, int idx)
 	}
 }
 
-void WebServer::handle_accept(int i, std::vector<Client> &clients)
+void WebServer::handle_accept(int i)
 {
 	socklen_t addrSize = sizeof(srvs[i].addr);
     clientSocket = accept(srvs[i].socket, (struct sockaddr *)&srvs[i].addr, &addrSize);
@@ -100,8 +103,6 @@ void WebServer::handle_accept(int i, std::vector<Client> &clients)
         close(clientSocket);
         return; 
     }
-	Client client(clientSocket);
-	clients.push_back(client);
 	FD_SET(clientSocket, &master);
 }
 
@@ -115,77 +116,191 @@ int WebServer::find_socket(int socket)
 	return (-1);
 }
 
-bool number_of(std::string str, std::string c)
+
+t_client_resp &find_client_resp(int socket, std::vector<t_client_resp> &clients)
 {
-	(void)c;
-	// std::cout << str << std::endl;
-	// exit(0);
-	if (str.rfind("--\r\n") != std::string::npos)
-		return (true);
-	return (false);
+	int indx_client = -1;
+	for (size_t i = 0; i < clients.size(); ++i)
+	{
+		if (clients[i].socket == socket)
+			indx_client = i;
+	}
+	if (indx_client == -1)
+	{
+		t_client_resp newClientResp;
+		newClientResp.response = "";
+		newClientResp.total_send = 0;
+		newClientResp.socket = socket;
+		clients.push_back(newClientResp);
+		indx_client = clients.size() - 1;
+	}
+	return (clients[indx_client]);
 }
 
-Client& find_client(int socket, std::vector<Client> &clients)
+t_client find_client(int socket, std::vector<t_client> clients)
 {
 	for (size_t i = 0; i < clients.size(); i++)
 	{
-		if (clients[i].getSocket() == socket)
+		if (clients[i].socket == socket)
 			return (clients[i]);
 	}
 	throw std::exception();
 }
 
-void WebServer::handle_receive(int i, std::vector<Client> &clients)
+bool check_chunked(std::string header)
 {
-	Client& client = find_client(i, clients);
-	int bytesReceived = 0;
-	char buf[1024];
-	if ((bytesReceived = recv(i, buf, 1024, 0)) <= 0)
+	if (header.find("Transfer-Encoding: chunked") != std::string::npos)
+		return (true);
+	return (false);
+}
+
+std::string WebServer::handle_receive(int i)
+{
+	int client_index = -1;
+	for(size_t indx = 0; indx < clients.size(); indx++)
+	{
+		if (clients[indx].socket == i)
+		{
+			client_index = indx;
+			break;
+		}
+	}
+	char buf[BUFFER_SIZE + 1];
+	int bytesReceived = recv(i, buf, BUFFER_SIZE, 0);
+	if(bytesReceived < 0)
 	{
 		close(i);
 		FD_CLR(i, &master);
+		return "";
+	}
+	buf[bytesReceived] = '\0';
+	std::string tmp(buf, bytesReceived);
+	if(client_index == -1)
+	{
+		// size_t start = 0;
+		t_client newClient;
+		reset_client(newClient);
+		size_t pos = tmp.find("Content-Length:");
+		newClient.socket = i;
+		size_t end = 0;
+		if (pos != std::string::npos)
+		{
+			std::string Content = tmp.substr(pos + 16);
+    	    end = Content.find_first_not_of("0123456789");
+    	    std::string length = Content.substr(0, end);
+			int content_length = atoi(length.c_str());
+			newClient.content_length = content_length;
+		}
+		size_t pos2 = tmp.find("\r\n\r\n",end);
+		if(pos2 != std::string::npos)
+		{
+			// start = pos2;
+			newClient.startCunter = pos2;
+		}
+		size_t pos3 = tmp.find("Transfer-Encoding: chunked");
+		if(pos3 != std::string::npos)
+			newClient.chunked = true;
+		else
+			newClient.chunked = false;
+		size_t pos4 = tmp.find(" ");
+		if (pos4 != std::string::npos)
+			newClient.method = tmp.substr(0, pos4);
+		client_index = clients.size();
+		clients.push_back(newClient);
+	}
+	clients[client_index].total_read += tmp.length();
+	clients[client_index].buffer += tmp;
+
+	if(clients[client_index].method == "POST")
+	{
+		if(clients[client_index].chunked)
+		{
+			size_t searchLength = std::min(static_cast<size_t>(10), static_cast<size_t>(clients[client_index].total_read));
+			std::string substring = clients[client_index].buffer.substr(clients[client_index].total_read - searchLength, searchLength);
+			size_t foundPos = substring.rfind("\r\n0\r\n");
+			if (foundPos != std::string::npos)
+			{
+				std::string Request = clients[client_index].buffer;
+				FD_CLR(clients[client_index].socket, &master);
+				FD_SET(clients[client_index].socket, &write_fds);
+				clients.erase(clients.begin() + client_index);
+				return Request;
+			}
+		}
+		else
+		{
+			if (clients[client_index].total_read - clients[client_index].startCunter >= clients[client_index].content_length)
+			{
+				std::string Request = clients[client_index].buffer;
+				FD_CLR(clients[client_index].socket, &master);
+				FD_SET(clients[client_index].socket, &write_fds);
+				clients.erase(clients.begin() + client_index);
+				return Request;
+
+			}
+		}
+	}
+	else
+	{
+		if (clients[client_index].buffer.find("\r\n\r\n") != std::string::npos)
+		{
+			std::string Request = clients[client_index].buffer;
+			FD_CLR(clients[client_index].socket, &master);
+			FD_SET(clients[client_index].socket, &write_fds);
+			clients.erase(clients.begin() + client_index);
+			return Request;
+		}
+	}
+	return "";
+	
+}
+
+void WebServer::send_response(t_client_resp &client, fd_set &master)
+{
+	int bytesSent = send(client.socket, client.response.c_str() + client.total_send, client.response.length() - client.total_send, 0);
+	if (bytesSent < 0)
+	{
+		Console::error("Send() failed");
+		close(client.socket);
+		FD_CLR(client.socket, &master);
 		return ;
 	}
-	std::string tmp;
-	tmp.append(buf, bytesReceived);
-	client.setBuffer(tmp);
-	if(bytesReceived > 0)
-    {
-		// std::cout << "buffer: " << client.getBuffer() << std::endl;
-		Response res(client.getBuffer());
-		client.getBuffer().clear();
-		std::string response = res.getResponse();
-		int bytesSent = 0;
-		int totalBytesSent = 0;
-		int responseSize = response.size();
-		while (totalBytesSent < responseSize)
-		{
-			bytesSent = send(i, response.c_str() + totalBytesSent, responseSize - totalBytesSent, 0);
-			if (bytesSent == -1)
-			{
-				Console::error("Send() failed");
-			}
-			totalBytesSent += bytesSent;
-			response.erase(0, bytesSent);
-		}
-		close(i);
-		FD_CLR(i, &master);
-		clients.erase(clients.begin());
-    }
+	client.total_send += bytesSent;
+	
 }
+
+
+void WebServer::reset_client(t_client &client)
+{
+	client.buffer = "";
+	client.total_read = 0;
+	client.method = "";
+	client.chunked = false;
+	client.startCunter = 0;
+	client.content_length = 0;
+	client.socket = -1;
+}
+
+void WebServer::reset_client_resp(t_client_resp &client)
+{
+	client.response = "";
+	client.total_send = 0;
+	client.socket = -1;
+}
+
+
 
 void WebServer::run()
 {
-	fd_set read_fds;
-    std::vector<Client> clients;
-	
+	std::string request = "";
 	while (true)
 	{
 		read_fds = master;
-		if (select(FD_SETSIZE, &read_fds, NULL, NULL, NULL) == -1)
+		tmpwrite_fds = write_fds;
+		if (select(FD_SETSIZE, &read_fds, &tmpwrite_fds, NULL, NULL) < 0)
 		{
 			Console::error("Select() failed");
-			return ; 
+			return ;
 		}
 		for (int i = 0; i < FD_SETSIZE; i++)
 		{
@@ -194,14 +309,33 @@ void WebServer::run()
 				int var = find_socket(i);
 				if (var != -1)
 				{
-					handle_accept(var, clients);
+					handle_accept(var);
 					FD_SET(clientSocket, &master);
 				}
 				else
 				{
-					handle_receive(i, clients);
-					FD_CLR(i, &master);
-					close(i);
+					request = handle_receive(i);
+					if (request != "")
+					{
+						t_client_resp& client = find_client_resp(i, clients_resp);
+						Response response(request);
+						client.response = response.getResponse();
+						// FD_CLR(i, &master);
+						// FD_SET(i, &tmpwrite_fds);
+					}
+				}
+			}
+			if (FD_ISSET(i, &tmpwrite_fds))
+			{
+				t_client_resp &client = find_client_resp(i, clients_resp);
+				send_response(client, master);
+				if (client.total_send == client.response.length())
+				{
+					reset_client_resp(client);
+					FD_CLR(i, &write_fds);
+					FD_SET(i, &master);
+					
+					// close(i);
 				}
 			}
 		}

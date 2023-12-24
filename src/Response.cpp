@@ -205,7 +205,7 @@ void Response::processMultipartFormDataBody(const std::string& body, Route const
         std::getline(ss, line);
 
         if (line.find("filename") != std::string::npos) {
-            std::cout << "file found" << std::endl;
+            // std::cout << "file found" << std::endl;
             processFileUpload(ss, line, route);
         } else if (line.find("name") != std::string::npos){
             processFormField(ss, line, queryStrings);
@@ -216,7 +216,7 @@ void Response::processMultipartFormDataBody(const std::string& body, Route const
 void Response::processFileUpload(std::istringstream& ss, const std::string& line, Route const & route) {
     int len = line.find("\"", line.find("filename") + 10) - line.find("filename") - 10;
     std::string filename = route.getUploadDir() + "/" + line.substr(line.find("filename") + 10, len);
-    std::cout << "filename: " << filename << std::endl;
+    // std::cout << "filename: " << filename << std::endl;
     std::ofstream file(filename.c_str());
 
     std::string content;
@@ -236,6 +236,6 @@ void Response::processFormField(std::istringstream& ss, const std::string& line,
     std::getline(ss, content);
     std::getline(ss, content, '\0');
     queryStrings[name] = content;
-    std::cout << "name: " << name << std::endl;
-    std::cout << "content: " << content << std::endl;
+    // std::cout << "name: " << name << std::endl;
+    // std::cout << "content: " << content << std::endl;
 }
