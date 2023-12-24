@@ -46,17 +46,18 @@ static std::map<std::string, std::string> getEnv(Request const & req, std::strin
 	std::map<std::string, std::string> env;
 	env["SERVER_SOFTWARE"] = "webserv/1.0";
 	env["GATEWAY_INTERFACE"] = "CGI/1.1";
-	env["REDIRECT_STATUS"] = "200";
+	env["REDIRECT_STATUS"] = "1";
 	env["SERVER_PROTOCOL"] = req.getVersion();
 	env["SERVER_PORT"] = toString(req.getPort());
 	env["REQUEST_METHOD"] = req.getMethod();
 	env["PATH_INFO"] = filename;
 	env["PATH_TRANSLATED"] = filename;
-	env["SCRIPT_NAME"] = filename.substr(filename.find_last_of("/") + 1);
 	env["QUERY_STRING"] = getQuery(req.getUri());
 	env["REMOTE_HOST"] = req.getHost();
-	env["CONTENT_LENGTH"] = toString(req.getRawBody().size());
-	env["CONTENT_TYPE"] = req.getHeaders()["Content-Type"];
+	if (req.getRawBody().size() > 0)
+		env["CONTENT_LENGTH"] = toString(req.getRawBody().size());
+	if (req.getHeaders()["Content-Type"] != "")
+		env["CONTENT_TYPE"] = req.getHeaders()["Content-Type"];
 	return (env);
 }
 
