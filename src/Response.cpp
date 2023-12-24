@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/12/15 19:01:11 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/24 17:01:11 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,13 +53,16 @@ Route Response::getRoute(Server & server)
         return deepSearch(server, resource);
     }
     if (resource.back() != '/') {
+        if (request->getMethod() == "DELETE") {
+            throw ServerException(Conflict);
+        }
         headers["Location"] = request->getUri() + "/";
         throw ServerException(MovedPermanently);
     }
     checkRedirection(*it);
     checkMethods(*it);
-    if (server.getClientMaxBodySize() != 0 && request->getMethod() != "GET" && \
-        (size_t)request->getContentLength() > server.getClientMaxBodySize())
+    if (request->getMethod() != "GET" && server.getClientMaxBodySize() != 0 && \
+            request->getBody().size() > server.getClientMaxBodySize())
         throw ServerException(RequestEntityTooLarge);
     return *it;
 }
@@ -76,7 +79,9 @@ std::string Response::getFilePath(Server const & server, Route const & route)
         return root + "/" + index;
     } catch (ServerException & e) {
         // check if listing is allowed
-        if (e.getCode() == Forbidden && (route.getAllowListing() || server.getAllowListing()) && request->getMethod() == "GET") {
+        if (e.getCode() == Forbidden && (route.getAllowListing() || server.getAllowListing()) && request->getMethod() != "POST") {
+            if (request->getMethod() == "DELETE")
+                return route.getRoot() + "/";
             std::vector<std::string> files = getFilesInDirectory(route.getRoot(), route.getPath());
             return (isListing = true, body = generateHtmlListing(files), "");
         }
@@ -90,10 +95,13 @@ void Response::handleGet(Server const & server, Route const & route)
     if (isListing)
         return;
     removeConsecutiveChars(filePath, '/');
-    headers["Content-Type"] = mimes[getFileExt(filePath)];
     if (!route.getCgi().empty()) {
         Console::info("Serving CGI file: " + filePath);
         Cgi cgi(route, filePath, *request);
+        std::map<std::string, std::string> Cgiheaders = cgi.getResponseHeaders();
+        if (Cgiheaders.find("Content-type") == Cgiheaders.end())
+            headers["Content-Type"] = "text/html";
+        headers.insert(Cgiheaders.begin(), Cgiheaders.end());
         body = cgi.getResponseBody();
         return; 
     }
@@ -108,17 +116,23 @@ void Response::handleDelete(Server const & server, Route const & route)
     if (!route.getCgi().empty()) {
         Console::info("Running CGI: " + filePath);
         Cgi cgi(route, filePath, *request);
+        std::map<std::string, std::string> Cgiheaders = cgi.getResponseHeaders();
+        headers.insert(Cgiheaders.begin(), Cgiheaders.end());
         body = cgi.getResponseBody();
         return; 
     }
+    removeFileOrDirectory(filePath);
 }
 
-void Response::handlePost(Server const & server, Route const & route) {
+void Response::handlePost(Server const & server, Route const & route)
+{
     if (!route.getCgi().empty()) {
         std::string filePath = getFilePath(server, route);
         removeConsecutiveChars(filePath, '/');
         Console::info("Running CGI: " + filePath);
         Cgi cgi(route, filePath, *request);
+        std::map<std::string, std::string> Cgiheaders = cgi.getResponseHeaders();
+        headers.insert(Cgiheaders.begin(), Cgiheaders.end());
         body = cgi.getResponseBody();
         return; 
     }
@@ -191,7 +205,7 @@ void Response::processMultipartFormDataBody(const std::string& body, Route const
         std::getline(ss, line);
 
         if (line.find("filename") != std::string::npos) {
-            std::cout << "file found" << std::endl;
+            // std::cout << "file found" << std::endl;
             processFileUpload(ss, line, route);
         } else if (line.find("name") != std::string::npos){
             processFormField(ss, line, queryStrings);
@@ -202,7 +216,7 @@ void Response::processMultipartFormDataBody(const std::string& body, Route const
 void Response::processFileUpload(std::istringstream& ss, const std::string& line, Route const & route) {
     int len = line.find("\"", line.find("filename") + 10) - line.find("filename") - 10;
     std::string filename = route.getUploadDir() + "/" + line.substr(line.find("filename") + 10, len);
-    std::cout << "filename: " << filename << std::endl;
+    // std::cout << "filename: " << filename << std::endl;
     std::ofstream file(filename.c_str());
 
     std::string content;
@@ -222,6 +236,6 @@ void Response::processFormField(std::istringstream& ss, const std::string& line,
     std::getline(ss, content);
     std::getline(ss, content, '\0');
     queryStrings[name] = content;
-    std::cout << "name: " << name << std::endl;
-    std::cout << "content: " << content << std::endl;
+    // std::cout << "name: " << name << std::endl;
+    // std::cout << "content: " << content << std::endl;
 }

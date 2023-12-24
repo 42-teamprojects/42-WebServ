@@ -303,11 +303,11 @@ void Request::print() const
     // std::cout << "Port : " << port << std::endl;
     // std::cout << "Encoding : " << contentType << std::endl;
     // std::cout << "Boundary : " << boundary << std::endl;
-    // std::map<std::string, std::string> headers = getHeaders();
-    // std::cout << "Headers : " << std::endl;
-    // std::map<std::string, std::string>::iterator it = headers.begin();
-    // for (; it != headers.end(); ++it)
-    //     std::cout << "  " << it->first << " : " << it->second << '\n';
+    std::map<std::string, std::string> headers = getHeaders();
+    std::cout << "Headers : " << std::endl;
+    std::map<std::string, std::string>::iterator it = headers.begin();
+    for (; it != headers.end(); ++it)
+        std::cout << "  " << it->first << " : " << it->second << '\n';
     std::cout << "Body : " << getBody() << std::endl;
     // std::cout << "Status : " << statusCode << std::endl;
 }

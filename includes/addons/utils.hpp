@@ -56,4 +56,4 @@ std::pair<std::string, bool>                   getMatchedPath(std::string server
 void                        trimTrailingSlashes(std::string & s);
 std::vector<std::string>    split(const std::string& s, const std::string& delimiter);
 bool                        mapCgi(std::map<std::string, std::string> & cgi, std::string const & value);
-
+void removeFileOrDirectory(std::string path);

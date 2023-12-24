@@ -2,7 +2,7 @@
     host = 127.0.0.1
     port = 80
     server_names = localhost
-    client_max_body_size = 100000000
+    client_max_body_size = 100000000000
     error_pages = 404:www/error_pages/404.html 500:www/error_pages/500.html
     root = www
     allow_listing = true
@@ -13,26 +13,30 @@
         root = www/error_pages
     </route>
     <route path="/cgi">
-        root = www/cgi-bin
+        root = www/cgi-scripts
         methods = GET, POST, DELETE
-        cgi = .php:/usr/bin/php
+        cgi = .php:cgi-bin/php-cgi, .py:/Library/Frameworks/Python.framework/Versions/3.11/bin/python3
     </route>
     <route path="/method">
         methods = POST
     </route>
     <route path="/redirect">
-        redirect = index.html
+        redirect = /index.html
     </route>
     <route path="/uploads">
+        root = www/uploads/uploads
         methods = POST, GET
-        root = www/uploads
         upload_dir = www/uploads/uploads
     </route>
     <route path="/post">
-        root = www/cgi-bin
-        methods = POST 
-        index = post.php 
-        cgi = .php:/usr/local/bin/php
+        root = www/cgi-scripts
+        methods = POST
+        index = post.php
+        cgi = .php:cgi-bin/php-cgi
+    </route>
+    <route path="/delete">
+        methods = DELETE
+        root = www/uploads/uploads
     </route>
 </server>
 
@@ -44,32 +48,4 @@
     error_pages = 404:www/error_pages/404.html
     root = www/QuizApp
     index = index.html
-</server>
-
-<server>
-    host = 127.0.0.1
-    port = 3000
-    server_names = localhost
-    client_max_body_size = 100000
-    error_pages = 404:www/error_pages/404.html
-    root = www
-    allow_listing = true
-    <route path="/index">
-        methods = GET, POST
-        cgi = .php:/usr/local/bin/php
-    </route>
-    <route path="/images">
-        methods = GET
-        root = /var/www/images
-        index = images.html
-        allow_listing = false
-    </route>
-    <route path="/uploads">
-        methods = POST
-        upload_dir = www/uploads/uploads
-    </route>
-    <route path="/redirect">
-        methods = GET
-        redirect = index.html
-    </route>
 </server>
