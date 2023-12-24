@@ -13,7 +13,7 @@
 #include "Cgi.hpp"
 #include "enums.hpp"
 
-Cgi::Cgi()
+Cgi::Cgi() : responseBody(""), responseHeaders()
 {
 }
 
@@ -96,6 +96,11 @@ std::string Cgi::getResponseBody()
 	return (this->responseBody);
 }
 
+std::map<std::string, std::string> Cgi::getResponseHeaders()
+{
+	return (this->responseHeaders);
+}
+
 void Cgi::executCgi(Request const & req)
 {
 	std::string cgiPath;
@@ -145,6 +150,22 @@ void Cgi::executCgi(Request const & req)
 		{
 			buffer[ret] = '\0';
 			body += buffer;
+		}
+		if (body.find("\r\n\r\n") != std::string::npos) {
+			std::string headers = body.substr(0, body.find("\r\n\r\n"));
+			std::istringstream iss(headers);
+			std::string line;
+			while (std::getline(iss, line))
+			{
+				size_t pos = line.find(": ");
+				if (pos != std::string::npos)
+				{
+					std::string key = line.substr(0, pos);
+					std::string value = line.substr(pos + 2);
+					this->responseHeaders[key] = value;
+				}
+			}
+			body = body.substr(body.find("\r\n\r\n") + 4);
 		}
 		this->responseBody = body;
 		close(fd[0]);

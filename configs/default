@@ -3,7 +3,7 @@
     port = 80
     server_names = localhost
     client_max_body_size = 100000
-    error_pages = 404:www/error_pages/404.html 500:www/error_pages/500.html
+    error_pages = 404:www/error_pages/404.html, 500:www/error_pages/500.html
     root = www
     allow_listing = true
     <route path="/test">
@@ -15,7 +15,7 @@
     <route path="/cgi">
         root = www/cgi-scripts
         methods = GET, POST, DELETE
-        cgi = .php:cgi-bin/php-cgi
+        cgi = .php:cgi-bin/php-cgi, .py:/Library/Frameworks/Python.framework/Versions/3.11/bin/python3
     </route>
     <route path="/method">
         methods = POST
@@ -32,6 +32,10 @@
         methods = POST
         index = post.php
         cgi = .php:cgi-bin/php-cgi
+    </route>
+    <route path="/delete">
+        methods = DELETE
+        root = www/uploads/uploads
     </route>
 </server>
 

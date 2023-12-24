@@ -57,7 +57,6 @@ private:
     static std::string getCurrentTime() {
         std::time_t now = std::time(NULL);
         char buf[100] = {0};
-        // std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", std::localtime(&now));
         std::strftime(buf, sizeof(buf), "%H:%M:%S", std::localtime(&now));
         return buf;
     }

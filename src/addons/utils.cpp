@@ -24,9 +24,9 @@ std::vector<std::string> getFilesInDirectory(std::string const & rootPath, std::
 
     struct dirent* entry;
     while ((entry = readdir(dir)) != NULL) {
-        // Ignore "." and ".." entries
-        if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) {
-            std::string path = reqPath + "/" + entry->d_name;
+        std::string dirName = std::string(entry->d_name);
+        if (dirName != "." && dirName !=  "..") {
+            std::string path = reqPath + "/" + dirName;
             removeConsecutiveChars(path, '/');
             if (entry->d_type == DT_DIR)
                 files.push_back(path + std::string("/"));
@@ -34,9 +34,7 @@ std::vector<std::string> getFilesInDirectory(std::string const & rootPath, std::
                 files.push_back(path);
         }
     }
-
     closedir(dir);
-
     return files;
 }
 
@@ -64,7 +62,7 @@ bool    mapErrorPages(std::map<int, std::string> & errorPages, std::string const
         if (page.size() != 2)
             return false;
         int code = std::atoi(page[0].c_str());
-        if (code < 300 || code > 599)
+        if (code < 100 || code > 599)
             return false;
         errorPages[code] = page[1];
     }
@@ -198,4 +196,49 @@ std::vector<std::string> split(const std::string& s, const std::string& delimite
         splitted.push_back(lastToken);
 
     return splitted;
+}
+
+void removeFile(std::string path) {
+    if (std::remove(path.c_str()) != 0) {
+        Console::error("Error removing file " + path);
+        throw ServerException(ServerError);
+    } else {
+        Console::info("File " + path + " successfully removed");
+        throw ServerException(NoContent);
+    }
+}
+
+void removeDirectory(std::string path) {
+    DIR* dir = opendir(path.c_str());
+
+    if (!dir) {
+        Console::error("Error opening directory " + path);
+        throw ServerException(ServerError);
+    }
+
+    struct dirent* entry;
+    while ((entry = readdir(dir)) != NULL) {
+        std::string dirName = std::string(entry->d_name);
+        if (dirName != "." && dirName !=  "..") {
+            std::string fullPath = path + "/" + dirName;
+            removeConsecutiveChars(fullPath, '/');
+
+            if (isFile(fullPath)) {
+                removeFile(fullPath);
+            } else if (isDirectory(fullPath)) {
+                removeDirectory(fullPath);
+            }
+        }
+    }
+    closedir(dir);
+}
+
+void removeFileOrDirectory(std::string path) {
+    if (isFile(path)) {
+        removeFile(path);
+    } else if (isDirectory(path)) {
+        removeDirectory(path);
+    } else {
+        throw ServerException(NotFound);
+    }
 }

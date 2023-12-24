@@ -36,8 +36,9 @@ std::string Response::getResponse() {
     std::stringstream ss;
     ss << "HTTP/1.1 " << toString(code) << " " << getStatusMessage(code) << "\r\n";
     ss << "Connection: keep-alive\r\n";
-    ss << "Server: webserv\r\n";
+    ss << "Server: webserv/1.0\r\n";
     ss << "Date: " << getDateGMT() << "\r\n";
+    ss << "Content-Length: " << toString(body.size()) << "\r\n";
     for (std::map<std::string, std::string>::iterator it = headers.begin(); it != headers.end(); it++) {
         ss << it->first << ": " << it->second << "\r\n";
     }
@@ -46,12 +47,11 @@ std::string Response::getResponse() {
     return ss.str();
 }
 
-#include <fstream>
-
 void Response::readContent(std::string const &filePath, HttpStatusCode code) {
     std::ifstream file(filePath);
     if (file.is_open())
     {
+        headers["Content-Type"] = mimes[getFileExt(filePath)];
         std::stringstream buffer;
         std::string line;
         while (std::getline(file, line))
@@ -62,9 +62,8 @@ void Response::readContent(std::string const &filePath, HttpStatusCode code) {
     else
     {
         code = code == OK ? NotFound : code;
-        body = "<html><h1 align='center'>" + toString(code) + " " + getStatusMessage(code) + "</h1></html>";
+        body = "<!DOCTYPE html><html><h1 align='center'>" + toString(code) + " " + getStatusMessage(code) + "</h1></html>";
     }
-    headers["Content-Length"] = toString(body.size());
 }
 
 Server Response::getServer() {
@@ -131,7 +130,7 @@ Route Response::findBestMatch(Server & server, std::string const & resource) {
 
 void Response::checkRedirection(Route const & route) {
     if (!route.getRedirect().empty()) {
-        headers["Location"] = "/" + route.getRedirect();
+        headers["Location"] = route.getRedirect();
         throw ServerException(MovedPermanently);
     }
 }

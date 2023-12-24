@@ -23,6 +23,7 @@ class Cgi
 		Route		cgiRoute;
 		std::string filename;
 		std::string responseBody;
+		std::map<std::string, std::string> responseHeaders;
 		std::map<std::string, std::string> env;
 		char **envp;
 	public :
@@ -32,5 +33,6 @@ class Cgi
 		Cgi& operator=(Cgi const& other);
 		~Cgi();
 		std::string getResponseBody();
+		std::map<std::string, std::string> getResponseHeaders();
 		void executCgi(Request const & req);
 };

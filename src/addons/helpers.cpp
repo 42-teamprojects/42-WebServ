@@ -16,6 +16,7 @@
 #include <ctime>
 #include <sstream>
 #include <iomanip>
+#include <map>
 
 std::string getDateGMT()
 {
@@ -40,8 +41,3 @@ bool hasAccess(std::string const &path)
     return (false);
 }
 
-std::string getRemoteAddress()
-{
-    std::string remoteAddress = getenv("REMOTE_ADDR");
-    return (remoteAddress);
-}
