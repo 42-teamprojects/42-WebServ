@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/23 16:12:00 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/24 17:26:47 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ void WebServer::handle_accept(int i)
         close(clientSocket);
         return; 
     }
+	FD_SET(clientSocket, &master);
 }
 
 int WebServer::find_socket(int socket)
@@ -116,7 +117,7 @@ int WebServer::find_socket(int socket)
 }
 
 
-t_client_resp find_client(int socket, std::vector<t_client_resp> clients)
+t_client_resp &find_client_resp(int socket, std::vector<t_client_resp> &clients)
 {
 	int indx_client = -1;
 	for (size_t i = 0; i < clients.size(); ++i)
@@ -166,7 +167,7 @@ std::string WebServer::handle_receive(int i)
 	}
 	char buf[BUFFER_SIZE + 1];
 	int bytesReceived = recv(i, buf, BUFFER_SIZE, 0);
-	if(bytesReceived <= 0)
+	if(bytesReceived < 0)
 	{
 		close(i);
 		FD_CLR(i, &master);
@@ -206,12 +207,6 @@ std::string WebServer::handle_receive(int i)
 			newClient.method = tmp.substr(0, pos4);
 		client_index = clients.size();
 		clients.push_back(newClient);
-	}
-	if (bytesReceived <= 0)
-	{
-		close(i);
-		FD_CLR(i, &master);
-		return "";
 	}
 	clients[client_index].total_read += tmp.length();
 	clients[client_index].buffer += tmp;
@@ -262,21 +257,16 @@ std::string WebServer::handle_receive(int i)
 
 void WebServer::send_response(t_client_resp &client, fd_set &master)
 {
-	int bytesSent = send(client.socket, client.response.c_str() + client.total_send, client.response.size() - client.total_send, 0);
+	int bytesSent = send(client.socket, client.response.c_str() + client.total_send, client.response.length() - client.total_send, 0);
 	if (bytesSent < 0)
 	{
+		Console::error("Send() failed");
 		close(client.socket);
+		FD_CLR(client.socket, &master);
 		return ;
 	}
 	client.total_send += bytesSent;
-	if (client.total_send >= client.response.size())
-	{
-		FD_SET(client.socket, &master);
-		FD_CLR(client.socket, &write_fds);
-		reset_client_resp(client);
-		close(client.socket);
-		return ;
-	}
+	
 }
 
 
@@ -323,14 +313,30 @@ void WebServer::run()
 					FD_SET(clientSocket, &master);
 				}
 				else
+				{
 					request = handle_receive(i);
+					if (request != "")
+					{
+						t_client_resp& client = find_client_resp(i, clients_resp);
+						Response response(request);
+						client.response = response.getResponse();
+						// FD_CLR(i, &master);
+						// FD_SET(i, &tmpwrite_fds);
+					}
+				}
 			}
 			if (FD_ISSET(i, &tmpwrite_fds))
 			{
-				t_client_resp client = find_client(i, clients_resp);
-				Response resp(request);
-				client.response = resp.getResponse();
+				t_client_resp &client = find_client_resp(i, clients_resp);
 				send_response(client, master);
+				if (client.total_send == client.response.length())
+				{
+					reset_client_resp(client);
+					FD_CLR(i, &write_fds);
+					FD_SET(i, &master);
+					
+					// close(i);
+				}
 			}
 		}
 	}
