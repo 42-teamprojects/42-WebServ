@@ -176,7 +176,7 @@ std::string WebServer::handle_receive(int i)
 	std::string tmp(buf, bytesReceived);
 	if(client_index == -1)
 	{
-		size_t start = 0;
+		// size_t start = 0;
 		t_client newClient;
 		reset_client(newClient);
 		size_t pos = tmp.find("Content-Length:");
@@ -193,7 +193,7 @@ std::string WebServer::handle_receive(int i)
 		size_t pos2 = tmp.find("\r\n\r\n",end);
 		if(pos2 != std::string::npos)
 		{
-			start = pos2;
+			// start = pos2;
 			newClient.startCunter = pos2;
 		}
 		size_t pos3 = tmp.find("Transfer-Encoding: chunked");

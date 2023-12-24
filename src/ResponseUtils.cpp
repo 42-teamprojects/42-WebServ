@@ -27,6 +27,7 @@ std::string Response::getStatusMessage(HttpStatusCode code) {
         case NoContent: return "No Content";
         case ServerError: return "Internal Server Error";
         case BadGateway: return "Bad Gateway";
+        case Created: return "Created";
         default: return "Unknown";
     }
 }

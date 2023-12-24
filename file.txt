@@ -1,2 +1,0 @@
-python3 watcher.py webserv
-c++ -Wall -Wextra -Werror -std=c++98 -fsanitize=address -g3 obj/main.o obj/src/Cgi.o obj/src/Client.o obj/src/Config.o obj/src/Request.o obj/src/Response.o obj/src/ResponseUtils.o obj/src/Route.o obj/src/Server.o obj/src/WebServer.o obj/src/addons/Mimes.o obj/src/addons/ServerException.o obj/src/addons/helpers.o obj/src/addons/utils.o -I includes/ -I includes/addons/ -o webserv

@@ -123,6 +123,7 @@ void Response::handlePost(Server const & server, Route const & route) {
         return; 
     }
     readBody(route);
+    throw ServerException(Created);
 }
 
 void Response::handleResponse() {

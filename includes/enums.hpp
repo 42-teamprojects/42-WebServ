@@ -27,4 +27,5 @@ typedef enum e_HttpStatusCode {
     ServerError = 500,
     NoContent = 204,
     BadGateway = 502,
+    Created = 201,
 } HttpStatusCode;
