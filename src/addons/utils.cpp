@@ -204,7 +204,6 @@ void removeFile(std::string path) {
         throw ServerException(ServerError);
     } else {
         Console::info("File " + path + " successfully removed");
-        throw ServerException(NoContent);
     }
 }
 
@@ -236,9 +235,12 @@ void removeDirectory(std::string path) {
 void removeFileOrDirectory(std::string path) {
     if (isFile(path)) {
         removeFile(path);
+        throw ServerException(NoContent);
     } else if (isDirectory(path)) {
         removeDirectory(path);
+        throw ServerException(NoContent);
     } else {
+        Console::error("Error removing file or directory " + path);
         throw ServerException(NotFound);
     }
 }

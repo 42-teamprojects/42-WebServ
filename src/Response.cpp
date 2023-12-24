@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/12/15 19:01:11 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/24 17:01:11 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ std::string Response::getFilePath(Server const & server, Route const & route)
         // check if listing is allowed
         if (e.getCode() == Forbidden && (route.getAllowListing() || server.getAllowListing()) && request->getMethod() != "POST") {
             if (request->getMethod() == "DELETE")
-                return route.getRoot() + "/" + route.getPath();
+                return route.getRoot() + "/";
             std::vector<std::string> files = getFilesInDirectory(route.getRoot(), route.getPath());
             return (isListing = true, body = generateHtmlListing(files), "");
         }
@@ -116,6 +116,8 @@ void Response::handleDelete(Server const & server, Route const & route)
     if (!route.getCgi().empty()) {
         Console::info("Running CGI: " + filePath);
         Cgi cgi(route, filePath, *request);
+        std::map<std::string, std::string> Cgiheaders = cgi.getResponseHeaders();
+        headers.insert(Cgiheaders.begin(), Cgiheaders.end());
         body = cgi.getResponseBody();
         return; 
     }
@@ -129,6 +131,8 @@ void Response::handlePost(Server const & server, Route const & route)
         removeConsecutiveChars(filePath, '/');
         Console::info("Running CGI: " + filePath);
         Cgi cgi(route, filePath, *request);
+        std::map<std::string, std::string> Cgiheaders = cgi.getResponseHeaders();
+        headers.insert(Cgiheaders.begin(), Cgiheaders.end());
         body = cgi.getResponseBody();
         return; 
     }
