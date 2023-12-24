@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseUtils.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yelaissa <yelaissa@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: yusufisawi <yusufisawi@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 12:22:45 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/12/21 14:33:34 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/06 18:47:49 by yusufisawi       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ std::string Response::getStatusMessage(HttpStatusCode code) {
         case NoContent: return "No Content";
         case ServerError: return "Internal Server Error";
         case BadGateway: return "Bad Gateway";
+        case Created: return "Created";
         default: return "Unknown";
     }
 }
@@ -130,7 +131,7 @@ Route Response::findBestMatch(Server & server, std::string const & resource) {
 
 void Response::checkRedirection(Route const & route) {
     if (!route.getRedirect().empty()) {
-        headers["Location"] = route.getRedirect();
+        headers["Location"] = "/" + route.getRedirect();
         throw ServerException(MovedPermanently);
     }
 }

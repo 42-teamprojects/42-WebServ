@@ -13,7 +13,7 @@ class MyHandler(FileSystemEventHandler):
     def __init__(self, process, exe):
         self.process = process
         self.last_modified = 0
-        self.exclude_extensions = ['.o', '']  # Add any other file extensions to exclude
+        self.exclude_extensions = ['.o']  # Add any other file extensions to exclude
         self.exe = exe
 
     def on_modified(self, event):
@@ -42,7 +42,9 @@ def start_watcher(exe):
 
     event_handler = MyHandler(process, exe)
     observer = Observer()
-    observer.schedule(event_handler, path='.', recursive=True)
+    observer.schedule(event_handler, path='./src', recursive=True)  # Watch for changes in the src folder
+    observer.schedule(event_handler, path='./includes', recursive=True)  # Watch for changes in the includes folder
+    observer.schedule(event_handler, path='./configs', recursive=True)  # Watch for changes in the configs folder
     observer.start()
     
     try:
