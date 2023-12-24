@@ -24,7 +24,7 @@
         redirect = /index.html
     </route>
     <route path="/uploads">
-        root = www/uploads/uploads
+        root = www/uploads
         methods = POST, GET
         upload_dir = www/uploads/uploads
     </route>
