@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yusufisawi <yusufisawi@student.42.fr>      +#+  +:+       +#+        */
+/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 22:07:44 by msodor            #+#    #+#             */
-/*   Updated: 2023/12/06 18:41:05 by yusufisawi       ###   ########.fr       */
+/*   Updated: 2023/12/25 13:23:55 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,12 @@ void Request::statusLineCheck()
     {
         this->statusCode = BadRequest;
         return ;
+    }
+    std::string::size_type pos = 0;
+    while ((pos = uri.find("%20", pos)) != std::string::npos)
+    {
+        uri.replace(pos, 3, " ");
+        pos += 1;
     }
 }
 

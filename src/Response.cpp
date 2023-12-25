@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 10:56:24 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/12/24 17:01:11 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/25 12:51:42 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,8 +141,9 @@ void Response::handlePost(Server const & server, Route const & route)
 }
 
 void Response::handleResponse() {
-    Server server = getServer();
+    Server server;
     try {
+        server = getServer();
         if (code != OK)
             throw ServerException(code);
         Route route = getRoute(server);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ResponseUtils.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yusufisawi <yusufisawi@student.42.fr>      +#+  +:+       +#+        */
+/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 12:22:45 by yelaissa          #+#    #+#             */
-/*   Updated: 2023/12/06 18:47:49 by yusufisawi       ###   ########.fr       */
+/*   Updated: 2023/12/25 12:56:06 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,9 +69,16 @@ void Response::readContent(std::string const &filePath, HttpStatusCode code) {
 Server Response::getServer() {
     std::vector<Server>::iterator it = Config::find(request->getHost(), request->getPort());
     if (it != Config::end()) {
+        if (request->getMethod() != "GET" && it->getClientMaxBodySize() != 0 && \
+            request->getBody().size() > it->getClientMaxBodySize())
+                throw ServerException(RequestEntityTooLarge);
         return *it;
     }
-    return *(Config::begin());
+    Server s = *(Config::begin());
+    if (request->getMethod() != "GET" && s.getClientMaxBodySize() != 0 && \
+            request->getBody().size() > s.getClientMaxBodySize())
+                throw ServerException(RequestEntityTooLarge);
+    return s;
 }
 
 std::string Response::getRequestedResource(std::string const & uri) {

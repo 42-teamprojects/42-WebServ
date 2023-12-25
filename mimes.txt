@@ -1,3 +1,4 @@
+.pdf|application/x-pdf|application/pdf
 .ez|application/andrew-inset
 .aw|application/applixware
 .atom|application/atom+xml
@@ -33,7 +34,6 @@
 .ogx|application/ogg
 .onepkg, .onetmp, .onetoc, .onetoc2|application/onenote
 .xer|application/patch-ops-error+xml
-.pdf|application/x-pdf|application/pdf
 .pgp|application/pgp-encrypted
 .asc, .sig|application/pgp-signature
 .prf|application/pics-rules
