@@ -39,14 +39,6 @@ const quizData = [
 		d: "none of the above",
 		correct: "b",
 	},
-	{
-		question: "Chkon akbar zaml",
-		a: "mouad sodor",
-		b: "hamza tlha",
-		c: "mkhairou",
-		d: "none of the above",
-		correct: "b",
-	},
 ];
 const answersEls = document.querySelectorAll(".answer");
 const questionEL = document.getElementById("question");

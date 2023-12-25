@@ -1,0 +1,9 @@
+<server>
+    host = 127.0.0.1
+    port = 8080
+    server_names = localhost, youssef.com
+    client_max_body_size = 100
+    error_pages = 404:www/error_pages/404.html
+    root = www/QuizApp
+    index = index.html
+</server>
