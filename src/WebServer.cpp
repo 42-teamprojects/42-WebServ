@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/25 11:38:47 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/25 12:35:21 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -317,8 +317,6 @@ void WebServer::run()
 						t_client_resp& client = find_client_resp(i, clients_resp);
 						Response response(request);
 						client.response = response.getResponse();
-						// FD_CLR(i, &master);
-						// FD_SET(i, &tmpwrite_fds);
 					}
 				}
 			}
@@ -332,8 +330,6 @@ void WebServer::run()
 					FD_SET(i, &master);
 					reset_client_resp(client);
 					close(client.socket);
-					// return;
-					// close(i);
 				}
 			}
 		}
