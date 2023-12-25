@@ -6,7 +6,7 @@
 /*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/24 17:26:47 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/25 11:38:47 by htalhaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void WebServer::handle_select(int port, int idx)
 		return ;
 	}
 
-	if (listen(srvs[idx].socket, 20) < 0)
+	if (listen(srvs[idx].socket, 5) < 0)
 	{
 		Console::error("Listen() failed");
 		close(srvs[idx].socket);
@@ -177,7 +177,6 @@ std::string WebServer::handle_receive(int i)
 	std::string tmp(buf, bytesReceived);
 	if(client_index == -1)
 	{
-		// size_t start = 0;
 		t_client newClient;
 		reset_client(newClient);
 		size_t pos = tmp.find("Content-Length:");
@@ -193,10 +192,7 @@ std::string WebServer::handle_receive(int i)
 		}
 		size_t pos2 = tmp.find("\r\n\r\n",end);
 		if(pos2 != std::string::npos)
-		{
-			// start = pos2;
 			newClient.startCunter = pos2;
-		}
 		size_t pos3 = tmp.find("Transfer-Encoding: chunked");
 		if(pos3 != std::string::npos)
 			newClient.chunked = true;
@@ -257,12 +253,13 @@ std::string WebServer::handle_receive(int i)
 
 void WebServer::send_response(t_client_resp &client, fd_set &master)
 {
+	(void)master;
 	int bytesSent = send(client.socket, client.response.c_str() + client.total_send, client.response.length() - client.total_send, 0);
 	if (bytesSent < 0)
 	{
 		Console::error("Send() failed");
 		close(client.socket);
-		FD_CLR(client.socket, &master);
+		FD_CLR(client.socket, &write_fds);
 		return ;
 	}
 	client.total_send += bytesSent;
@@ -331,10 +328,11 @@ void WebServer::run()
 				send_response(client, master);
 				if (client.total_send == client.response.length())
 				{
-					reset_client_resp(client);
 					FD_CLR(i, &write_fds);
 					FD_SET(i, &master);
-					
+					reset_client_resp(client);
+					close(client.socket);
+					// return;
 					// close(i);
 				}
 			}
