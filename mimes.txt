@@ -1,4 +1,4 @@
-.pdf|application/x-pdf|application/pdf
+.pdf|application/pdf
 .ez|application/andrew-inset
 .aw|application/applixware
 .atom|application/atom+xml

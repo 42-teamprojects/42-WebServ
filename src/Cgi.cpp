@@ -6,7 +6,7 @@
 /*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/18 17:18:58 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/22 15:54:03 by yelaissa         ###   ########.fr       */
+/*   Updated: 2023/12/25 15:56:06 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,7 @@ void Cgi::executCgi(Request const & req)
 			throw ServerException(BadGateway);
 		}
 		close(fd[1]);
-		char buffer[1024];
+		char buffer[10240];
 		std::string body;
 		int ret;
 		while ((ret = read(fd[0], buffer, 1023)) > 0)

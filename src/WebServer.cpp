@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: htalhaou <htalhaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yelaissa <yelaissa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 15:08:25 by htalhaou          #+#    #+#             */
-/*   Updated: 2023/12/25 12:35:21 by htalhaou         ###   ########.fr       */
+/*   Updated: 2023/12/25 16:39:33 by yelaissa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServer.hpp"
 #include "webserv.hpp"
+
 WebServer::WebServer(std::vector<Server> &servers) : servers(servers)
 {
 	srvs.resize(servers.size() + 1);
@@ -41,6 +42,7 @@ WebServer::~WebServer()
 {
 	for (size_t i = 0; i < servers.size(); i++)
 		close(srvs[i].socket);
+	close(clientSocket);
 }
 
 void WebServer::handle_select(int port, int idx)
@@ -51,13 +53,6 @@ void WebServer::handle_select(int port, int idx)
 		Console::error("socket() failed");
 		return ;
 	}
-	if (fcntl(srvs[idx].socket, F_SETFL, O_NONBLOCK, O_CLOEXEC) == -1)
-	{
-		Console::error("fcntl() failed");
-		close(srvs[idx].socket);
-		return ; 
-	}
-	FD_SET(srvs[idx].socket, &master);
 
 	memset(&srvs[idx].addr, 0, sizeof(srvs[idx].addr));
 	srvs[idx].addr.sin_family = AF_INET;
@@ -72,6 +67,14 @@ void WebServer::handle_select(int port, int idx)
 		return ; 
 	}
 
+	if (fcntl(srvs[idx].socket, F_SETFL, O_NONBLOCK, O_CLOEXEC) == -1)
+	{
+		Console::error("fcntl() failed");
+		close(srvs[idx].socket);
+		return ; 
+	}
+	FD_SET(srvs[idx].socket, &master);
+
 	if (bind(srvs[idx].socket, (struct sockaddr *)&srvs[idx].addr, sizeof(srvs[idx].addr)) < 0)
 	{
 		Console::error("Bind() failed");
@@ -79,7 +82,7 @@ void WebServer::handle_select(int port, int idx)
 		return ;
 	}
 
-	if (listen(srvs[idx].socket, 5) < 0)
+	if (listen(srvs[idx].socket, SOMAXCONN) < 0)
 	{
 		Console::error("Listen() failed");
 		close(srvs[idx].socket);
@@ -167,7 +170,7 @@ std::string WebServer::handle_receive(int i)
 	}
 	char buf[BUFFER_SIZE + 1];
 	int bytesReceived = recv(i, buf, BUFFER_SIZE, 0);
-	if(bytesReceived < 0)
+	if(bytesReceived <= 0)
 	{
 		close(i);
 		FD_CLR(i, &master);
@@ -251,6 +254,13 @@ std::string WebServer::handle_receive(int i)
 	
 }
 
+void sigpipeHandler(int signo)
+{
+	(void)signo;
+    Console::warning("SIGPIPE received. Ignoring.");
+}
+
+
 void WebServer::send_response(t_client_resp &client, fd_set &master)
 {
 	(void)master;
@@ -290,11 +300,16 @@ void WebServer::reset_client_resp(t_client_resp &client)
 void WebServer::run()
 {
 	std::string request = "";
+	struct timeval tv;
+	signal(SIGPIPE, sigpipeHandler);
 	while (true)
 	{
+		tv.tv_sec = 1;
+		tv.tv_usec = 0;
+	
 		read_fds = master;
 		tmpwrite_fds = write_fds;
-		if (select(FD_SETSIZE, &read_fds, &tmpwrite_fds, NULL, NULL) < 0)
+		if (select(FD_SETSIZE, &read_fds, &tmpwrite_fds, NULL, &tv) < 0)
 		{
 			Console::error("Select() failed");
 			return ;
@@ -324,7 +339,7 @@ void WebServer::run()
 			{
 				t_client_resp &client = find_client_resp(i, clients_resp);
 				send_response(client, master);
-				if (client.total_send == client.response.length())
+				if (client.total_send >= client.response.length())
 				{
 					FD_CLR(i, &write_fds);
 					FD_SET(i, &master);
